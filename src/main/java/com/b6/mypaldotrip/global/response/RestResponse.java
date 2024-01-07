@@ -2,6 +2,7 @@ package com.b6.mypaldotrip.global.response;
 
 import com.b6.mypaldotrip.global.template.ResultCode;
 import java.io.Serializable;
+import java.util.ArrayList;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpHeaders;
@@ -39,6 +40,15 @@ public class RestResponse<T> implements Serializable {
         return RestResponse.<T>builder()
             .code(resultCode.getHttpStatus().value())
             .message(resultCode.getMessage())
+            .metaData(MetaData.builder().apiVersion(version).build())
+            .build();
+    }
+
+    public static RestResponse<Object> argumentValidException(ArrayList<String> errors,
+        String version) {
+        return RestResponse.builder()
+            .code(HttpStatus.BAD_REQUEST.value())
+            .message("requestValidException : " + errors.stream().toList().toString())
             .metaData(MetaData.builder().apiVersion(version).build())
             .build();
     }
