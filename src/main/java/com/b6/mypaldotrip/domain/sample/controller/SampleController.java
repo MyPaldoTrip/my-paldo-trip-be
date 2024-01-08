@@ -26,6 +26,6 @@ public class SampleController {
     public ResponseEntity<RestResponse<SampleRes>> saveSample(@Valid @RequestBody SampleReq req) {
         SampleRes res = sampleService.saveSample(req);
         return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
-            .toResponseEntity();
+                .toResponseEntity();
     }
 }

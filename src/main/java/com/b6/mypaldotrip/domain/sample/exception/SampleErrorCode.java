@@ -13,4 +13,3 @@ public enum SampleErrorCode implements ResultCode {
     private final HttpStatus httpStatus;
     private final String message;
 }
-
