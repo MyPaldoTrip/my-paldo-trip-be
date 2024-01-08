@@ -31,4 +31,9 @@ public class CourseEntity extends BaseEntity {
         this.content = content;
     }
 
+    public void updateCourse(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
 }

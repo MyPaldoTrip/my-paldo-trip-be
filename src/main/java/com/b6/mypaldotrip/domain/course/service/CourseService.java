@@ -1,14 +1,16 @@
 package com.b6.mypaldotrip.domain.course.service;
 
 import com.b6.mypaldotrip.domain.course.controller.dto.requeset.CourseSaveReq;
+import com.b6.mypaldotrip.domain.course.controller.dto.requeset.CourseUpdateReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseGetRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseSaveRes;
+import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseUpdateRes;
 import com.b6.mypaldotrip.domain.course.exception.CourseErrorCode;
 import com.b6.mypaldotrip.domain.course.store.entity.CourseEntity;
 import com.b6.mypaldotrip.domain.course.store.repository.CourseRepository;
-import com.b6.mypaldotrip.domain.sample.exception.SampleErrorCode;
 import com.b6.mypaldotrip.global.exception.GlobalException;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -49,6 +51,19 @@ public class CourseService {
     public CourseGetRes getCourse(Long courseId) {
         CourseEntity course = findCourse(courseId);
         CourseGetRes res = CourseGetRes.builder()
+            .title(course.getTitle())
+            .content(course.getContent())
+            .build();
+
+        return res;
+    }
+
+    @Transactional
+    public CourseUpdateRes updateCourse(Long courseId, CourseUpdateReq req) {
+        CourseEntity course = findCourse(courseId);
+        course.updateCourse(req.title(), req.content());
+
+        CourseUpdateRes res = CourseUpdateRes.builder()
             .title(course.getTitle())
             .content(course.getContent())
             .build();

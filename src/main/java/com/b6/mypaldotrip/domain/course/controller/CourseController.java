@@ -1,9 +1,11 @@
 package com.b6.mypaldotrip.domain.course.controller;
 
 import com.b6.mypaldotrip.domain.course.controller.dto.requeset.CourseSaveReq;
+import com.b6.mypaldotrip.domain.course.controller.dto.requeset.CourseUpdateReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseGetRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseSaveRes;
+import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseUpdateRes;
 import com.b6.mypaldotrip.domain.course.service.CourseService;
 import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.config.VersionConfig;
@@ -12,9 +14,11 @@ import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,6 +50,17 @@ public class CourseController {
     @GetMapping("/{courseId}")
     public ResponseEntity<RestResponse<CourseGetRes>> getCourse(@PathVariable Long courseId) {
         CourseGetRes res = courseService.getCourse(courseId);
+
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+            .toResponseEntity();
+    }
+
+    @PutMapping("{courseId}")
+    public ResponseEntity<RestResponse<CourseUpdateRes>> updateCourse(
+        @PathVariable Long courseId,
+        @RequestBody CourseUpdateReq req
+    ) {
+        CourseUpdateRes res = courseService.updateCourse(courseId, req);
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
             .toResponseEntity();
