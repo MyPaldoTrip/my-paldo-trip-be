@@ -2,7 +2,8 @@ package com.b6.mypaldotrip.domain.trip.controller;
 
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripCreateRes;
-import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripGetRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripListRes;
 import com.b6.mypaldotrip.domain.trip.service.TripService;
 import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.config.VersionConfig;
@@ -30,15 +31,15 @@ public class TripController {
     }
 
     @GetMapping
-    public ResponseEntity<RestResponse<List<TripRes>>> getAllTrips() {
-        List<TripRes> res = tripService.getAllTrips();
+    public ResponseEntity<RestResponse<List<TripListRes>>> getTripList() {
+        List<TripListRes> res = tripService.getTripList();
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
 
     @GetMapping("/{tripId}")
-    public ResponseEntity<RestResponse<TripRes>> getTrip(@PathVariable Long tripId) {
-        TripRes res = tripService.getTrip(tripId);
+    public ResponseEntity<RestResponse<TripGetRes>> getTrip(@PathVariable Long tripId) {
+        TripGetRes res = tripService.getTrip(tripId);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }

@@ -2,7 +2,8 @@ package com.b6.mypaldotrip.domain.trip.service;
 
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripCreateRes;
-import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripGetRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripListRes;
 import com.b6.mypaldotrip.domain.trip.exception.TripErrorCode;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
 import com.b6.mypaldotrip.domain.trip.store.repository.TripRepository;
@@ -46,23 +47,23 @@ public class TripService {
                 .description(trip.getDescription()).build();
     }
 
-    public List<TripRes> getAllTrips() {
+    public List<TripListRes> getTripList() {
         List<TripEntity> tripList = findAllTrips();
-        List<TripRes> tripResList = new ArrayList<>();
+        List<TripListRes> tripListRes = new ArrayList<>();
 
         for (TripEntity trip : tripList) {
-            tripResList.add(new TripRes(trip.getCategory(), trip.getName(), trip.getDescription()));
+            tripListRes.add(new TripListRes(trip.getCategory(), trip.getName(), trip.getDescription()));
         }
-        return tripResList;
+        return tripListRes;
+    }
+
+    public TripGetRes getTrip(Long tripId) {
+        TripEntity trip = tripRepository.findById(tripId).orElseThrow(() -> new GlobalException(TripErrorCode.NON_EXIST_TRIP));
+        return new TripGetRes(trip.getCategory(), trip.getName(), trip.getDescription());
     }
 
     // 모든 여행정보 조회 메서드
     private List<TripEntity> findAllTrips() {
         return tripRepository.findAll();
-    }
-
-    public TripRes getTrip(Long tripId) {
-        TripEntity trip = tripRepository.findById(tripId).orElseThrow(() -> new GlobalException(TripErrorCode.NON_EXIST_TRIP));
-        return new TripRes(trip.getCategory(), trip.getName(), trip.getDescription());
     }
 }
