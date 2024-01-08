@@ -2,12 +2,16 @@ package com.b6.mypaldotrip.domain.trip.service;
 
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripCreateRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripRes;
 import com.b6.mypaldotrip.domain.trip.exception.TripErrorCode;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
 import com.b6.mypaldotrip.domain.trip.store.repository.TripRepository;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -40,5 +44,20 @@ public class TripService {
                 .category(trip.getCategory())
                 .name(trip.getName())
                 .description(trip.getDescription()).build();
+    }
+
+    public List<TripRes> getAllTrips() {
+        List<TripEntity> tripList = findAllTrips();
+        List<TripRes> tripResList = new ArrayList<>();
+
+        for (TripEntity trip : tripList) {
+            tripResList.add(new TripRes(trip.getCategory(), trip.getName(), trip.getDescription()));
+        }
+        return tripResList;
+    }
+
+    // 모든 여행정보 조회 메서드
+    private List<TripEntity> findAllTrips() {
+        return tripRepository.findAll();
     }
 }
