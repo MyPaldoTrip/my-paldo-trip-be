@@ -24,14 +24,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<RestResponse<Object>> handleMethodArgumentNotValidException
-        (MethodArgumentNotValidException e) {
+    public ResponseEntity<RestResponse<Object>> handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException e) {
         ArrayList<String> errors = new ArrayList<>();
         e.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
 
         ResultCode resultCode = GlobalResultCode.VALIDATION_ERROR;
         return RestResponse.argumentValidException(errors, versionConfig.getVersion())
-            .toResponseEntity();
-
+                .toResponseEntity();
     }
 }
