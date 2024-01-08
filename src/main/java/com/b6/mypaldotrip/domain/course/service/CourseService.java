@@ -2,6 +2,7 @@ package com.b6.mypaldotrip.domain.course.service;
 
 import com.b6.mypaldotrip.domain.course.controller.dto.requeset.CourseSaveReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.requeset.CourseUpdateReq;
+import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseDeleteRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseGetRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseSaveRes;
@@ -50,6 +51,7 @@ public class CourseService {
 
     public CourseGetRes getCourse(Long courseId) {
         CourseEntity course = findCourse(courseId);
+
         CourseGetRes res = CourseGetRes.builder()
             .title(course.getTitle())
             .content(course.getContent())
@@ -61,6 +63,7 @@ public class CourseService {
     @Transactional
     public CourseUpdateRes updateCourse(Long courseId, CourseUpdateReq req) {
         CourseEntity course = findCourse(courseId);
+
         course.updateCourse(req.title(), req.content());
 
         CourseUpdateRes res = CourseUpdateRes.builder()
@@ -71,9 +74,22 @@ public class CourseService {
         return res;
     }
 
+    @Transactional
+    public CourseDeleteRes deleteCourse(Long courseId) {
+        CourseEntity course = findCourse(courseId);
+
+        courseRepository.delete(course);
+
+        CourseDeleteRes res = CourseDeleteRes.builder().msg(courseId + "번 코스 삭제").build();
+
+        return res;
+    }
+
     private CourseEntity findCourse(Long courseId) {
         return courseRepository.findById(courseId).orElseThrow(
             () -> new GlobalException(CourseErrorCode.COURSE_NOT_FOUND)
         );
     }
+
+
 }

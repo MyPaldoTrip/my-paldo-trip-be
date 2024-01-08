@@ -2,8 +2,9 @@ package com.b6.mypaldotrip.domain.course.controller;
 
 import com.b6.mypaldotrip.domain.course.controller.dto.requeset.CourseSaveReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.requeset.CourseUpdateReq;
-import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListRes;
+import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseDeleteRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseGetRes;
+import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseSaveRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseUpdateRes;
 import com.b6.mypaldotrip.domain.course.service.CourseService;
@@ -32,7 +33,8 @@ public class CourseController {
     private final VersionConfig versionConfig;
 
     @PostMapping
-    public ResponseEntity<RestResponse<CourseSaveRes>> saveCourse(@Valid @RequestBody CourseSaveReq req) {
+    public ResponseEntity<RestResponse<CourseSaveRes>> saveCourse(
+        @Valid @RequestBody CourseSaveReq req) {
         CourseSaveRes res = courseService.saveCourse(req);
 
         return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
@@ -41,10 +43,10 @@ public class CourseController {
 
     @GetMapping
     public ResponseEntity<RestResponse<List<CourseListRes>>> getCourseList() {
-         List<CourseListRes> res = courseService.getCourseList();
+        List<CourseListRes> res = courseService.getCourseList();
 
-         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
-             .toResponseEntity();
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+            .toResponseEntity();
     }
 
     @GetMapping("/{courseId}")
@@ -61,6 +63,14 @@ public class CourseController {
         @RequestBody CourseUpdateReq req
     ) {
         CourseUpdateRes res = courseService.updateCourse(courseId, req);
+
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+            .toResponseEntity();
+    }
+
+    @DeleteMapping("/{courseId}")
+    public ResponseEntity<RestResponse<CourseDeleteRes>> deleteCourse(@PathVariable Long courseId) {
+        CourseDeleteRes res = courseService.deleteCourse(courseId);
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
             .toResponseEntity();
