@@ -6,6 +6,7 @@ import com.b6.mypaldotrip.domain.sample.service.SampleService;
 import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.response.RestResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +23,7 @@ public class SampleController {
     private final VersionConfig versionConfig;
 
     @PostMapping
-    public ResponseEntity<RestResponse<SampleRes>> saveSample(@RequestBody SampleReq req) {
+    public ResponseEntity<RestResponse<SampleRes>> saveSample(@Valid @RequestBody SampleReq req) {
         SampleRes res = sampleService.saveSample(req);
         return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
             .toResponseEntity();
