@@ -2,10 +2,7 @@ package com.b6.mypaldotrip.domain.trip.service;
 
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripUpdateReq;
-import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripCreateRes;
-import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripGetRes;
-import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripListRes;
-import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripUpdateRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.*;
 import com.b6.mypaldotrip.domain.trip.exception.TripErrorCode;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
 import com.b6.mypaldotrip.domain.trip.store.repository.TripRepository;
@@ -70,6 +67,7 @@ public class TripService {
 
     @Transactional
     public TripUpdateRes updateTrip(Long tripId, TripUpdateReq req) {
+        // TODO: 2024-01-08 운영자 검증 로직 추가 필요
         TripEntity trip = findTrip(tripId);
         trip.updateTrip(req.category(), req.name(), req.description());
         return TripUpdateRes.builder()
@@ -77,6 +75,13 @@ public class TripService {
                 .name(trip.getName())
                 .description(trip.getDescription())
                 .build();
+    }
+
+    public TripDeleteRes deleteTrip(Long tripId) {
+        // TODO: 2024-01-08 운영자 검증 로직 추가 필요
+        TripEntity trip = findTrip(tripId);
+        tripRepository.delete(trip);
+        return TripDeleteRes.builder().message("여행 정보가 삭제되었습니다.").build();
     }
 
     // 여행정보 전체 조회 메서드
