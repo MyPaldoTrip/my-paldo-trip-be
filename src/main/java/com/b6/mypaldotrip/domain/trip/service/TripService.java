@@ -1,15 +1,18 @@
 package com.b6.mypaldotrip.domain.trip.service;
 
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
+import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripUpdateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripCreateRes;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripGetRes;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripListRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripUpdateRes;
 import com.b6.mypaldotrip.domain.trip.exception.TripErrorCode;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
 import com.b6.mypaldotrip.domain.trip.store.repository.TripRepository;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -59,6 +62,17 @@ public class TripService {
     public TripGetRes getTrip(Long tripId) {
         TripEntity trip = findTrip(tripId);
         return TripGetRes.builder()
+                .category(trip.getCategory())
+                .name(trip.getName())
+                .description(trip.getDescription())
+                .build();
+    }
+
+    @Transactional
+    public TripUpdateRes updateTrip(Long tripId, TripUpdateReq req) {
+        TripEntity trip = findTrip(tripId);
+        trip.updateTrip(req.category(), req.name(), req.description());
+        return TripUpdateRes.builder()
                 .category(trip.getCategory())
                 .name(trip.getName())
                 .description(trip.getDescription())

@@ -32,4 +32,10 @@ public class TripEntity extends BaseEntity {
         this.name = name;
         this.description = description;
     }
+
+    public void updateTrip(Category category, String name, String description) {
+        this.category = category == null ? this.category : category;
+        this.name = name == null ? this.name : name;
+        this.description = description == null ? this.description : description;
+    }
 }
