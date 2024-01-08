@@ -35,4 +35,11 @@ public class TripController {
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
+
+    @GetMapping("/{tripId}")
+    public ResponseEntity<RestResponse<TripRes>> getTrip(@PathVariable Long tripId) {
+        TripRes res = tripService.getTrip(tripId);
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                .toResponseEntity();
+    }
 }

@@ -60,4 +60,9 @@ public class TripService {
     private List<TripEntity> findAllTrips() {
         return tripRepository.findAll();
     }
+
+    public TripRes getTrip(Long tripId) {
+        TripEntity trip = tripRepository.findById(tripId).orElseThrow(() -> new GlobalException(TripErrorCode.NON_EXIST_TRIP));
+        return new TripRes(trip.getCategory(), trip.getName(), trip.getDescription());
+    }
 }
