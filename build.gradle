@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.1'
     id 'io.spring.dependency-management' version '1.1.4'
+    id("com.diffplug.spotless") version("6.11.0")
 }
 
 group = 'com.b6'
@@ -35,4 +36,21 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+spotless {
+    java {
+        googleJavaFormat().aosp()
+        // 파일 끝에 새로운 라인 추가
+        endWithNewline()
+        // 사용하지 않는 import 제거
+        removeUnusedImports()
+        // 각 라인 끝에 있는 공백을 제거
+        trimTrailingWhitespace()
+    }
+}
+
+tasks {
+    check.dependsOn spotlessCheck
+    assemble.dependsOn spotlessApply
 }
