@@ -11,7 +11,6 @@ import com.b6.mypaldotrip.global.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -48,22 +47,31 @@ public class TripService {
     }
 
     public List<TripListRes> getTripList() {
-        List<TripEntity> tripList = findAllTrips();
-        List<TripListRes> tripListRes = new ArrayList<>();
-
-        for (TripEntity trip : tripList) {
-            tripListRes.add(new TripListRes(trip.getCategory(), trip.getName(), trip.getDescription()));
-        }
-        return tripListRes;
+        return findAllTrips().stream()
+                .map(trip -> TripListRes.builder()
+                        .category(trip.getCategory())
+                        .name(trip.getName())
+                        .description(trip.getDescription())
+                        .build()
+                ).toList();
     }
 
     public TripGetRes getTrip(Long tripId) {
-        TripEntity trip = tripRepository.findById(tripId).orElseThrow(() -> new GlobalException(TripErrorCode.NON_EXIST_TRIP));
-        return new TripGetRes(trip.getCategory(), trip.getName(), trip.getDescription());
+        TripEntity trip = findTrip(tripId);
+        return TripGetRes.builder()
+                .category(trip.getCategory())
+                .name(trip.getName())
+                .description(trip.getDescription())
+                .build();
     }
 
-    // 모든 여행정보 조회 메서드
+    // 여행정보 전체 조회 메서드
     private List<TripEntity> findAllTrips() {
         return tripRepository.findAll();
+    }
+
+    // 여행정보 조회 메서드
+    private TripEntity findTrip(Long tripId) {
+        return tripRepository.findById(tripId).orElseThrow(() -> new GlobalException(TripErrorCode.NON_EXIST_TRIP));
     }
 }
