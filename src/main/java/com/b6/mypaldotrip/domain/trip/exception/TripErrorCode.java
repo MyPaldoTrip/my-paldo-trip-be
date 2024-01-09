@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum TripErrorCode implements ResultCode {
-    WRONG_CATEGORY_ERROR(HttpStatus.BAD_REQUEST, "카테고리가 없거나 잘못된 카테고리 입니다."),
+    WRONG_CATEGORY_ERROR(HttpStatus.BAD_REQUEST, "잘못된 카테고리 입니다."),
+    NO_CATEGORY_ERROR(HttpStatus.BAD_REQUEST, "카테고리가 없습니다."),
     NO_NAME_ERROR(HttpStatus.BAD_REQUEST, "이름이 없습니다."),
     NO_DESCRIPTION_ERROR(HttpStatus.BAD_REQUEST, "설명이 없습니다."),
     ALREADY_EXIST_TRIP(HttpStatus.BAD_REQUEST, "이미 존재하는 여행정보 입니다."),

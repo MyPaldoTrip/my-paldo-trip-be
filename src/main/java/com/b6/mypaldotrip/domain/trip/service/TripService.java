@@ -22,9 +22,7 @@ public class TripService {
         String name = req.name();
 
         /** TODO: 2024-01-08 운영자 검증 로직 추가 필요 TODO: 2024-01-08 city 정보 검증 로직 추가 필요 */
-        if (req.category() == null) {
-            throw new GlobalException(TripErrorCode.WRONG_CATEGORY_ERROR);
-        } else if (tripRepository.findByName(name).isPresent()) {
+        if (tripRepository.findByName(name).isPresent()) {
             throw new GlobalException(TripErrorCode.ALREADY_EXIST_TRIP);
         }
         TripEntity trip =
