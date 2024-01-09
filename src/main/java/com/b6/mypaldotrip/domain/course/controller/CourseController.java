@@ -34,11 +34,11 @@ public class CourseController {
 
     @PostMapping
     public ResponseEntity<RestResponse<CourseSaveRes>> saveCourse(
-        @Valid @RequestBody CourseSaveReq req) {
+            @Valid @RequestBody CourseSaveReq req) {
         CourseSaveRes res = courseService.saveCourse(req);
 
         return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
-            .toResponseEntity();
+                .toResponseEntity();
     }
 
     @GetMapping
@@ -46,7 +46,7 @@ public class CourseController {
         List<CourseListRes> res = courseService.getCourseList();
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
-            .toResponseEntity();
+                .toResponseEntity();
     }
 
     @GetMapping("/{courseId}")
@@ -54,18 +54,16 @@ public class CourseController {
         CourseGetRes res = courseService.getCourse(courseId);
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
-            .toResponseEntity();
+                .toResponseEntity();
     }
 
     @PutMapping("{courseId}")
     public ResponseEntity<RestResponse<CourseUpdateRes>> updateCourse(
-        @PathVariable Long courseId,
-        @RequestBody CourseUpdateReq req
-    ) {
+            @PathVariable Long courseId, @RequestBody CourseUpdateReq req) {
         CourseUpdateRes res = courseService.updateCourse(courseId, req);
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
-            .toResponseEntity();
+                .toResponseEntity();
     }
 
     @DeleteMapping("/{courseId}")
@@ -73,7 +71,6 @@ public class CourseController {
         CourseDeleteRes res = courseService.deleteCourse(courseId);
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
-            .toResponseEntity();
+                .toResponseEntity();
     }
-
 }
