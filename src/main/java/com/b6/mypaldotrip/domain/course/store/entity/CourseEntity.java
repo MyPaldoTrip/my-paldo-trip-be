@@ -35,5 +35,4 @@ public class CourseEntity extends BaseEntity {
         this.title = title;
         this.content = content;
     }
-
 }
