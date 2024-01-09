@@ -16,6 +16,6 @@ public enum Category {
                 return category;
             }
         }
-        throw new GlobalException(TripErrorCode.NO_CATEGORY_ERROR);
+        throw new GlobalException(TripErrorCode.WRONG_CATEGORY_ERROR);
     }
 }
