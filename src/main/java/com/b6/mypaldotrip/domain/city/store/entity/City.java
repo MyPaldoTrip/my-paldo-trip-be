@@ -20,15 +20,20 @@ public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cityId;
-
+    private String provinceName;
     private String cityName;
-
     private String cityInfo;
 
     @Builder
-    public City(final String cityName, final String cityInfo){
-        this.cityName=cityName;
-        this.cityInfo=cityInfo;
+    public City(final String provinceName, final String cityName, final String cityInfo) {
+        this.provinceName = provinceName;
+        this.cityName = cityName;
+        this.cityInfo = cityInfo;
     }
 
+    public void update(String provinceName, String cityName, String cityInfo) {
+        this.provinceName = provinceName;
+        this.cityName = cityName;
+        this.cityInfo = cityInfo;
+    }
 }

@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record CityCreateRes(
+    String provinceName,
     String cityName,
     String cityInfo
 ) {

@@ -7,7 +7,6 @@ import com.b6.mypaldotrip.domain.city.controller.dto.response.CityDeleteRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityListRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityUpdateRes;
 import com.b6.mypaldotrip.domain.city.service.CityService;
-import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListRes;
 import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.response.RestResponse;
@@ -35,7 +34,7 @@ public class CityController {
     public ResponseEntity<RestResponse<CityCreateRes>> createCity(
         @RequestBody CityCreateReq cityCreateReq
         //@AuthenticationPrincipal UserDetailsImpl userDetails
-        ){
+    ) {
         CityCreateRes res = cityService.createCity(cityCreateReq);
         //userDetails.getUser());
         return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
@@ -45,10 +44,11 @@ public class CityController {
 
     @PutMapping("/{cityId}")//수정
     public ResponseEntity<RestResponse<CityUpdateRes>> updateCity(
+        @PathVariable Long cityId,
         @RequestBody CityUpdateReq cityUpdateReq
         //@AuthenticationPrincipal UserDetailsImpl userDetails
-    ){
-        CityUpdateRes res = cityService.updateCity(cityUpdateReq);
+    ) {
+        CityUpdateRes res = cityService.updateCity(cityId,cityUpdateReq);
         //userDetails.getUser());
         return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
             .toResponseEntity();
@@ -56,10 +56,9 @@ public class CityController {
     }
 
     @DeleteMapping("/{cityId}")//삭제
-    public ResponseEntity<RestResponse<CityDeleteRes>> deleteCity(
-        @PathVariable Long cityId
+    public ResponseEntity<RestResponse<CityDeleteRes>> deleteCity(@PathVariable Long cityId
         //@AuthenticationPrincipal UserDetailsImpl userDetails
-    ){
+    ) {
         CityDeleteRes res = cityService.deleteCity(cityId);
         //userDetails.getUser());
         return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
