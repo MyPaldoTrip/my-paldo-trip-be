@@ -6,6 +6,7 @@ import com.b6.mypaldotrip.global.response.RestResponse;
 import com.b6.mypaldotrip.global.template.ResultCode;
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
+@Slf4j
 public class GlobalExceptionHandler {
 
     private final VersionConfig versionConfig;
@@ -40,7 +42,7 @@ public class GlobalExceptionHandler {
         DataIntegrityViolationException e) {
 
         ResultCode resultCode = GlobalResultCode.DUPLICATE;
-        return RestResponse.error(resultCode, versionConfig.getVersion())
-            .toResponseEntity();
+        return RestResponse.error(resultCode, versionConfig.getVersion()).toResponseEntity();
+
     }
 }

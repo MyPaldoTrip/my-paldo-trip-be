@@ -71,14 +71,17 @@ public class CityService {
     }
 
 //    @Transactional
-//    public List<ProvinceListRes> getProvinceList() {
-//        List<ProvinceListRes> provinces = cityRepository.findDistinctByProvinceName();
+//    public List<ProvincesListRes> getProvinceList() {
+//        List<String> provinces = cityRepository.findDistinctByProvinceName();
 //
 //        return provinces;
 //    }
 
     public List<CityListRes> getCityList(String provincesName) {
         List<CityListRes> res = cityRepository.findByProvinceName(provincesName);
+        if (res == null || res.isEmpty()) {
+            throw new GlobalException(CityErrorCode.CITY_NOT_FOUND);
+        }
         return res;
     }
 

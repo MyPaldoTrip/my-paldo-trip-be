@@ -28,27 +28,28 @@ public class RestResponse<T> implements Serializable {
 
     public static <T> RestResponse<T> success(T data, ResultCode resultCode, String version) {
         return RestResponse.<T>builder()
-                .code(resultCode.getHttpStatus().value())
-                .message(resultCode.getMessage())
-                .data(data)
-                .metaData(MetaData.builder().apiVersion(version).build())
-                .build();
+            .code(resultCode.getHttpStatus().value())
+            .message(resultCode.getMessage())
+            .data(data)
+            .metaData(MetaData.builder().apiVersion(version).build())
+            .build();
     }
 
     public static <T> RestResponse<T> error(ResultCode resultCode, String version) {
         return RestResponse.<T>builder()
-                .code(resultCode.getHttpStatus().value())
-                .message(resultCode.getMessage())
-                .metaData(MetaData.builder().apiVersion(version).build())
-                .build();
+            .code(resultCode.getHttpStatus().value())
+            .message(resultCode.getMessage())
+            .metaData(MetaData.builder().apiVersion(version).build())
+            .build();
     }
 
+
     public static RestResponse<Object> argumentValidException(
-            ArrayList<String> errors, String version) {
+        ArrayList<String> errors, String version) {
         return RestResponse.builder()
-                .code(HttpStatus.BAD_REQUEST.value())
-                .message("requestValidException : " + errors.stream().toList().toString())
-                .metaData(MetaData.builder().apiVersion(version).build())
-                .build();
+            .code(HttpStatus.BAD_REQUEST.value())
+            .message("requestValidException : " + errors.stream().toList().toString())
+            .metaData(MetaData.builder().apiVersion(version).build())
+            .build();
     }
 }

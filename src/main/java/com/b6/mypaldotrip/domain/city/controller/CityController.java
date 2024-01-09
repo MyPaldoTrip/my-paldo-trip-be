@@ -48,17 +48,9 @@ public class CityController {
         @RequestBody CityUpdateReq cityUpdateReq
         //@AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-//        try {
         CityUpdateRes res = cityService.updateCity(cityId, cityUpdateReq);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
             .toResponseEntity();
-//        } catch (DataIntegrityViolationException e) {
-//            // 중복 예외 처리
-//            return ResponseEntity.status(HttpStatus.CONFLICT)
-//                .body(RestResponse.<CityUpdateRes>error(GlobalResultCode.DUPLICATE,
-//                        versionConfig.getVersion())
-//                    .toResponseEntity().getBody());
-//        }
 
     }
 
@@ -74,9 +66,10 @@ public class CityController {
 
     }
 
+
 //    @GetMapping("/provinces")//중복을 제거한 도 전체 조회
-//    public ResponseEntity<RestResponse<List<ProvinceListRes>>> getProvinceList() {
-//        List<ProvinceListRes> res = cityService.getProvinceList();
+//    public ResponseEntity<RestResponse<List<ProvincesListRes>>> getProvinceList() {
+//        List<ProvincesListRes> res = cityService.getProvinceList();
 //
 //        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
 //            .toResponseEntity();
