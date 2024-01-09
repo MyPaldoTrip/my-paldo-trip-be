@@ -12,8 +12,6 @@ import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.response.RestResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,17 +48,17 @@ public class CityController {
         @RequestBody CityUpdateReq cityUpdateReq
         //@AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        try {
-            CityUpdateRes res = cityService.updateCity(cityId, cityUpdateReq);
-            return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
-                .toResponseEntity();
-        } catch (DataIntegrityViolationException e) {
-            // 중복 예외 처리
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(RestResponse.<CityUpdateRes>error(GlobalResultCode.DUPLICATE,
-                        versionConfig.getVersion())
-                    .toResponseEntity().getBody());
-        }
+//        try {
+        CityUpdateRes res = cityService.updateCity(cityId, cityUpdateReq);
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+            .toResponseEntity();
+//        } catch (DataIntegrityViolationException e) {
+//            // 중복 예외 처리
+//            return ResponseEntity.status(HttpStatus.CONFLICT)
+//                .body(RestResponse.<CityUpdateRes>error(GlobalResultCode.DUPLICATE,
+//                        versionConfig.getVersion())
+//                    .toResponseEntity().getBody());
+//        }
 
     }
 

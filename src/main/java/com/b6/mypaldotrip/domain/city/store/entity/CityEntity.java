@@ -23,7 +23,7 @@ public class CityEntity {
     private Long cityId;
     @Column(nullable = false)
     private String provinceName;
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String cityName;
     private String cityInfo;
 

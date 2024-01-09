@@ -26,7 +26,7 @@ public class CityService {
         //유저의 권한이 관리자인지 확인(securityconfig에서 관리자만 할수 있게 하는지)
 
         //같은 시 명이 중복되는지 확인
-        findCity(req.cityName());
+        cityDuplicationCheck(req.cityName());
 
         CityEntity cityEntity = CityEntity.builder()
             .provinceName(req.provinceName())
@@ -48,7 +48,7 @@ public class CityService {
         //수정하려는 시가 존재하는지 확인
         CityEntity cityEntity = findCity(cityId);
         //같은 시 명이 중복되는지 확인
-        //findCity(req.cityName());
+        //cityDuplicationCheck(req.cityName());
 
         cityEntity.update(req.provinceName(), req.cityName(), req.cityInfo());
 
@@ -88,7 +88,7 @@ public class CityService {
         );
     }
 
-    private void findCity(String cityName) {//중복체크를 위해 생성
+    private void cityDuplicationCheck(String cityName) {//중복체크를 위해 생성
         if (cityRepository.findByCityName(cityName).isPresent()) {
             throw new GlobalException(CityErrorCode.ALREADY_CITY_EXIST);
         }
