@@ -5,7 +5,6 @@ import com.b6.mypaldotrip.global.exception.GlobalException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 public enum Category {
-
     ATTRACTION,
     RESTAURANT,
     FESTIVAL;
