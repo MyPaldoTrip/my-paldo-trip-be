@@ -27,10 +27,6 @@ public class TripService {
          */
         if (req.category() == null) {
             throw new GlobalException(TripErrorCode.WRONG_CATEGORY_ERROR);
-        } else if (req.name().isEmpty()) {
-            throw new GlobalException(TripErrorCode.NO_NAME_ERROR);
-        } else if (req.description().isEmpty()) {
-            throw new GlobalException(TripErrorCode.NO_DESCRIPTION_ERROR);
         } else if (tripRepository.findByName(name).isPresent()) {
             throw new GlobalException(TripErrorCode.ALREADY_EXIST_TRIP);
         }
