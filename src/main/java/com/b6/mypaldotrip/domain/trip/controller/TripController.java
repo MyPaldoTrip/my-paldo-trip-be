@@ -8,14 +8,13 @@ import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.response.RestResponse;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/v1/trips")
+@RequestMapping("/api/${mpt.version}/trips")
 @RequiredArgsConstructor
 public class TripController {
 
@@ -23,7 +22,8 @@ public class TripController {
     private final VersionConfig versionConfig;
 
     @PostMapping
-    public ResponseEntity<RestResponse<TripCreateRes>> createTrip(@Valid @RequestBody TripCreateReq req) {
+    public ResponseEntity<RestResponse<TripCreateRes>> createTrip(
+            @Valid @RequestBody TripCreateReq req) {
         TripCreateRes res = tripService.createTrip(req);
         return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
                 .toResponseEntity();
@@ -44,8 +44,8 @@ public class TripController {
     }
 
     @PatchMapping("/{tripId}")
-    public ResponseEntity<RestResponse<TripUpdateRes>> updateTrip(@PathVariable Long tripId,
-                                                                  @RequestBody TripUpdateReq req) {
+    public ResponseEntity<RestResponse<TripUpdateRes>> updateTrip(
+            @PathVariable Long tripId, @RequestBody TripUpdateReq req) {
         TripUpdateRes res = tripService.updateTrip(tripId, req);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();

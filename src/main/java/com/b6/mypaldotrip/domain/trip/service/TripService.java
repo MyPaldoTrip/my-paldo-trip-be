@@ -7,11 +7,10 @@ import com.b6.mypaldotrip.domain.trip.exception.TripErrorCode;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
 import com.b6.mypaldotrip.domain.trip.store.repository.TripRepository;
 import com.b6.mypaldotrip.global.exception.GlobalException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,38 +21,35 @@ public class TripService {
     public TripCreateRes createTrip(TripCreateReq req) {
         String name = req.name();
 
-        /** TODO: 2024-01-08 운영자 검증 로직 추가 필요
-         *  TODO: 2024-01-08 city 정보 검증 로직 추가 필요
-         */
+        /** TODO: 2024-01-08 운영자 검증 로직 추가 필요 TODO: 2024-01-08 city 정보 검증 로직 추가 필요 */
         if (req.category() == null) {
             throw new GlobalException(TripErrorCode.WRONG_CATEGORY_ERROR);
-        } else if (req.name().isEmpty()) {
-            throw new GlobalException(TripErrorCode.NO_NAME_ERROR);
-        } else if (req.description().isEmpty()) {
-            throw new GlobalException(TripErrorCode.NO_DESCRIPTION_ERROR);
         } else if (tripRepository.findByName(name).isPresent()) {
             throw new GlobalException(TripErrorCode.ALREADY_EXIST_TRIP);
         }
-        TripEntity trip = TripEntity.builder()
-                .category(req.category())
-                .name(req.name())
-                .description(req.description())
-                .build();
+        TripEntity trip =
+                TripEntity.builder()
+                        .category(req.category())
+                        .name(req.name())
+                        .description(req.description())
+                        .build();
         tripRepository.save(trip);
         return TripCreateRes.builder()
                 .category(trip.getCategory())
                 .name(trip.getName())
-                .description(trip.getDescription()).build();
+                .description(trip.getDescription())
+                .build();
     }
 
     public List<TripListRes> getTripList() {
         return findAllTrips().stream()
-                .map(trip -> TripListRes.builder()
-                        .category(trip.getCategory())
-                        .name(trip.getName())
-                        .description(trip.getDescription())
-                        .build()
-                ).toList();
+                .map(
+                        trip ->
+                                TripListRes.builder()
+                                        .category(trip.getCategory())
+                                        .name(trip.getName())
+                                        .build())
+                .toList();
     }
 
     public TripGetRes getTrip(Long tripId) {
@@ -91,6 +87,8 @@ public class TripService {
 
     // 여행정보 조회 메서드
     private TripEntity findTrip(Long tripId) {
-        return tripRepository.findById(tripId).orElseThrow(() -> new GlobalException(TripErrorCode.NON_EXIST_TRIP));
+        return tripRepository
+                .findById(tripId)
+                .orElseThrow(() -> new GlobalException(TripErrorCode.NON_EXIST_TRIP));
     }
 }
