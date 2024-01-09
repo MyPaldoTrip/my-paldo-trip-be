@@ -37,5 +37,8 @@ public class TripCourse {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
-    private CourseEntity course;
+    private CourseEntity courseEntity;
+
+
+
 }
