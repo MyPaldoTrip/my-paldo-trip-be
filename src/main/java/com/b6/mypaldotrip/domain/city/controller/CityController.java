@@ -7,11 +7,14 @@ import com.b6.mypaldotrip.domain.city.controller.dto.response.CityDeleteRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityListRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityUpdateRes;
 import com.b6.mypaldotrip.domain.city.service.CityService;
+import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
 import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.response.RestResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,12 +51,20 @@ public class CityController {
         @RequestBody CityUpdateReq cityUpdateReq
         //@AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        CityUpdateRes res = cityService.updateCity(cityId,cityUpdateReq);
-        //userDetails.getUser());
-        return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
-            .toResponseEntity();
+        try {
+            CityUpdateRes res = cityService.updateCity(cityId, cityUpdateReq);
+            return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
+                .toResponseEntity();
+        } catch (DataIntegrityViolationException e) {
+            // 중복 예외 처리
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(RestResponse.<CityUpdateRes>error(GlobalResultCode.DUPLICATE,
+                        versionConfig.getVersion())
+                    .toResponseEntity().getBody());
+        }
 
     }
+
 
     @DeleteMapping("/{cityId}")//삭제
     public ResponseEntity<RestResponse<CityDeleteRes>> deleteCity(@PathVariable Long cityId
@@ -61,14 +72,23 @@ public class CityController {
     ) {
         CityDeleteRes res = cityService.deleteCity(cityId);
         //userDetails.getUser());
-        return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
             .toResponseEntity();
 
     }
 
-    @GetMapping//도시 전체 조회
-    public ResponseEntity<RestResponse<List<CityListRes>>> getCourseList() {
-        List<CityListRes> res = cityService.getCityList();
+    @GetMapping("/provinces")//중복을 제거한 도 전체 조회
+    public ResponseEntity<RestResponse<List<CityEntity>>> getProvinceList() {
+        List<CityEntity> res = cityService.getProvinceList();
+
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+            .toResponseEntity();
+    }
+
+    @GetMapping("/provinces/{cityName}")//시 전체 조회
+    public ResponseEntity<RestResponse<List<CityListRes>>> getCityList(
+        @PathVariable String cityName) {
+        List<CityListRes> res = cityService.getCityList(cityName);
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
             .toResponseEntity();

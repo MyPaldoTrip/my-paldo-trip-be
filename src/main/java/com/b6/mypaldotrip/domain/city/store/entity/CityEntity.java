@@ -1,5 +1,6 @@
 package com.b6.mypaldotrip.domain.city.store.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,17 +16,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "tb_city")
 @Entity
-public class City {
+public class CityEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cityId;
+    @Column(nullable = false)
     private String provinceName;
+    @Column(nullable = false, unique = true)
     private String cityName;
     private String cityInfo;
 
     @Builder
-    public City(final String provinceName, final String cityName, final String cityInfo) {
+    public CityEntity(final String provinceName, final String cityName, final String cityInfo) {
         this.provinceName = provinceName;
         this.cityName = cityName;
         this.cityInfo = cityInfo;

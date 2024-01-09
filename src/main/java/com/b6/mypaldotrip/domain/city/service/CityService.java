@@ -7,12 +7,13 @@ import com.b6.mypaldotrip.domain.city.controller.dto.response.CityDeleteRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityListRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityUpdateRes;
 import com.b6.mypaldotrip.domain.city.exception.CityErrorCode;
-import com.b6.mypaldotrip.domain.city.store.entity.City;
+import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
 import com.b6.mypaldotrip.domain.city.store.repository.CityRepository;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -27,54 +28,69 @@ public class CityService {
         //같은 시 명이 중복되는지 확인
         findCity(req.cityName());
 
-        City city = City.builder()
+        CityEntity cityEntity = CityEntity.builder()
             .provinceName(req.provinceName())
             .cityName(req.cityName())
             .cityInfo(req.cityInfo())
             .build();
 
-        cityRepository.save(city);
+        cityRepository.save(cityEntity);
 
         return CityCreateRes.builder()
-            .provinceName(city.getProvinceName())
-            .cityName(city.getCityName())
-            .cityInfo(city.getCityInfo())
+            .provinceName(cityEntity.getProvinceName())
+            .cityName(cityEntity.getCityName())
+            .cityInfo(cityEntity.getCityInfo())
             .build();
     }
 
+    @Transactional
     public CityUpdateRes updateCity(Long cityId, CityUpdateReq req) {
         //수정하려는 시가 존재하는지 확인
-        City city = findCity(cityId);
+        CityEntity cityEntity = findCity(cityId);
         //같은 시 명이 중복되는지 확인
-        findCity(req.cityName());
+        //findCity(req.cityName());
 
-        city.update(req.provinceName(), req.cityName(), req.cityInfo());
+        cityEntity.update(req.provinceName(), req.cityName(), req.cityInfo());
 
         return CityUpdateRes
             .builder()
-            .provinceName(city.getProvinceName())
-            .cityName(city.getCityName())
-            .cityInfo(city.getCityInfo())
+            .provinceName(cityEntity.getProvinceName())
+            .cityName(cityEntity.getCityName())
+            .cityInfo(cityEntity.getCityInfo())
             .build();
     }
 
     public CityDeleteRes deleteCity(Long cityId) {
+        CityEntity cityEntity = findCity(cityId);
+        cityRepository.delete(cityEntity);
+        CityDeleteRes res = CityDeleteRes.builder()
+            .msg(cityEntity.getProvinceName() + cityEntity.getCityName() + "를 삭제했습니다")
+            .build();
+
+        return res;
+    }
+
+    public List<CityEntity> getProvinceList() {
+        //List<CityEntity> provinces = cityRepository.findDistinctProvinceNames();
+
         return null;
     }
 
-    public List<CityListRes> getCityList() {
+    public List<CityListRes> getCityList(String cityName) {
         return null;
     }
 
-    private City findCity(Long cityId) {
+    private CityEntity findCity(Long cityId) {//존재하는지 확인을 위해 생성
         return cityRepository.findById(cityId).orElseThrow(
             () -> new GlobalException(CityErrorCode.CITY_NOT_FOUND)
         );
     }
 
-    private City findCity(String cityName) {
-        return cityRepository.findByCityName(cityName).orElseThrow(
-            () -> new GlobalException(CityErrorCode.ALREADY_CITY_EXIST)
-        );
+    private void findCity(String cityName) {//중복체크를 위해 생성
+        if (cityRepository.findByCityName(cityName).isPresent()) {
+            throw new GlobalException(CityErrorCode.ALREADY_CITY_EXIST);
+        }
     }
+
+
 }

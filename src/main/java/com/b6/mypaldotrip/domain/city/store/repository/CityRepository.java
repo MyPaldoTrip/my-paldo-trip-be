@@ -1,10 +1,13 @@
 package com.b6.mypaldotrip.domain.city.store.repository;
 
-import com.b6.mypaldotrip.domain.city.store.entity.City;
+import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CityRepository extends JpaRepository<City, Long> {
+public interface CityRepository extends JpaRepository<CityEntity, Long> {
 
-    Optional<City> findByCityName(String cityName);
+    Optional<CityEntity> findByCityName(String cityName);
+
+//    @Query("SELECT DISTINCT c.provinceName FROM CityEntity c")
+//    List<CityEntity> findDistinctProvinceNames();
 }
