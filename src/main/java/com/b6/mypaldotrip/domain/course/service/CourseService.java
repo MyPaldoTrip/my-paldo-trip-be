@@ -23,28 +23,30 @@ public class CourseService {
     private final CourseRepository courseRepository;
 
     public CourseSaveRes saveCourse(CourseSaveReq req) {
-        CourseEntity course = CourseEntity.builder()
-            .title(req.title())
-            .content(req.content())
-            .build();
+        CourseEntity course =
+                CourseEntity.builder().title(req.title()).content(req.content()).build();
 
         courseRepository.save(course);
 
-        CourseSaveRes res = CourseSaveRes.builder()
-            .title(course.getTitle())
-            .content(course.getContent())
-            .build();
+        CourseSaveRes res =
+                CourseSaveRes.builder()
+                        .title(course.getTitle())
+                        .content(course.getContent())
+                        .build();
 
         return res;
     }
 
     public List<CourseListRes> getCourseList() {
-        List<CourseListRes> res = courseRepository.findAll().stream()
-            .map(c -> CourseListRes.builder()
-                .title(c.getTitle())
-                .content(c.getContent())
-                .build()
-            ).toList();
+        List<CourseListRes> res =
+                courseRepository.findAll().stream()
+                        .map(
+                                c ->
+                                        CourseListRes.builder()
+                                                .title(c.getTitle())
+                                                .content(c.getContent())
+                                                .build())
+                        .toList();
 
         return res;
     }
@@ -52,10 +54,11 @@ public class CourseService {
     public CourseGetRes getCourse(Long courseId) {
         CourseEntity course = findCourse(courseId);
 
-        CourseGetRes res = CourseGetRes.builder()
-            .title(course.getTitle())
-            .content(course.getContent())
-            .build();
+        CourseGetRes res =
+                CourseGetRes.builder()
+                        .title(course.getTitle())
+                        .content(course.getContent())
+                        .build();
 
         return res;
     }
@@ -66,10 +69,11 @@ public class CourseService {
 
         course.updateCourse(req.title(), req.content());
 
-        CourseUpdateRes res = CourseUpdateRes.builder()
-            .title(course.getTitle())
-            .content(course.getContent())
-            .build();
+        CourseUpdateRes res =
+                CourseUpdateRes.builder()
+                        .title(course.getTitle())
+                        .content(course.getContent())
+                        .build();
 
         return res;
     }
@@ -86,10 +90,8 @@ public class CourseService {
     }
 
     private CourseEntity findCourse(Long courseId) {
-        return courseRepository.findById(courseId).orElseThrow(
-            () -> new GlobalException(CourseErrorCode.COURSE_NOT_FOUND)
-        );
+        return courseRepository
+                .findById(courseId)
+                .orElseThrow(() -> new GlobalException(CourseErrorCode.COURSE_NOT_FOUND));
     }
-
-
 }
