@@ -28,7 +28,7 @@ public class TripCourse {
     @Builder
     private TripCourse(TripEntity trip, CourseEntity course) {
         this.trip = trip;
-        this.course = course;
+        this.courseEntity = course;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,5 +37,5 @@ public class TripCourse {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
-    private CourseEntity course;
+    private CourseEntity courseEntity;
 }
