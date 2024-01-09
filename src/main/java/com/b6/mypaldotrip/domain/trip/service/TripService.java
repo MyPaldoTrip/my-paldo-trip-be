@@ -51,7 +51,6 @@ public class TripService {
                 .map(trip -> TripListRes.builder()
                         .category(trip.getCategory())
                         .name(trip.getName())
-                        .description(trip.getDescription())
                         .build()
                 ).toList();
     }
