@@ -1,7 +1,7 @@
 package com.b6.mypaldotrip.domain.course.service;
 
-import com.b6.mypaldotrip.domain.course.controller.dto.requeset.CourseSaveReq;
-import com.b6.mypaldotrip.domain.course.controller.dto.requeset.CourseUpdateReq;
+import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSaveReq;
+import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseUpdateReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseDeleteRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseGetRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListRes;
@@ -89,7 +89,7 @@ public class CourseService {
         return res;
     }
 
-    private CourseEntity findCourse(Long courseId) {
+    public CourseEntity findCourse(Long courseId) {
         return courseRepository
                 .findById(courseId)
                 .orElseThrow(() -> new GlobalException(CourseErrorCode.COURSE_NOT_FOUND));
