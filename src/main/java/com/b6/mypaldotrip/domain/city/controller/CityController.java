@@ -7,7 +7,6 @@ import com.b6.mypaldotrip.domain.city.controller.dto.response.CityDeleteRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityListRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityUpdateRes;
 import com.b6.mypaldotrip.domain.city.service.CityService;
-import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
 import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.response.RestResponse;
@@ -77,18 +76,18 @@ public class CityController {
 
     }
 
-    @GetMapping("/provinces")//중복을 제거한 도 전체 조회
-    public ResponseEntity<RestResponse<List<CityEntity>>> getProvinceList() {
-        List<CityEntity> res = cityService.getProvinceList();
+//    @GetMapping("/provinces")//중복을 제거한 도 전체 조회
+//    public ResponseEntity<RestResponse<List<ProvinceListRes>>> getProvinceList() {
+//        List<ProvinceListRes> res = cityService.getProvinceList();
+//
+//        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+//            .toResponseEntity();
+//    }
 
-        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
-            .toResponseEntity();
-    }
-
-    @GetMapping("/provinces/{cityName}")//시 전체 조회
+    @GetMapping("/provinces/{provincesName}")//시 전체 조회
     public ResponseEntity<RestResponse<List<CityListRes>>> getCityList(
-        @PathVariable String cityName) {
-        List<CityListRes> res = cityService.getCityList(cityName);
+        @PathVariable String provincesName) {
+        List<CityListRes> res = cityService.getCityList(provincesName);
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
             .toResponseEntity();

@@ -70,14 +70,16 @@ public class CityService {
         return res;
     }
 
-    public List<CityEntity> getProvinceList() {
-        //List<CityEntity> provinces = cityRepository.findDistinctProvinceNames();
+//    @Transactional
+//    public List<ProvinceListRes> getProvinceList() {
+//        List<ProvinceListRes> provinces = cityRepository.findDistinctByProvinceName();
+//
+//        return provinces;
+//    }
 
-        return null;
-    }
-
-    public List<CityListRes> getCityList(String cityName) {
-        return null;
+    public List<CityListRes> getCityList(String provincesName) {
+        List<CityListRes> res = cityRepository.findByProvinceName(provincesName);
+        return res;
     }
 
     private CityEntity findCity(Long cityId) {//존재하는지 확인을 위해 생성
