@@ -1,7 +1,7 @@
 package com.b6.mypaldotrip.domain.course.controller;
 
-import com.b6.mypaldotrip.domain.course.controller.dto.requeset.CourseSaveReq;
-import com.b6.mypaldotrip.domain.course.controller.dto.requeset.CourseUpdateReq;
+import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSaveReq;
+import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseUpdateReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseDeleteRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseGetRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListRes;

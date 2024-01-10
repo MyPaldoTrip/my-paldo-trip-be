@@ -1,4 +1,4 @@
-package com.b6.mypaldotrip.domain.course.controller.dto.requeset;
+package com.b6.mypaldotrip.domain.course.controller.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 
