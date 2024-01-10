@@ -1,11 +1,9 @@
 package com.b6.mypaldotrip.domain.city.store.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
+import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,6 +26,9 @@ public class CityEntity {
     private String cityName;
 
     private String cityInfo;
+
+    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TripEntity> tripEntityList = new ArrayList<>();
 
     @Builder
     public CityEntity(final String provinceName, final String cityName, final String cityInfo) {

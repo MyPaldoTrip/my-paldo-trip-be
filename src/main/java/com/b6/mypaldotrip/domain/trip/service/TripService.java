@@ -1,5 +1,6 @@
 package com.b6.mypaldotrip.domain.trip.service;
 
+import com.b6.mypaldotrip.domain.city.service.CityService;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripUpdateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.*;
@@ -17,22 +18,25 @@ import org.springframework.transaction.annotation.Transactional;
 public class TripService {
 
     private final TripRepository tripRepository;
+    private final CityService cityService;
 
     public TripCreateRes createTrip(TripCreateReq req) {
         String name = req.name();
 
-        /** TODO: 2024-01-08 운영자 검증 로직 추가 필요 TODO: 2024-01-08 city 정보 검증 로직 추가 필요 */
+        /** TODO: 2024-01-08 운영자 검증 로직 추가 필요 */
         if (tripRepository.findByName(name).isPresent()) {
             throw new GlobalException(TripErrorCode.ALREADY_EXIST_TRIP);
         }
         TripEntity trip =
                 TripEntity.builder()
+                        .city(cityService.findCity(req.cityId()))
                         .category(req.category())
                         .name(req.name())
                         .description(req.description())
                         .build();
         tripRepository.save(trip);
         return TripCreateRes.builder()
+                .city(trip.getCity().getCityName())
                 .category(trip.getCategory())
                 .name(trip.getName())
                 .description(trip.getDescription())
@@ -44,6 +48,7 @@ public class TripService {
                 .map(
                         trip ->
                                 TripListRes.builder()
+                                        .city(trip.getCity().getCityName())
                                         .category(trip.getCategory())
                                         .name(trip.getName())
                                         .build())
@@ -53,6 +58,7 @@ public class TripService {
     public TripGetRes getTrip(Long tripId) {
         TripEntity trip = findTrip(tripId);
         return TripGetRes.builder()
+                .city(trip.getCity().getCityName())
                 .category(trip.getCategory())
                 .name(trip.getName())
                 .description(trip.getDescription())
@@ -63,8 +69,10 @@ public class TripService {
     public TripUpdateRes updateTrip(Long tripId, TripUpdateReq req) {
         // TODO: 2024-01-08 운영자 검증 로직 추가 필요
         TripEntity trip = findTrip(tripId);
-        trip.updateTrip(req.category(), req.name(), req.description());
+        trip.updateTrip(
+                cityService.findCity(req.cityId()), req.category(), req.name(), req.description());
         return TripUpdateRes.builder()
+                .city(trip.getCity().getCityName())
                 .category(trip.getCategory())
                 .name(trip.getName())
                 .description(trip.getDescription())
@@ -79,12 +87,12 @@ public class TripService {
     }
 
     // 여행정보 전체 조회 메서드
-    private List<TripEntity> findAllTrips() {
+    public List<TripEntity> findAllTrips() {
         return tripRepository.findAll();
     }
 
     // 여행정보 조회 메서드
-    private TripEntity findTrip(Long tripId) {
+    public TripEntity findTrip(Long tripId) {
         return tripRepository
                 .findById(tripId)
                 .orElseThrow(() -> new GlobalException(TripErrorCode.NON_EXIST_TRIP));
