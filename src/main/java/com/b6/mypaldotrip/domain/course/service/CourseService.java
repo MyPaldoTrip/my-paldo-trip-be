@@ -36,8 +36,6 @@ public class CourseService {
         CourseEntity course =
                 CourseEntity.builder().title(req.title()).content(req.content()).build();
 
-        course.setUser(user);
-        course.setCity(city);
 
         courseRepository.save(course);
 
