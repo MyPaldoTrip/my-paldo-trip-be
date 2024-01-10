@@ -1,5 +1,7 @@
 package com.b6.mypaldotrip.domain.course.store.entity;
 
+import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
+import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.domain.comment.store.entity.CommentEntity;
 import com.b6.mypaldotrip.domain.like.store.entity.LikeEntity;
 import com.b6.mypaldotrip.global.common.BaseEntity;
@@ -9,6 +11,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +46,14 @@ public class CourseEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "courseEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentEntity> comments = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity userEntity;
+
+    @ManyToOne
+    @JoinColumn(name = "city_id")
+    private CityEntity cityEntity;
 
     public void updateCourse(String title, String content) {
         this.title = title;
