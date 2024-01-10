@@ -20,10 +20,12 @@ public class CommentService {
     public CommentSaveRes saveComment(Long courseId, CommentSaveReq req, UserEntity user) {
         CourseEntity course = courseService.findCourse(courseId);
 
-        CommentEntity comment = CommentEntity.builder().content(req.content()).build();
-
-        comment.setUser(user);
-        comment.setCourse(course);
+        CommentEntity comment =
+                CommentEntity.builder()
+                        .content(req.content())
+                        .userEntity(user)
+                        .courseEntity(course)
+                        .build();
 
         commentRepository.save(comment);
 

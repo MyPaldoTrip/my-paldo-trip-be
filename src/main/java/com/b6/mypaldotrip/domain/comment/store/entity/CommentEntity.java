@@ -28,8 +28,10 @@ public class CommentEntity extends BaseEntity {
     private String content;
 
     @Builder
-    private CommentEntity(String content) {
+    private CommentEntity(String content, UserEntity userEntity, CourseEntity courseEntity) {
         this.content = content;
+        this.userEntity = userEntity;
+        this.courseEntity = courseEntity;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,12 +41,4 @@ public class CommentEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     private CourseEntity courseEntity;
-
-    public void setUser(UserEntity user) {
-        this.userEntity = user;
-    }
-
-    public void setCourse(CourseEntity course) {
-        this.courseEntity = course;
-    }
 }
