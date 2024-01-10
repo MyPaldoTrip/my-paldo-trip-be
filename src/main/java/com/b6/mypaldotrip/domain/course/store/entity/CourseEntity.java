@@ -1,10 +1,14 @@
 package com.b6.mypaldotrip.domain.course.store.entity;
 
+import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
+import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.global.common.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -31,8 +35,24 @@ public class CourseEntity extends BaseEntity {
         this.content = content;
     }
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity userEntity;
+
+    @ManyToOne
+    @JoinColumn(name = "city_id")
+    private CityEntity cityEntity;
+
     public void updateCourse(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    public void setUser(UserEntity user) {
+        this.userEntity = user;
+    }
+
+    public void setCity(CityEntity city) {
+        this.cityEntity = city;
     }
 }

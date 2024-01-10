@@ -11,10 +11,12 @@ import com.b6.mypaldotrip.domain.course.service.CourseService;
 import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.response.RestResponse;
+import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,8 +36,9 @@ public class CourseController {
 
     @PostMapping
     public ResponseEntity<RestResponse<CourseSaveRes>> saveCourse(
-            @Valid @RequestBody CourseSaveReq req) {
-        CourseSaveRes res = courseService.saveCourse(req);
+            @Valid @RequestBody CourseSaveReq req,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        CourseSaveRes res = courseService.saveCourse(req, userDetails.getUser());
 
         return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
                 .toResponseEntity();
