@@ -1,6 +1,7 @@
 package com.b6.mypaldotrip.domain.course.store.entity;
 
 import com.b6.mypaldotrip.domain.comment.store.entity.CommentEntity;
+import com.b6.mypaldotrip.domain.like.store.entity.LikeEntity;
 import com.b6.mypaldotrip.global.common.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -35,6 +36,9 @@ public class CourseEntity extends BaseEntity {
         this.title = title;
         this.content = content;
     }
+
+    @OneToMany(mappedBy = "courseEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LikeEntity> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "courseEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentEntity> comments = new ArrayList<>();
