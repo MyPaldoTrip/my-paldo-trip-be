@@ -4,9 +4,4 @@ import lombok.Builder;
 
 @Builder
 public record UserUpdateRes(
-        String email,
-        String username,
-        String introduction,
-        String profileURL,
-        Long age,
-        Long level) {}
+        String email, String username, String introduction, String fileURL, Long age, Long level) {}

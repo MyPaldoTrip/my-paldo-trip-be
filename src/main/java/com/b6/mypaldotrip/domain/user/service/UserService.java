@@ -9,11 +9,14 @@ import com.b6.mypaldotrip.domain.user.controller.dto.response.UserUpdateRes;
 import com.b6.mypaldotrip.domain.user.exception.UserErrorCode;
 import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.domain.user.store.repository.UserRepository;
+import com.b6.mypaldotrip.global.common.S3Provider;
 import com.b6.mypaldotrip.global.exception.GlobalException;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +24,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final S3Provider s3Provider;
 
     public UserSignUpRes signup(UserSignUpReq req) {
         String password = passwordEncoder.encode(req.password());
@@ -49,24 +53,31 @@ public class UserService {
                 .email(userEntity.getEmail())
                 .username(userEntity.getUsername())
                 .introduction(userEntity.getIntroduction())
-                .profileURL(userEntity.getProfileURL())
+                .profileURL(userEntity.getFileURL())
                 .age(userEntity.getAge())
                 .level(userEntity.getLevel())
                 .build();
     }
 
     @Transactional
-    public UserUpdateRes updateProfile(UserUpdateReq req, Long userId) {
+    public UserUpdateRes updateProfile(MultipartFile multipartFile, UserUpdateReq req, Long userId)
+            throws IOException {
         UserEntity userEntity = findUser(userId);
         String password = passwordEncoder.encode(req.password());
+        String fileUrl;
+        try {
+            fileUrl = s3Provider.updateFile(userEntity, multipartFile);
+        } catch (GlobalException e) {
+            fileUrl = s3Provider.saveFile(multipartFile, "user");
+        }
 
-        userEntity.update(req.username(), req.introduction(), req.age(), password);
+        userEntity.update(req.username(), req.introduction(), req.age(), password, fileUrl);
 
         return UserUpdateRes.builder()
                 .email(userEntity.getEmail())
                 .username(userEntity.getUsername())
                 .introduction(userEntity.getIntroduction())
-                .profileURL(userEntity.getProfileURL())
+                .fileURL(fileUrl)
                 .age(userEntity.getAge())
                 .level(userEntity.getLevel())
                 .build();

@@ -32,7 +32,7 @@ public class UserEntity extends BaseEntity {
     private String password;
 
     private String introduction;
-    private String profileURL;
+    private String fileURL;
     private Long age;
     private Long level;
 
@@ -42,22 +42,24 @@ public class UserEntity extends BaseEntity {
             String username,
             String password,
             String introduction,
-            String profileURL,
+            String fileURL,
             Long age,
             Long level) {
         this.email = email;
         this.username = username;
         this.password = password;
         this.introduction = introduction;
-        this.profileURL = profileURL;
+        this.fileURL = fileURL;
         this.age = age;
         this.level = level;
     }
 
-    public void update(String username, String introduction, Long age, String password) {
+    public void update(
+            String username, String introduction, Long age, String password, String fileURL) {
         this.username = username;
         this.introduction = introduction;
         this.age = age;
         this.password = password;
+        this.fileURL = fileURL;
     }
 }

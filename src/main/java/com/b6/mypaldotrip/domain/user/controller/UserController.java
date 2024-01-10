@@ -12,6 +12,7 @@ import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.response.RestResponse;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,7 +23,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/${mpt.version}/users")
@@ -57,8 +60,13 @@ public class UserController {
 
     @PutMapping
     public ResponseEntity<RestResponse<UserUpdateRes>> updateProfile(
-            @RequestBody UserUpdateReq req, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        UserUpdateRes res = userService.updateProfile(req, userDetails.getUserEntity().getUserId());
+            @RequestPart MultipartFile multipartFile,
+            @RequestPart UserUpdateReq req,
+            @AuthenticationPrincipal UserDetailsImpl userDetails)
+            throws IOException {
+        UserUpdateRes res =
+                userService.updateProfile(
+                        multipartFile, req, userDetails.getUserEntity().getUserId());
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
