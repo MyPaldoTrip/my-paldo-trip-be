@@ -31,7 +31,7 @@ public class CommentController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         CommentSaveRes res = commentService.saveComment(courseId, req, userDetails.getUser());
 
-        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+        return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
                 .toResponseEntity();
     }
 }
