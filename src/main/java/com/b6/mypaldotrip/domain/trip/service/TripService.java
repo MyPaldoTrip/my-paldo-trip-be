@@ -2,6 +2,7 @@ package com.b6.mypaldotrip.domain.trip.service;
 
 import com.b6.mypaldotrip.domain.city.service.CityService;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
+import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripListReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripUpdateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.*;
 import com.b6.mypaldotrip.domain.trip.exception.TripErrorCode;
@@ -10,6 +11,8 @@ import com.b6.mypaldotrip.domain.trip.store.repository.TripRepository;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,8 +46,9 @@ public class TripService {
                 .build();
     }
 
-    public List<TripListRes> getTripList() {
-        return findAllTrips().stream()
+    public List<TripListRes> getTripList(TripListReq req) {
+        Pageable pageable = PageRequest.of(req.page(), 20);
+        return tripRepository.searchTripsAndSort(req.cityName(), req.category(), pageable).stream()
                 .map(
                         trip ->
                                 TripListRes.builder()
