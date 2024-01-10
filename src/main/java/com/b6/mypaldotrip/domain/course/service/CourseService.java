@@ -1,5 +1,8 @@
 package com.b6.mypaldotrip.domain.course.service;
 
+import com.b6.mypaldotrip.domain.city.exception.CityErrorCode;
+import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
+import com.b6.mypaldotrip.domain.city.store.repository.CityRepository;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSaveReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseUpdateReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseDeleteRes;
@@ -10,6 +13,7 @@ import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseUpdateRes;
 import com.b6.mypaldotrip.domain.course.exception.CourseErrorCode;
 import com.b6.mypaldotrip.domain.course.store.entity.CourseEntity;
 import com.b6.mypaldotrip.domain.course.store.repository.CourseRepository;
+import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -21,10 +25,19 @@ import org.springframework.stereotype.Service;
 public class CourseService {
 
     private final CourseRepository courseRepository;
+    private final CityRepository cityRepository;
 
-    public CourseSaveRes saveCourse(CourseSaveReq req) {
+    public CourseSaveRes saveCourse(CourseSaveReq req, UserEntity user) {
+        CityEntity city =
+                cityRepository
+                        .findByCityName(req.cityName())
+                        .orElseThrow(() -> new GlobalException(CityErrorCode.CITY_NOT_FOUND));
+
         CourseEntity course =
                 CourseEntity.builder().title(req.title()).content(req.content()).build();
+
+        course.setUser(user);
+        course.setCity(city);
 
         courseRepository.save(course);
 
