@@ -41,4 +41,22 @@ public class UserService {
         userRepository.delete(userEntity);
         return UserDeleteRes.builder().build();
     }
+
+    public UserGetProfileRes viewProfile(Long userId) {
+        UserEntity userEntity = findUser(userId);
+        return UserGetProfileRes.builder()
+                .email(userEntity.getEmail())
+                .username(userEntity.getUsername())
+                .introduction(userEntity.getIntroduction())
+                .profileURL(userEntity.getProfileURL())
+                .age(userEntity.getAge())
+                .level(userEntity.getLevel())
+                .build();
+    }
+
+    public UserEntity findUser(Long userId) {
+        return userRepository
+                .findById(userId)
+                .orElseThrow(() -> new GlobalException(UserErrorCode.NOT_FOUND_USER_BY_USERID));
+    }
 }
