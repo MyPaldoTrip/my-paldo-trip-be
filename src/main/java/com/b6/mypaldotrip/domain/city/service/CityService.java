@@ -6,6 +6,7 @@ import com.b6.mypaldotrip.domain.city.controller.dto.response.CityCreateRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityDeleteRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityListRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityUpdateRes;
+import com.b6.mypaldotrip.domain.city.controller.dto.response.ProvinceListRes;
 import com.b6.mypaldotrip.domain.city.exception.CityErrorCode;
 import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
 import com.b6.mypaldotrip.domain.city.store.repository.CityRepository;
@@ -48,8 +49,6 @@ public class CityService {
     public CityUpdateRes updateCity(Long cityId, CityUpdateReq req) {
         // 수정하려는 시가 존재하는지 확인
         CityEntity cityEntity = findCity(cityId);
-        // 같은 시 명이 중복되는지 확인
-        // cityDuplicationCheck(req.cityName());
 
         cityEntity.update(req.provinceName(), req.cityName(), req.cityInfo());
 
@@ -65,22 +64,32 @@ public class CityService {
         cityRepository.delete(cityEntity);
         CityDeleteRes res =
                 CityDeleteRes.builder()
-                        .msg(cityEntity.getProvinceName() + cityEntity.getCityName() + "를 삭제했습니다")
+                        .msg(
+                                cityEntity.getProvinceName()
+                                        + " "
+                                        + cityEntity.getCityName()
+                                        + " 삭제 완료")
                         .build();
 
         return res;
     }
 
-    //    @Transactional
-    //    public List<ProvincesListRes> getProvinceList() {
-    //        List<String> provinces = cityRepository.findDistinctByProvinceName();
-    //
-    //        return provinces;
-    //    }
+    @Transactional
+    public List<ProvinceListRes> getProvinceList() {
+        List<String> provinces = cityRepository.findDistinctByProvinceName();
+        if (provinces.isEmpty()) {
+            throw new GlobalException(CityErrorCode.PROVINCE_NOT_FOUND);
+        }
+        List<ProvinceListRes> res =
+                provinces.stream()
+                        .map(province -> ProvinceListRes.builder().provinceName(province).build())
+                        .toList();
+        return res;
+    }
 
-    public List<CityListRes> getCityList(String provincesName) {
-        List<CityListRes> res = cityRepository.findByProvinceName(provincesName);
-        if (res == null || res.isEmpty()) {
+    public List<CityListRes> getCityList(String provinceName) {
+        List<CityListRes> res = cityRepository.findByProvinceName(provinceName);
+        if (res.isEmpty()) {
             throw new GlobalException(CityErrorCode.CITY_NOT_FOUND);
         }
         return res;

@@ -24,7 +24,7 @@ public class CityEntity {
     @Column(nullable = false)
     private String provinceName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String cityName;
 
     private String cityInfo;
