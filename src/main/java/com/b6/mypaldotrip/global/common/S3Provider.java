@@ -21,6 +21,9 @@ public class S3Provider {
     @Value("${cloud.aws.s3.bucket.name}")
     public String bucket;
 
+    @Value("${cloud.aws.s3.bucket.url}")
+    private String url;
+
     private static ObjectMetadata setObjectMetadata(MultipartFile multipartFile) {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
@@ -56,21 +59,29 @@ public class S3Provider {
         }
     }
 
-    public void deleteImage(String originalFilename) {
-        if (originalFilename == null) {
-            return;
-        }
+    public <T extends BaseEntity> void deleteFile(T entity) {
+        String originalFilename = getOriginalFilename(entity);
+
         validate(amazonS3, bucket, originalFilename);
         amazonS3.deleteObject(bucket, originalFilename);
     }
 
-    public String updateImage(String originalFilename, MultipartFile multipartFile)
+    public <T extends BaseEntity> String updateFile(T entity, MultipartFile multipartFile)
             throws IOException {
+        String originalFilename = getOriginalFilename(entity);
+
         validate(amazonS3, bucket, originalFilename);
         ObjectMetadata metadata = setObjectMetadata(multipartFile);
 
         amazonS3.putObject(bucket, originalFilename, multipartFile.getInputStream(), metadata);
         return amazonS3.getUrl(bucket, originalFilename).toString();
+    }
+
+    private <T extends BaseEntity> String getOriginalFilename(T entity) {
+        if (entity.getFileURL() == null) {
+            return null;
+        }
+        return entity.getFileURL().replace(url, "");
     }
 
     private void validate(AmazonS3 amazonS3, String bucket, String filename) {
