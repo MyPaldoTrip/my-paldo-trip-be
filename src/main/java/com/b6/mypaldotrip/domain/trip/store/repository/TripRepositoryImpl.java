@@ -5,12 +5,11 @@ import com.b6.mypaldotrip.domain.trip.store.entity.QTripEntity;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
-
-import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
