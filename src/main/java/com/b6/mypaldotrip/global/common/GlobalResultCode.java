@@ -11,7 +11,8 @@ public enum GlobalResultCode implements ResultCode {
     SUCCESS(HttpStatus.OK, "정상 처리 되었습니다"),
     CREATED(HttpStatus.CREATED, "저장 되었습니다."),
     DUPLICATE(HttpStatus.CONFLICT, "중복 에러입니다."),
-    VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "Validation에러입니다. 입력 조건을 확인해주세요");
+    VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "Validation에러입니다. 입력 조건을 확인해주세요"),
+    NOT_FOUND_FILE(HttpStatus.NOT_FOUND, "파일을 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
