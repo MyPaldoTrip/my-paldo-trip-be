@@ -1,6 +1,7 @@
 package com.b6.mypaldotrip.domain.user.service;
 
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserSignUpReq;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.UserDeleteRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserSignUpRes;
 import com.b6.mypaldotrip.domain.user.exception.UserErrorCode;
 import com.b6.mypaldotrip.domain.user.store.entity.User;
@@ -33,5 +34,11 @@ public class UserService {
                         .build();
         userRepository.save(user);
         return UserSignUpRes.builder().email(user.getEmail()).username(user.getUsername()).build();
+    }
+
+    public UserDeleteRes deleteUser(Long userId) {
+        User user = findUser(userId);
+        userRepository.delete(user);
+        return UserDeleteRes.builder().build();
     }
 }
