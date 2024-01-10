@@ -36,7 +36,7 @@ public class CourseEntity extends BaseEntity {
         this.content = content;
     }
 
-    @OneToMany(mappedBy = "course_id", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "courseEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentEntity> comments = new ArrayList<>();
 
     public void updateCourse(String title, String content) {

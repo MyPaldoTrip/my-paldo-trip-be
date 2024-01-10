@@ -29,7 +29,7 @@ public class CommentController {
             @PathVariable Long courseId,
             @RequestBody CommentSaveReq req,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        CommentSaveRes res = commentService.saveComment(courseId, req, userDetails.getUser());
+        CommentSaveRes res = commentService.saveComment(courseId, req, userDetails.getUserEntity());
 
         return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
                 .toResponseEntity();
