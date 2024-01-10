@@ -23,6 +23,6 @@ public class LikeController {
     public ResponseEntity<RestResponse<LikeToggleRes>> toggleLike(
             @PathVariable Long courseId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        return likeService.toggleLike(courseId, userDetails.getUser());
+        return likeService.toggleLike(courseId, userDetails.getUserEntity());
     }
 }
