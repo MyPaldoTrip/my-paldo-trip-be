@@ -37,7 +37,7 @@ public class UserController {
     @DeleteMapping
     public ResponseEntity<RestResponse<UserDeleteRes>> deleteUser(@AuthenticationPrincipal
         UserDetailsImpl userDetails) {
-        UserDeleteRes res = userService.deleteUser(userDetails.getUser().getUserId());
+        UserDeleteRes res = userService.deleteUser(userDetails.getUserEntity().getUserId());
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
             .toResponseEntity();
     }

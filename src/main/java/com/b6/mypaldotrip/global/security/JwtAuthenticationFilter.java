@@ -4,7 +4,7 @@ import static com.b6.mypaldotrip.global.security.JwtUtil.TOKEN_HEADER;
 
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserLonginReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserLoginRes;
-import com.b6.mypaldotrip.domain.user.store.entity.User;
+import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -50,9 +50,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             FilterChain filterChain,
             Authentication authentication) {
 
-        User user = ((UserDetailsImpl) authentication.getPrincipal()).getUser();
+        UserEntity userEntity = ((UserDetailsImpl) authentication.getPrincipal()).getUserEntity();
 
-        String token = jwtUtil.createToken(user.getEmail());
+        String token = jwtUtil.createToken(userEntity.getEmail());
 
         response.addHeader(TOKEN_HEADER, token);
 

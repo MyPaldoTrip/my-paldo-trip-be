@@ -1,6 +1,6 @@
 package com.b6.mypaldotrip.global.security;
 
-import com.b6.mypaldotrip.domain.user.store.entity.User;
+import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import java.util.Collection;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -11,10 +11,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 @RequiredArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
-    private final User user;
+    private final UserEntity userEntity;
 
     public String getEmail() {
-        return user.getEmail();
+        return userEntity.getEmail();
     }
 
     @Override
@@ -24,12 +24,12 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return userEntity.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return userEntity.getUsername();
     }
 
     @Override

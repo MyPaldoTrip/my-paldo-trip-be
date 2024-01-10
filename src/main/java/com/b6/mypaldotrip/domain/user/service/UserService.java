@@ -4,7 +4,7 @@ import com.b6.mypaldotrip.domain.user.controller.dto.request.UserSignUpReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserDeleteRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserSignUpRes;
 import com.b6.mypaldotrip.domain.user.exception.UserErrorCode;
-import com.b6.mypaldotrip.domain.user.store.entity.User;
+import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.domain.user.store.repository.UserRepository;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public User findUser(Long userId) {
+    public UserEntity findUser(Long userId) {
         return userRepository
                 .findById(userId)
                 .orElseThrow(() -> new GlobalException(UserErrorCode.NOT_FOUND_USER_BY_USERID));
@@ -26,19 +26,19 @@ public class UserService {
 
     public UserSignUpRes signup(UserSignUpReq req) {
         String password = passwordEncoder.encode(req.password());
-        User user =
-                User.builder()
+        UserEntity userEntity =
+                UserEntity.builder()
                         .email(req.email())
                         .username(req.username())
                         .password(password)
                         .build();
-        userRepository.save(user);
-        return UserSignUpRes.builder().email(user.getEmail()).username(user.getUsername()).build();
+        userRepository.save(userEntity);
+        return UserSignUpRes.builder().email(userEntity.getEmail()).username(userEntity.getUsername()).build();
     }
 
     public UserDeleteRes deleteUser(Long userId) {
-        User user = findUser(userId);
-        userRepository.delete(user);
+        UserEntity userEntity = findUser(userId);
+        userRepository.delete(userEntity);
         return UserDeleteRes.builder().build();
     }
 }
