@@ -53,4 +53,11 @@ public class UserEntity extends BaseEntity {
         this.age = age;
         this.level = level;
     }
+
+    public void update(String username, String introduction, Long age, String password) {
+        this.username = username;
+        this.introduction = introduction;
+        this.age = age;
+        this.password = password;
+    }
 }
