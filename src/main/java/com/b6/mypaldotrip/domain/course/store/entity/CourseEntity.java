@@ -36,7 +36,10 @@ public class CourseEntity extends BaseEntity {
     private String content;
 
     @Builder
-    private CourseEntity(String title, String content) {
+    private CourseEntity(
+            String title, String content, UserEntity userEntity, CityEntity cityEntity) {
+        this.userEntity = userEntity;
+        this.cityEntity = cityEntity;
         this.title = title;
         this.content = content;
     }
