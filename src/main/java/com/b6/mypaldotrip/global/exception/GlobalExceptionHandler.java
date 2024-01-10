@@ -28,21 +28,20 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<RestResponse<Object>> handleMethodArgumentNotValidException(
-        MethodArgumentNotValidException e) {
+            MethodArgumentNotValidException e) {
         ArrayList<String> errors = new ArrayList<>();
         e.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
 
         ResultCode resultCode = GlobalResultCode.VALIDATION_ERROR;
         return RestResponse.argumentValidException(errors, versionConfig.getVersion())
-            .toResponseEntity();
+                .toResponseEntity();
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<RestResponse<Object>> handleDataIntegrityViolationException(
-        DataIntegrityViolationException e) {
+            DataIntegrityViolationException e) {
 
         ResultCode resultCode = GlobalResultCode.DUPLICATE;
         return RestResponse.error(resultCode, versionConfig.getVersion()).toResponseEntity();
-
     }
 }

@@ -23,59 +23,60 @@ public class CityService {
 
     public CityCreateRes createCity(CityCreateReq req) {
 
-        //유저의 권한이 관리자인지 확인(securityconfig에서 관리자만 할수 있게 하는지)
+        // 유저의 권한이 관리자인지 확인(securityconfig에서 관리자만 할수 있게 하는지)
 
-        //같은 시 명이 중복되는지 확인
+        // 같은 시 명이 중복되는지 확인
         cityDuplicationCheck(req.cityName());
 
-        CityEntity cityEntity = CityEntity.builder()
-            .provinceName(req.provinceName())
-            .cityName(req.cityName())
-            .cityInfo(req.cityInfo())
-            .build();
+        CityEntity cityEntity =
+                CityEntity.builder()
+                        .provinceName(req.provinceName())
+                        .cityName(req.cityName())
+                        .cityInfo(req.cityInfo())
+                        .build();
 
         cityRepository.save(cityEntity);
 
         return CityCreateRes.builder()
-            .provinceName(cityEntity.getProvinceName())
-            .cityName(cityEntity.getCityName())
-            .cityInfo(cityEntity.getCityInfo())
-            .build();
+                .provinceName(cityEntity.getProvinceName())
+                .cityName(cityEntity.getCityName())
+                .cityInfo(cityEntity.getCityInfo())
+                .build();
     }
 
     @Transactional
     public CityUpdateRes updateCity(Long cityId, CityUpdateReq req) {
-        //수정하려는 시가 존재하는지 확인
+        // 수정하려는 시가 존재하는지 확인
         CityEntity cityEntity = findCity(cityId);
-        //같은 시 명이 중복되는지 확인
-        //cityDuplicationCheck(req.cityName());
+        // 같은 시 명이 중복되는지 확인
+        // cityDuplicationCheck(req.cityName());
 
         cityEntity.update(req.provinceName(), req.cityName(), req.cityInfo());
 
-        return CityUpdateRes
-            .builder()
-            .provinceName(cityEntity.getProvinceName())
-            .cityName(cityEntity.getCityName())
-            .cityInfo(cityEntity.getCityInfo())
-            .build();
+        return CityUpdateRes.builder()
+                .provinceName(cityEntity.getProvinceName())
+                .cityName(cityEntity.getCityName())
+                .cityInfo(cityEntity.getCityInfo())
+                .build();
     }
 
     public CityDeleteRes deleteCity(Long cityId) {
         CityEntity cityEntity = findCity(cityId);
         cityRepository.delete(cityEntity);
-        CityDeleteRes res = CityDeleteRes.builder()
-            .msg(cityEntity.getProvinceName() + cityEntity.getCityName() + "를 삭제했습니다")
-            .build();
+        CityDeleteRes res =
+                CityDeleteRes.builder()
+                        .msg(cityEntity.getProvinceName() + cityEntity.getCityName() + "를 삭제했습니다")
+                        .build();
 
         return res;
     }
 
-//    @Transactional
-//    public List<ProvincesListRes> getProvinceList() {
-//        List<String> provinces = cityRepository.findDistinctByProvinceName();
-//
-//        return provinces;
-//    }
+    //    @Transactional
+    //    public List<ProvincesListRes> getProvinceList() {
+    //        List<String> provinces = cityRepository.findDistinctByProvinceName();
+    //
+    //        return provinces;
+    //    }
 
     public List<CityListRes> getCityList(String provincesName) {
         List<CityListRes> res = cityRepository.findByProvinceName(provincesName);
@@ -85,17 +86,15 @@ public class CityService {
         return res;
     }
 
-    private CityEntity findCity(Long cityId) {//존재하는지 확인을 위해 생성
-        return cityRepository.findById(cityId).orElseThrow(
-            () -> new GlobalException(CityErrorCode.CITY_NOT_FOUND)
-        );
+    private CityEntity findCity(Long cityId) { // 존재하는지 확인을 위해 생성
+        return cityRepository
+                .findById(cityId)
+                .orElseThrow(() -> new GlobalException(CityErrorCode.CITY_NOT_FOUND));
     }
 
-    private void cityDuplicationCheck(String cityName) {//중복체크를 위해 생성
+    private void cityDuplicationCheck(String cityName) { // 중복체크를 위해 생성
         if (cityRepository.findByCityName(cityName).isPresent()) {
             throw new GlobalException(CityErrorCode.ALREADY_CITY_EXIST);
         }
     }
-
-
 }

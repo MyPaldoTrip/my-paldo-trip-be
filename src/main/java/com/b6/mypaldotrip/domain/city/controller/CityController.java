@@ -30,58 +30,51 @@ public class CityController {
     private final CityService cityService;
     private final VersionConfig versionConfig;
 
-    @PostMapping//생성
+    @PostMapping // 생성
     public ResponseEntity<RestResponse<CityCreateRes>> createCity(
-        @RequestBody CityCreateReq cityCreateReq
-        //@AuthenticationPrincipal UserDetailsImpl userDetails
-    ) {
+            @RequestBody CityCreateReq cityCreateReq
+            // @AuthenticationPrincipal UserDetailsImpl userDetails
+            ) {
         CityCreateRes res = cityService.createCity(cityCreateReq);
-        //userDetails.getUser());
+        // userDetails.getUser());
         return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
-            .toResponseEntity();
-
+                .toResponseEntity();
     }
 
-    @PutMapping("/{cityId}")//수정
+    @PutMapping("/{cityId}") // 수정
     public ResponseEntity<RestResponse<CityUpdateRes>> updateCity(
-        @PathVariable Long cityId,
-        @RequestBody CityUpdateReq cityUpdateReq
-        //@AuthenticationPrincipal UserDetailsImpl userDetails
-    ) {
+            @PathVariable Long cityId, @RequestBody CityUpdateReq cityUpdateReq
+            // @AuthenticationPrincipal UserDetailsImpl userDetails
+            ) {
         CityUpdateRes res = cityService.updateCity(cityId, cityUpdateReq);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
-            .toResponseEntity();
-
+                .toResponseEntity();
     }
 
-
-    @DeleteMapping("/{cityId}")//삭제
+    @DeleteMapping("/{cityId}") // 삭제
     public ResponseEntity<RestResponse<CityDeleteRes>> deleteCity(@PathVariable Long cityId
-        //@AuthenticationPrincipal UserDetailsImpl userDetails
-    ) {
+            // @AuthenticationPrincipal UserDetailsImpl userDetails
+            ) {
         CityDeleteRes res = cityService.deleteCity(cityId);
-        //userDetails.getUser());
+        // userDetails.getUser());
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
-            .toResponseEntity();
-
+                .toResponseEntity();
     }
 
+    //    @GetMapping("/provinces")//중복을 제거한 도 전체 조회
+    //    public ResponseEntity<RestResponse<List<ProvincesListRes>>> getProvinceList() {
+    //        List<ProvincesListRes> res = cityService.getProvinceList();
+    //
+    //        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+    //            .toResponseEntity();
+    //    }
 
-//    @GetMapping("/provinces")//중복을 제거한 도 전체 조회
-//    public ResponseEntity<RestResponse<List<ProvincesListRes>>> getProvinceList() {
-//        List<ProvincesListRes> res = cityService.getProvinceList();
-//
-//        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
-//            .toResponseEntity();
-//    }
-
-    @GetMapping("/provinces/{provincesName}")//시 전체 조회
+    @GetMapping("/provinces/{provincesName}") // 시 전체 조회
     public ResponseEntity<RestResponse<List<CityListRes>>> getCityList(
-        @PathVariable String provincesName) {
+            @PathVariable String provincesName) {
         List<CityListRes> res = cityService.getCityList(provincesName);
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
-            .toResponseEntity();
+                .toResponseEntity();
     }
-
 }

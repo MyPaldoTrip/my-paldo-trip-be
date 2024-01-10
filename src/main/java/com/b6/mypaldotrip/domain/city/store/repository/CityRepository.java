@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-
 public interface CityRepository extends JpaRepository<CityEntity, Long> {
 
     Optional<CityEntity> findByCityName(String cityName);
@@ -16,5 +15,4 @@ public interface CityRepository extends JpaRepository<CityEntity, Long> {
     List<String> findDistinctByProvinceName();
 
     List<CityListRes> findByProvinceName(String provincesName);
-
 }

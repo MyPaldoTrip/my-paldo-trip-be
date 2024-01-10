@@ -11,7 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "tb_city")
@@ -21,10 +20,13 @@ public class CityEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cityId;
+
     @Column(nullable = false)
     private String provinceName;
+
     @Column(nullable = false)
     private String cityName;
+
     private String cityInfo;
 
     @Builder
