@@ -1,7 +1,7 @@
 package com.b6.mypaldotrip.global.security;
 
 import com.b6.mypaldotrip.domain.user.exception.UserErrorCode;
-import com.b6.mypaldotrip.domain.user.store.entity.User;
+import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.domain.user.store.repository.UserRepository;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +18,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user =
+        UserEntity userEntity =
                 userRepository
                         .findByEmail(email)
                         .orElseThrow(
                                 () -> new GlobalException(UserErrorCode.NOT_FOUND_USER_BY_EMAIL));
 
-        return new UserDetailsImpl(user);
+        return new UserDetailsImpl(userEntity);
     }
 }
