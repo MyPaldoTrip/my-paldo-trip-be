@@ -33,7 +33,10 @@ public class UserService {
                         .password(password)
                         .build();
         userRepository.save(userEntity);
-        return UserSignUpRes.builder().email(userEntity.getEmail()).username(userEntity.getUsername()).build();
+        return UserSignUpRes.builder()
+                .email(userEntity.getEmail())
+                .username(userEntity.getUsername())
+                .build();
     }
 
     public UserDeleteRes deleteUser(Long userId) {
