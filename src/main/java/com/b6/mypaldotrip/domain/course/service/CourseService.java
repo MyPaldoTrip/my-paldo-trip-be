@@ -34,10 +34,12 @@ public class CourseService {
                         .orElseThrow(() -> new GlobalException(CityErrorCode.CITY_NOT_FOUND));
 
         CourseEntity course =
-                CourseEntity.builder().title(req.title()).content(req.content()).build();
-
-        course.setUser(user);
-        course.setCity(city);
+                CourseEntity.builder()
+                        .title(req.title())
+                        .content(req.content())
+                        .userEntity(user)
+                        .cityEntity(city)
+                        .build();
 
         courseRepository.save(course);
 
