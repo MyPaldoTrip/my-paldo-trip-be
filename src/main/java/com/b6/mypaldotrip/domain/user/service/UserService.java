@@ -44,7 +44,12 @@ public class UserService {
     public UserDeleteRes deleteUser(Long userId) {
         UserEntity userEntity = findUser(userId);
         userRepository.delete(userEntity);
-        return UserDeleteRes.builder().build();
+        try {
+            s3Provider.deleteFile(userEntity);
+        } catch (GlobalException e) {
+            return UserDeleteRes.builder().message("유저 삭제, 삭제할 파일 없음").build();
+        }
+        return UserDeleteRes.builder().message("유저, 유저파일 삭제").build();
     }
 
     public UserGetProfileRes viewProfile(Long userId) {
