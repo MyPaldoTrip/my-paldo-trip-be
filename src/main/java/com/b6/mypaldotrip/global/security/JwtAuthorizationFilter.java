@@ -28,10 +28,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String token = jwtUtil.getTokenFromHeader(request);
-
-        if (token != null && !jwtUtil.validateToken(token)) {
+        jwtUtil.validateToken(token);
+        if (token != null) {
             Claims userInfo = jwtUtil.getUserInfoFromToken(token);
-
             try {
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
                 UserDetails userDetails =
