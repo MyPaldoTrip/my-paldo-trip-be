@@ -1,5 +1,6 @@
 package com.b6.mypaldotrip.domain.trip.store.entity;
 
+import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
 import com.b6.mypaldotrip.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -24,16 +25,20 @@ public class TripEntity extends BaseEntity {
 
     private String description;
 
-    // TODO: 2024-01-08 city와 연관관계 설정 필요
+    @ManyToOne
+    @JoinColumn(name = "city_id")
+    private CityEntity city;
 
     @Builder
-    private TripEntity(Category category, String name, String description) {
+    private TripEntity(CityEntity city, Category category, String name, String description) {
+        this.city = city;
         this.category = category;
         this.name = name;
         this.description = description;
     }
 
-    public void updateTrip(Category category, String name, String description) {
+    public void updateTrip(CityEntity city, Category category, String name, String description) {
+        this.city = city == null ? this.city : city;
         this.category = category == null ? this.category : category;
         this.name = name == null ? this.name : name;
         this.description = description == null ? this.description : description;
