@@ -19,14 +19,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "tb_trip_course")
-public class TripCourse {
+public class TripCourseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tripCourseId;
 
     @Builder
-    private TripCourse(TripEntity trip, CourseEntity course) {
+    private TripCourseEntity(TripEntity trip, CourseEntity course) {
         this.trip = trip;
         this.courseEntity = course;
     }
