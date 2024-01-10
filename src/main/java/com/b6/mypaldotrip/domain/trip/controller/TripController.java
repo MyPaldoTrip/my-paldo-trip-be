@@ -1,6 +1,7 @@
 package com.b6.mypaldotrip.domain.trip.controller;
 
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
+import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripListReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripUpdateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.*;
 import com.b6.mypaldotrip.domain.trip.service.TripService;
@@ -30,8 +31,9 @@ public class TripController {
     }
 
     @GetMapping
-    public ResponseEntity<RestResponse<List<TripListRes>>> getTripList() {
-        List<TripListRes> res = tripService.getTripList();
+    public ResponseEntity<RestResponse<List<TripListRes>>> getTripList(
+            @RequestBody TripListReq req) {
+        List<TripListRes> res = tripService.getTripList(req);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
