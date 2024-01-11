@@ -14,7 +14,7 @@ public class EmailAuth {
 
     @Id private String email;
     private String code;
-    private Boolean verified;
+    private Boolean verified = false;
 
     @Builder
     private EmailAuth(String email, String code) {
