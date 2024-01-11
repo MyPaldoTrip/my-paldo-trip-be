@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -61,6 +62,10 @@ public class WebSecurityConfig {
                                 .permitAll()
                                 .requestMatchers(
                                         "/api/" + versionConfig.getVersion() + "/users/signup/**")
+                                .permitAll()
+                                .requestMatchers(
+                                        HttpMethod.GET,
+                                        "/api/" + versionConfig.getVersion() + "/trips/**")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated());

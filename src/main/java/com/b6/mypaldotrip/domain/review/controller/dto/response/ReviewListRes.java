@@ -4,4 +4,5 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 
 @Builder
-public record ReviewListRes(String content, Integer score, LocalDateTime modifiedAt) {}
+public record ReviewListRes(
+        String username, String content, Integer score, LocalDateTime modifiedAt) {}
