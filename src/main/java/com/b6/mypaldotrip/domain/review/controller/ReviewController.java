@@ -4,6 +4,7 @@ import com.b6.mypaldotrip.domain.review.controller.dto.request.ReviewCreateReq;
 import com.b6.mypaldotrip.domain.review.controller.dto.request.ReviewListReq;
 import com.b6.mypaldotrip.domain.review.controller.dto.request.ReviewUpdateReq;
 import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewCreateRes;
+import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewDeleteRes;
 import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewListRes;
 import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewUpdateRes;
 import com.b6.mypaldotrip.domain.review.service.ReviewService;
@@ -46,6 +47,14 @@ public class ReviewController {
             @PathVariable Long reviewId,
             @Valid @RequestBody ReviewUpdateReq req) {
         ReviewUpdateRes res = reviewService.updateReview(tripId, reviewId, req);
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                .toResponseEntity();
+    }
+
+    @DeleteMapping("/{reviewId}")
+    ResponseEntity<RestResponse<ReviewDeleteRes>> deleteReview(
+            @PathVariable Long tripId, @PathVariable Long reviewId) {
+        ReviewDeleteRes res = reviewService.deleteReview(tripId, reviewId);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
