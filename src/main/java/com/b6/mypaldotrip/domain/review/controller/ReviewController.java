@@ -1,12 +1,15 @@
 package com.b6.mypaldotrip.domain.review.controller;
 
 import com.b6.mypaldotrip.domain.review.controller.dto.request.ReviewCreateReq;
+import com.b6.mypaldotrip.domain.review.controller.dto.request.ReviewListReq;
 import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewCreateRes;
+import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewListRes;
 import com.b6.mypaldotrip.domain.review.service.ReviewService;
 import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.response.RestResponse;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +27,14 @@ public class ReviewController {
             @PathVariable Long tripId, @Valid @RequestBody ReviewCreateReq req) {
         ReviewCreateRes res = reviewService.createReview(tripId, req);
         return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
+                .toResponseEntity();
+    }
+
+    @GetMapping
+    public ResponseEntity<RestResponse<List<ReviewListRes>>> getReviewList(
+            @PathVariable Long tripId, @RequestBody ReviewListReq req) {
+        List<ReviewListRes> res = reviewService.getReviewList(tripId, req);
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
 }
