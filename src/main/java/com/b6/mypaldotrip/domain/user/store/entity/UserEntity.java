@@ -1,12 +1,10 @@
 package com.b6.mypaldotrip.domain.user.store.entity;
 
+import com.b6.mypaldotrip.domain.review.store.entity.ReviewEntity;
 import com.b6.mypaldotrip.global.common.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,6 +33,9 @@ public class UserEntity extends BaseEntity {
     private String fileURL;
     private Long age;
     private Long level;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewEntity> reviewList = new ArrayList<>();
 
     @Builder
     private UserEntity(
