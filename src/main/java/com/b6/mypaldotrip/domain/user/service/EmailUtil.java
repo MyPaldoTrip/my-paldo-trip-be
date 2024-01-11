@@ -30,9 +30,7 @@ public class EmailUtil {
         try {
             String code = UUID.randomUUID().toString().substring(0, 8);
             MimeMessage message = createMessage(recipientEmail, subject, code);
-            if (emailAuthService.hasMail(recipientEmail)) {
-                emailAuthService.delete(recipientEmail);
-            }
+
             EmailAuth emailAuth =
                     emailAuthService.save(
                             EmailAuth.builder().email(recipientEmail).code(code).build());
