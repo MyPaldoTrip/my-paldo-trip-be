@@ -95,13 +95,19 @@ public class CityService {
         return res;
     }
 
-    private CityEntity findCity(Long cityId) { // 존재하는지 확인을 위해 생성
+    public CityEntity findCity(Long cityId) { // 존재하는지 확인을 위해 생성
         return cityRepository
                 .findById(cityId)
                 .orElseThrow(() -> new GlobalException(CityErrorCode.CITY_NOT_FOUND));
     }
 
-    private void cityDuplicationCheck(String cityName) { // 중복체크를 위해 생성
+    public CityEntity findByCityName(String cityName) {
+        return cityRepository
+                .findByCityName(cityName)
+                .orElseThrow(() -> new GlobalException(CityErrorCode.CITY_NOT_FOUND));
+    }
+
+    public void cityDuplicationCheck(String cityName) { // 중복체크를 위해 생성
         if (cityRepository.findByCityName(cityName).isPresent()) {
             throw new GlobalException(CityErrorCode.ALREADY_CITY_EXIST);
         }
