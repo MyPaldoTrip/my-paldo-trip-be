@@ -33,4 +33,9 @@ public class EmailAuthService {
     public boolean isEmailVerified(String email) {
         return findById(email).getVerified();
     }
+
+    public void successVerify(EmailAuth emailAuth) {
+        emailAuth.successVerify();
+        emailAuthRepository.save(emailAuth);
+    }
 }

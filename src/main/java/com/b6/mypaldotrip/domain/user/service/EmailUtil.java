@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j(topic = "이메일 유틸")
 @Component
@@ -54,11 +53,10 @@ public class EmailUtil {
         return message;
     }
 
-    @Transactional
     public void verifyCode(String recipientEmail, String code) {
         EmailAuth emailAuth = emailAuthService.findById(recipientEmail);
         if (Objects.equals(emailAuth.getCode(), code)) {
-            emailAuth.verifyComplete();
+            emailAuthService.successVerify(emailAuth);
         } else {
             throw new GlobalException(EmailErrorCode.COND_MISMATCH);
         }
