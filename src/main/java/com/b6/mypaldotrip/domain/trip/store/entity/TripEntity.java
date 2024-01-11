@@ -1,8 +1,11 @@
 package com.b6.mypaldotrip.domain.trip.store.entity;
 
 import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
+import com.b6.mypaldotrip.domain.review.store.entity.ReviewEntity;
 import com.b6.mypaldotrip.global.common.BaseEntity;
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,6 +31,9 @@ public class TripEntity extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "city_id")
     private CityEntity city;
+
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewEntity> reviewList = new ArrayList<>();
 
     @Builder
     private TripEntity(CityEntity city, Category category, String name, String description) {

@@ -1,5 +1,6 @@
 package com.b6.mypaldotrip.domain.review.store.entity;
 
+import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
 import com.b6.mypaldotrip.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -20,6 +21,10 @@ public class ReviewEntity extends BaseEntity {
     private String content;
 
     private Integer score;
+
+    @ManyToOne
+    @JoinColumn(name = "trip_id")
+    private TripEntity trip;
 
     @Builder
     private ReviewEntity(String content, Integer score) {
