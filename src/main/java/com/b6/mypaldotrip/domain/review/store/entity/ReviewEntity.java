@@ -27,7 +27,7 @@ public class ReviewEntity extends BaseEntity {
     @JoinColumn(name = "trip_id")
     private TripEntity trip;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
