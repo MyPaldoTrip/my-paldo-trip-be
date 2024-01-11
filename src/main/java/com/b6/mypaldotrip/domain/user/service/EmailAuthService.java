@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service;
 public class EmailAuthService {
     private final EmailAuthRepository emailAuthRepository;
 
-    public boolean hasMail(String email) {
-        return emailAuthRepository.existsById(email);
-    }
-
-    public void delete(String email) {
-        emailAuthRepository.deleteById(email);
-    }
+    //    public boolean hasMail(String email) {
+    //        return emailAuthRepository.existsById(email);
+    //    }
+    //
+    //    public void delete(String email) {
+    //        emailAuthRepository.deleteById(email);
+    //    }
 
     public EmailAuth save(EmailAuth emailAuth) {
         return emailAuthRepository.save(emailAuth);
