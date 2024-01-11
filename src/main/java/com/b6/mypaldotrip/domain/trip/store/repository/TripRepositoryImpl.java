@@ -26,18 +26,18 @@ public class TripRepositoryImpl implements TripCustomRepository {
                 .selectFrom(trip)
                 .join(trip.city)
                 .fetchJoin()
-                .where(getCityNamePredicate(trip, cityName), getCategoryPredicate(trip, category))
+                .where(getEqCityName(trip, cityName), getEqCategory(trip, category))
                 .orderBy(trip.tripId.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
     }
 
-    private BooleanExpression getCityNamePredicate(QTripEntity trip, String cityName) {
+    private BooleanExpression getEqCityName(QTripEntity trip, String cityName) {
         return StringUtils.hasText(cityName) ? trip.city.cityName.eq(cityName) : null;
     }
 
-    private BooleanExpression getCategoryPredicate(QTripEntity trip, Category category) {
+    private BooleanExpression getEqCategory(QTripEntity trip, Category category) {
         return category != null ? trip.category.eq(category) : null;
     }
 }
