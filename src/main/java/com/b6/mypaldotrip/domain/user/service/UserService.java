@@ -25,9 +25,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3Provider s3Provider;
+    private final EmailAuthService emailAuthService;
 
     public UserSignUpRes signup(UserSignUpReq req) {
+        if (!emailAuthService.isEmailVerified(req.email())) {
+            throw new GlobalException(UserErrorCode.VERIFIED_TIME_OUT);
+        }
         String password = passwordEncoder.encode(req.password());
+
         UserEntity userEntity =
                 UserEntity.builder()
                         .email(req.email())

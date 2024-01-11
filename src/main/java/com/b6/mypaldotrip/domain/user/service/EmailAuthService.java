@@ -29,4 +29,11 @@ public class EmailAuthService {
                 .findById(email)
                 .orElseThrow(() -> new GlobalException(EmailErrorCode.VERIFY_TIME_OUT));
     }
+
+    public boolean isEmailVerified(String email) {
+        return emailAuthRepository
+                .findById(email)
+                .orElseThrow(() -> new GlobalException(EmailErrorCode.VERIFY_TIME_OUT))
+                .getVerified();
+    }
 }
