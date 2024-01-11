@@ -68,7 +68,7 @@ public class WebSecurityConfig {
                                         "/api/" + versionConfig.getVersion() + "/trips/**")
                                 .permitAll()
                                 .requestMatchers(
-                                        "/api/" + versionConfig.getVersion() + "/users/email")
+                                        "/api/" + versionConfig.getVersion() + "/users/email/**")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated());
