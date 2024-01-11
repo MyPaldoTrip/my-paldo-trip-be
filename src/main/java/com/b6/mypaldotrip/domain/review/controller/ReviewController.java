@@ -2,8 +2,10 @@ package com.b6.mypaldotrip.domain.review.controller;
 
 import com.b6.mypaldotrip.domain.review.controller.dto.request.ReviewCreateReq;
 import com.b6.mypaldotrip.domain.review.controller.dto.request.ReviewListReq;
+import com.b6.mypaldotrip.domain.review.controller.dto.request.ReviewUpdateReq;
 import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewCreateRes;
 import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewListRes;
+import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewUpdateRes;
 import com.b6.mypaldotrip.domain.review.service.ReviewService;
 import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.config.VersionConfig;
@@ -34,6 +36,16 @@ public class ReviewController {
     public ResponseEntity<RestResponse<List<ReviewListRes>>> getReviewList(
             @PathVariable Long tripId, @RequestBody ReviewListReq req) {
         List<ReviewListRes> res = reviewService.getReviewList(tripId, req);
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                .toResponseEntity();
+    }
+
+    @PatchMapping("/{reviewId}")
+    ResponseEntity<RestResponse<ReviewUpdateRes>> updateReview(
+            @PathVariable Long tripId,
+            @PathVariable Long reviewId,
+            @Valid @RequestBody ReviewUpdateReq req) {
+        ReviewUpdateRes res = reviewService.updateReview(tripId, reviewId, req);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
