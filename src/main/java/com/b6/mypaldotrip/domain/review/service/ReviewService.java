@@ -48,16 +48,7 @@ public class ReviewService {
 
     public List<ReviewListRes> getReviewList(Long tripId, ReviewListReq req) {
         tripService.findTrip(tripId);
-        return reviewRepository.findByTrip_TripId(tripId).stream()
-                .map(
-                        review ->
-                                ReviewListRes.builder()
-                                        .username(review.getUser().getUsername())
-                                        .content(review.getContent())
-                                        .score(review.getScore())
-                                        .modifiedAt(review.getModifiedAt())
-                                        .build())
-                .toList();
+        return reviewRepository.findByTripId(tripId);
     }
 
     @Transactional
