@@ -14,7 +14,6 @@ import com.b6.mypaldotrip.domain.trip.service.TripService;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +48,7 @@ public class ReviewService {
 
     public List<ReviewListRes> getReviewList(Long tripId, ReviewListReq req) {
         tripService.findTrip(tripId);
-        return reviewRepository.findByTrip_TripId(tripId).orElseGet(Collections::emptyList).stream()
+        return reviewRepository.findByTrip_TripId(tripId).stream()
                 .map(
                         review ->
                                 ReviewListRes.builder()
