@@ -4,6 +4,7 @@ import com.b6.mypaldotrip.domain.review.controller.dto.request.ReviewCreateReq;
 import com.b6.mypaldotrip.domain.review.controller.dto.request.ReviewListReq;
 import com.b6.mypaldotrip.domain.review.controller.dto.request.ReviewUpdateReq;
 import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewCreateRes;
+import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewDeleteRes;
 import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewListRes;
 import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewUpdateRes;
 import com.b6.mypaldotrip.domain.review.exception.ReviewErrorCode;
@@ -55,17 +56,28 @@ public class ReviewService {
     public ReviewUpdateRes updateReview(Long tripId, Long reviewId, ReviewUpdateReq req) {
         TripEntity trip = tripService.findTrip(tripId);
         ReviewEntity review = findReview(reviewId);
-
-        if (!review.getTrip().getTripId().equals(trip.getTripId())) {
-            throw new GlobalException(ReviewErrorCode.MISMATCHED_TRIP_REVIEW);
-        }
-
+        matchReviewAndTrip(review, trip);
         review.updateReview(req.content(), req.score());
         return ReviewUpdateRes.builder()
                 .content(review.getContent())
                 .score(review.getScore())
                 .modifiedAt(review.getModifiedAt())
                 .build();
+    }
+
+    public ReviewDeleteRes deleteReview(Long tripId, Long reviewId) {
+        TripEntity trip = tripService.findTrip(tripId);
+        ReviewEntity review = findReview(reviewId);
+        matchReviewAndTrip(review, trip);
+        reviewRepository.delete(review);
+        return ReviewDeleteRes.builder().message("리뷰가 삭제되었습니다.").build();
+    }
+
+    // 해당 리뷰가 위치하는 여행정보가 맞는지 검증
+    private static void matchReviewAndTrip(ReviewEntity review, TripEntity trip) {
+        if (!review.getTrip().getTripId().equals(trip.getTripId())) {
+            throw new GlobalException(ReviewErrorCode.MISMATCHED_TRIP_REVIEW);
+        }
     }
 
     // 리뷰 조회 메서드
