@@ -12,8 +12,7 @@ import org.springframework.data.redis.core.RedisHash;
 @RedisHash(value = "emailAuth", timeToLive = 300) // redis 사용, 유효기간 300초
 public class EmailAuth {
 
-    @Id
-    private String email;
+    @Id private String email;
     private String code;
 
     @Builder
