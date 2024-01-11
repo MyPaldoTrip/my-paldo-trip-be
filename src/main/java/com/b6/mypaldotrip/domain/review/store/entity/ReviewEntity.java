@@ -1,6 +1,7 @@
 package com.b6.mypaldotrip.domain.review.store.entity;
 
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
+import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -22,12 +23,17 @@ public class ReviewEntity extends BaseEntity {
 
     private Integer score;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trip_id")
     private TripEntity trip;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
+
     @Builder
-    private ReviewEntity(String content, Integer score, TripEntity trip) {
+    private ReviewEntity(UserEntity user, String content, Integer score, TripEntity trip) {
+        this.user = user;
         this.content = content;
         this.score = score;
         this.trip = trip;
