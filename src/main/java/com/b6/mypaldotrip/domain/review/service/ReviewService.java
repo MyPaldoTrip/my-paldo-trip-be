@@ -27,7 +27,7 @@ public class ReviewService {
     public ReviewCreateRes createReview(Long tripId, ReviewCreateReq req) {
         TripEntity trip = tripService.findTrip(tripId);
         ReviewEntity review =
-                ReviewEntity.builder().content(req.content()).score(req.score()).build();
+                ReviewEntity.builder().content(req.content()).score(req.score()).trip(trip).build();
         reviewRepository.save(review);
         // TODO: 2024-01-11 response에 유저 정보 추가 필요
         return ReviewCreateRes.builder()
@@ -40,6 +40,7 @@ public class ReviewService {
     public List<ReviewListRes> getReviewList(Long tripId, ReviewListReq req) {
         TripEntity trip = tripService.findTrip(tripId);
         return reviewRepository.findAll().stream()
+                .filter(review -> review.getTrip().getTripId().equals(trip.getTripId()))
                 .map(
                         review ->
                                 ReviewListRes.builder()
@@ -54,6 +55,11 @@ public class ReviewService {
     public ReviewUpdateRes updateReview(Long tripId, Long reviewId, ReviewUpdateReq req) {
         TripEntity trip = tripService.findTrip(tripId);
         ReviewEntity review = findReview(reviewId);
+
+        if (!review.getTrip().getTripId().equals(trip.getTripId())) {
+            throw new GlobalException(ReviewErrorCode.MISMATCHED_TRIP_REVIEW);
+        }
+
         review.updateReview(req.content(), req.score());
         return ReviewUpdateRes.builder()
                 .content(review.getContent())

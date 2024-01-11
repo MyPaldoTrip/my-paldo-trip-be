@@ -27,9 +27,10 @@ public class ReviewEntity extends BaseEntity {
     private TripEntity trip;
 
     @Builder
-    private ReviewEntity(String content, Integer score) {
+    private ReviewEntity(String content, Integer score, TripEntity trip) {
         this.content = content;
         this.score = score;
+        this.trip = trip;
     }
 
     public void updateReview(String content, Integer score) {
