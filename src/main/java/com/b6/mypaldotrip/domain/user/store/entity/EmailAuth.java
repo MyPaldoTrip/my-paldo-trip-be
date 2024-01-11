@@ -22,7 +22,7 @@ public class EmailAuth {
         this.code = code;
     }
 
-    public void verifyComplete() {
+    public void successVerify() {
         this.verified = true;
     }
 }
