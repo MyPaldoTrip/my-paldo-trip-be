@@ -9,6 +9,7 @@ import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewListRes;
 import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewUpdateRes;
 import com.b6.mypaldotrip.domain.review.exception.ReviewErrorCode;
 import com.b6.mypaldotrip.domain.review.store.entity.ReviewEntity;
+import com.b6.mypaldotrip.domain.review.store.entity.ReviewSort;
 import com.b6.mypaldotrip.domain.review.store.repository.ReviewRepository;
 import com.b6.mypaldotrip.domain.trip.service.TripService;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
@@ -17,6 +18,8 @@ import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,8 +50,19 @@ public class ReviewService {
     }
 
     public List<ReviewListRes> getReviewList(Long tripId, ReviewListReq req) {
+        Pageable pageable = PageRequest.of(req.page(), 20);
+        ReviewSort sort = (req.reviewSort() != null) ? req.reviewSort() : ReviewSort.MODIFIED;
         tripService.findTrip(tripId);
-        return reviewRepository.findByTripId(tripId);
+        return reviewRepository.findByTripId(tripId, sort, pageable).stream()
+                .map(
+                        review ->
+                                ReviewListRes.builder()
+                                        .username(review.getUser().getUsername())
+                                        .content(review.getContent())
+                                        .score(review.getScore())
+                                        .modifiedAt(review.getModifiedAt())
+                                        .build())
+                .toList();
     }
 
     @Transactional
