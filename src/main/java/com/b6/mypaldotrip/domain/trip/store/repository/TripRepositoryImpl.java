@@ -20,25 +20,24 @@ public class TripRepositoryImpl implements TripCustomRepository {
     @Override
     public List<TripEntity> searchTripsAndSort(
             String cityName, Category category, Pageable pageable) {
+
         QTripEntity trip = QTripEntity.tripEntity;
-        BooleanExpression predicate = trip.isNotNull();
-
-        if (StringUtils.hasText(cityName)) {
-            predicate = predicate.and(trip.city.cityName.eq(cityName));
-        }
-
-        if (category != null) {
-            predicate = predicate.and(trip.category.eq(category));
-        }
-
         return jpaQueryFactory
                 .selectFrom(trip)
                 .join(trip.city)
                 .fetchJoin()
-                .where(predicate)
+                .where(getEqCityName(trip, cityName), getEqCategory(trip, category))
                 .orderBy(trip.tripId.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+    }
+
+    private BooleanExpression getEqCityName(QTripEntity trip, String cityName) {
+        return StringUtils.hasText(cityName) ? trip.city.cityName.eq(cityName) : null;
+    }
+
+    private BooleanExpression getEqCategory(QTripEntity trip, Category category) {
+        return category != null ? trip.category.eq(category) : null;
     }
 }
