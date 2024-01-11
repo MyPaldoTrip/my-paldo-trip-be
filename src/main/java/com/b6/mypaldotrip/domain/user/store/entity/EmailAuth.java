@@ -14,10 +14,15 @@ public class EmailAuth {
 
     @Id private String email;
     private String code;
+    private Boolean verified;
 
     @Builder
     private EmailAuth(String email, String code) {
         this.email = email;
         this.code = code;
+    }
+
+    public void verifyComplete() {
+        this.verified = true;
     }
 }

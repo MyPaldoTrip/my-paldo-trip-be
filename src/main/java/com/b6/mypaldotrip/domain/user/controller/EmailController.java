@@ -1,7 +1,9 @@
 package com.b6.mypaldotrip.domain.user.controller;
 
 import com.b6.mypaldotrip.domain.user.controller.dto.request.EmailSendReq;
+import com.b6.mypaldotrip.domain.user.controller.dto.request.EmailVerifyReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.EmailSendRes;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.EmailVerifyRes;
 import com.b6.mypaldotrip.domain.user.service.EmailService;
 import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.config.VersionConfig;
@@ -26,6 +28,14 @@ public class EmailController {
     public ResponseEntity<RestResponse<EmailSendRes>> sendEmail(
             @Valid @RequestBody EmailSendReq req) {
         EmailSendRes res = emailService.sendEmail(req);
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                .toResponseEntity();
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<RestResponse<EmailVerifyRes>> verifyEmail(
+            @Valid @RequestBody EmailVerifyReq req) {
+        EmailVerifyRes res = emailService.verifyEmail(req);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }

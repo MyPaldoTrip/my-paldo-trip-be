@@ -1,8 +1,9 @@
 package com.b6.mypaldotrip.domain.user.service;
 
+import com.b6.mypaldotrip.domain.user.exception.EmailErrorCode;
 import com.b6.mypaldotrip.domain.user.store.entity.EmailAuth;
 import com.b6.mypaldotrip.domain.user.store.repository.EmailAuthRepository;
-import java.util.Optional;
+import com.b6.mypaldotrip.global.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,9 @@ public class EmailAuthService {
         return emailAuthRepository.save(emailAuth);
     }
 
-    public Optional<EmailAuth> findById(String email) {
-        return emailAuthRepository.findById(email);
+    public EmailAuth findById(String email) {
+        return emailAuthRepository
+                .findById(email)
+                .orElseThrow(() -> new GlobalException(EmailErrorCode.VERIFY_TIME_OUT));
     }
 }

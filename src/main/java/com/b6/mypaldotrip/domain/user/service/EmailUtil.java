@@ -6,12 +6,14 @@ import com.b6.mypaldotrip.global.exception.GlobalException;
 import jakarta.mail.Message.RecipientType;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j(topic = "이메일 유틸")
 @Component
@@ -52,5 +54,15 @@ public class EmailUtil {
         message.setText(code);
 
         return message;
+    }
+
+    @Transactional
+    public void verifyCode(String recipientEmail, String code) {
+        EmailAuth emailAuth = emailAuthService.findById(recipientEmail);
+        if (Objects.equals(emailAuth.getCode(), code)) {
+            emailAuth.verifyComplete();
+        } else {
+            throw new GlobalException(EmailErrorCode.COND_MISMATCH);
+        }
     }
 }
