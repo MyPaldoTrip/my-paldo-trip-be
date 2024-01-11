@@ -1,11 +1,14 @@
 package com.b6.mypaldotrip.domain.review.service;
 
 import com.b6.mypaldotrip.domain.review.controller.dto.request.ReviewCreateReq;
+import com.b6.mypaldotrip.domain.review.controller.dto.request.ReviewListReq;
 import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewCreateRes;
+import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewListRes;
 import com.b6.mypaldotrip.domain.review.store.entity.ReviewEntity;
 import com.b6.mypaldotrip.domain.review.store.repository.ReviewRepository;
 import com.b6.mypaldotrip.domain.trip.service.TripService;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,5 +30,18 @@ public class ReviewService {
                 .score(review.getScore())
                 .modifiedAt(review.getModifiedAt())
                 .build();
+    }
+
+    public List<ReviewListRes> getReviewList(Long tripId, ReviewListReq req) {
+        TripEntity trip = tripService.findTrip(tripId);
+        return reviewRepository.findAll().stream()
+                .map(
+                        review ->
+                                ReviewListRes.builder()
+                                        .content(review.getContent())
+                                        .score(review.getScore())
+                                        .modifiedAt(review.getModifiedAt())
+                                        .build())
+                .toList();
     }
 }
