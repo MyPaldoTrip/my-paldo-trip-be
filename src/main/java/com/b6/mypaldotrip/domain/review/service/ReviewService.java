@@ -2,15 +2,20 @@ package com.b6.mypaldotrip.domain.review.service;
 
 import com.b6.mypaldotrip.domain.review.controller.dto.request.ReviewCreateReq;
 import com.b6.mypaldotrip.domain.review.controller.dto.request.ReviewListReq;
+import com.b6.mypaldotrip.domain.review.controller.dto.request.ReviewUpdateReq;
 import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewCreateRes;
 import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewListRes;
+import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewUpdateRes;
+import com.b6.mypaldotrip.domain.review.exception.ReviewErrorCode;
 import com.b6.mypaldotrip.domain.review.store.entity.ReviewEntity;
 import com.b6.mypaldotrip.domain.review.store.repository.ReviewRepository;
 import com.b6.mypaldotrip.domain.trip.service.TripService;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
+import com.b6.mypaldotrip.global.exception.GlobalException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -43,5 +48,24 @@ public class ReviewService {
                                         .modifiedAt(review.getModifiedAt())
                                         .build())
                 .toList();
+    }
+
+    @Transactional
+    public ReviewUpdateRes updateReview(Long tripId, Long reviewId, ReviewUpdateReq req) {
+        TripEntity trip = tripService.findTrip(tripId);
+        ReviewEntity review = findReview(reviewId);
+        review.updateReview(req.content(), req.score());
+        return ReviewUpdateRes.builder()
+                .content(review.getContent())
+                .score(review.getScore())
+                .modifiedAt(review.getModifiedAt())
+                .build();
+    }
+
+    // 리뷰 조회 메서드
+    public ReviewEntity findReview(Long reviewId) {
+        return reviewRepository
+                .findById(reviewId)
+                .orElseThrow(() -> new GlobalException(ReviewErrorCode.NON_EXIST_REVIEW));
     }
 }
