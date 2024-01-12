@@ -5,4 +5,4 @@ import lombok.Builder;
 
 @Builder
 public record ReviewListRes(
-        String username, String content, Integer score, LocalDateTime modifiedAt) {}
+        String username, Long level, String content, Integer score, LocalDateTime modifiedAt) {}

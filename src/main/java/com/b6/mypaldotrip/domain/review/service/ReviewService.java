@@ -58,6 +58,7 @@ public class ReviewService {
                         review ->
                                 ReviewListRes.builder()
                                         .username(review.getUser().getUsername())
+                                        .level(review.getUser().getLevel())
                                         .content(review.getContent())
                                         .score(review.getScore())
                                         .modifiedAt(review.getModifiedAt())
