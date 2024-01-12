@@ -1,4 +1,4 @@
-package com.b6.mypaldotrip.domain.like.controller.dto;
+package com.b6.mypaldotrip.domain.like.controller;
 
 import com.b6.mypaldotrip.domain.like.controller.dto.response.LikeToggleRes;
 import com.b6.mypaldotrip.domain.like.service.LikeService;

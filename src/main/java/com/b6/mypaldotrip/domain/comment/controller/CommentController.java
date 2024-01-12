@@ -1,4 +1,4 @@
-package com.b6.mypaldotrip.domain.comment.controller.dto;
+package com.b6.mypaldotrip.domain.comment.controller;
 
 import com.b6.mypaldotrip.domain.comment.controller.dto.request.CommentSaveReq;
 import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentSaveRes;

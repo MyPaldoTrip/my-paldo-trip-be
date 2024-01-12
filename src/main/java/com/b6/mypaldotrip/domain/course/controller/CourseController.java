@@ -1,6 +1,7 @@
 package com.b6.mypaldotrip.domain.course.controller;
 
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSaveReq;
+import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSearchReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseUpdateReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseDeleteRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseGetRes;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -45,8 +47,11 @@ public class CourseController {
     }
 
     @GetMapping
-    public ResponseEntity<RestResponse<List<CourseListRes>>> getCourseList() {
-        List<CourseListRes> res = courseService.getCourseList();
+    public ResponseEntity<RestResponse<List<CourseListRes>>> getCourseListByDynamicConditions(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @RequestBody CourseSearchReq req) {
+        List<CourseListRes> res = courseService.getCourseListByDynamicConditions(page, size, req);
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
