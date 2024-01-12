@@ -4,6 +4,7 @@ import com.b6.mypaldotrip.domain.city.exception.CityErrorCode;
 import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
 import com.b6.mypaldotrip.domain.city.store.repository.CityRepository;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSaveReq;
+import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSearchReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseUpdateReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseDeleteRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseGetRes;
@@ -12,12 +13,15 @@ import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseSaveRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseUpdateRes;
 import com.b6.mypaldotrip.domain.course.exception.CourseErrorCode;
 import com.b6.mypaldotrip.domain.course.store.entity.CourseEntity;
+import com.b6.mypaldotrip.domain.course.store.entity.CourseSort;
 import com.b6.mypaldotrip.domain.course.store.repository.CourseRepository;
 import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -52,9 +56,13 @@ public class CourseService {
         return res;
     }
 
-    public List<CourseListRes> getCourseList() {
+    public List<CourseListRes> getCourseListByDynamicConditions(
+            int page, int size, CourseSearchReq req) {
+        Pageable pageable = PageRequest.of(page, size);
+        CourseSort courseSort = req.courseSort() != null ? req.courseSort() : CourseSort.MODIFIED;
+
         List<CourseListRes> res =
-                courseRepository.findAll().stream()
+                courseRepository.getCourseListByDynamicConditions(pageable, courseSort, req).stream()
                         .map(
                                 c ->
                                         CourseListRes.builder()
