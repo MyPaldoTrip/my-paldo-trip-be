@@ -22,6 +22,25 @@ spring:
       mode: always
       encoding: UTF-8
 
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      smtp:
+        auth: true
+        starttls:
+          enable: true
+        connection-timeout: 5000 #클라이언트가 SMTP서버와 연결을 설정하는데 대기해야하는 시간(ms)
+        timeout: 5000 #클라이언트가 SMTP서버로부터 응답을 대기해야하는 시간(ms)
+        write-timeout: 5000 #클라이언트가 작업을 완료하는데 대기해야 하는 시간(ms)
+
 jwt:
   secret:
     key: ${JWT_SECRET_KEY}

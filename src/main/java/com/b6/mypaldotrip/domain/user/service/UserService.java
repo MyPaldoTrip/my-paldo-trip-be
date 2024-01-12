@@ -13,11 +13,13 @@ import com.b6.mypaldotrip.global.common.S3Provider;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -25,9 +27,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3Provider s3Provider;
+    private final EmailAuthService emailAuthService;
 
     public UserSignUpRes signup(UserSignUpReq req) {
+        if (!emailAuthService.isEmailVerified(req.email())) {
+            log.error("해당 이메일 검증 false");
+            throw new GlobalException(UserErrorCode.BEFORE_EMAIL_VALIDATION);
+        }
         String password = passwordEncoder.encode(req.password());
+
         UserEntity userEntity =
                 UserEntity.builder()
                         .email(req.email())
