@@ -9,5 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CustomCourseRepository {
-    List<CourseEntity> getCourseListByDynamicConditions(Pageable pageable, CourseSort courseSort, CourseSearchReq req);
+    List<CourseEntity> getCourseListByDynamicConditions(
+            Pageable pageable, CourseSort courseSort, CourseSearchReq req);
 }

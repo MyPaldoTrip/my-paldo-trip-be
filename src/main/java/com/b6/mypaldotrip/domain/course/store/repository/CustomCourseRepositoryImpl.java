@@ -21,17 +21,17 @@ public class CustomCourseRepositoryImpl implements CustomCourseRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<CourseEntity> getCourseListByDynamicConditions(Pageable pageable, CourseSort courseSort,
-        CourseSearchReq req) {
+    public List<CourseEntity> getCourseListByDynamicConditions(
+            Pageable pageable, CourseSort courseSort, CourseSearchReq req) {
 
         return jpaQueryFactory
-            .selectFrom(courseEntity)
-            .where(cityNameEq(req.cityName()), following(req.username()))
-            .leftJoin(courseEntity.cityEntity)
-            .orderBy(courseSort(courseSort))
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
+                .selectFrom(courseEntity)
+                .where(cityNameEq(req.cityName()), following(req.username()))
+                .leftJoin(courseEntity.cityEntity)
+                .orderBy(courseSort(courseSort))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
     }
 
     private BooleanExpression cityNameEq(String cityName) {

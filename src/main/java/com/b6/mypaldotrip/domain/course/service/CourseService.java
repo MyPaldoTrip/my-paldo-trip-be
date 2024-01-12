@@ -62,7 +62,9 @@ public class CourseService {
         CourseSort courseSort = req.courseSort() != null ? req.courseSort() : CourseSort.MODIFIED;
 
         List<CourseListRes> res =
-                courseRepository.getCourseListByDynamicConditions(pageable, courseSort, req).stream()
+                courseRepository
+                        .getCourseListByDynamicConditions(pageable, courseSort, req)
+                        .stream()
                         .map(
                                 c ->
                                         CourseListRes.builder()
