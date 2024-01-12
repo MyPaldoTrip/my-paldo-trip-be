@@ -2,7 +2,16 @@ package com.b6.mypaldotrip.domain.user.store.entity;
 
 import com.b6.mypaldotrip.domain.review.store.entity.ReviewEntity;
 import com.b6.mypaldotrip.global.common.BaseEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -34,6 +43,9 @@ public class UserEntity extends BaseEntity {
     private Long age;
     private Long level;
 
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewEntity> reviewList = new ArrayList<>();
 
@@ -53,6 +65,7 @@ public class UserEntity extends BaseEntity {
         this.fileURL = fileURL;
         this.age = age;
         this.level = level;
+        this.userRole = UserRole.ROLE_USER;
     }
 
     public void update(
