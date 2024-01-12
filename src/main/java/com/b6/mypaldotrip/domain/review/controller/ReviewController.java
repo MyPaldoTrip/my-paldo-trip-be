@@ -39,8 +39,11 @@ public class ReviewController {
 
     @GetMapping
     public ResponseEntity<RestResponse<List<ReviewListRes>>> getReviewList(
-            @PathVariable Long tripId, @RequestBody ReviewListReq req) {
-        List<ReviewListRes> res = reviewService.getReviewList(tripId, req);
+            @PathVariable Long tripId,
+            @RequestBody ReviewListReq req,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long userId = userDetails != null ? userDetails.getUserEntity().getUserId() : null;
+        List<ReviewListRes> res = reviewService.getReviewList(tripId, req, userId);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }

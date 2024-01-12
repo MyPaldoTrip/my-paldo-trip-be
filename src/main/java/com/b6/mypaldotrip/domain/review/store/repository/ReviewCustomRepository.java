@@ -8,5 +8,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ReviewCustomRepository {
-    List<ReviewEntity> findByTripId(Long tripId, ReviewSort reviewSort, Pageable pageable);
+    List<ReviewEntity> findByTripIdAndSort(
+            Long tripId,
+            Long userId,
+            boolean isFollowingOnly,
+            ReviewSort reviewSort,
+            Pageable pageable);
 }

@@ -49,11 +49,15 @@ public class ReviewService {
                 .build();
     }
 
-    public List<ReviewListRes> getReviewList(Long tripId, ReviewListReq req) {
+    public List<ReviewListRes> getReviewList(Long tripId, ReviewListReq req, Long userId) {
         Pageable pageable = PageRequest.of(req.page(), 20);
         ReviewSort sort = (req.reviewSort() != null) ? req.reviewSort() : ReviewSort.MODIFIED;
+        boolean isFollowingOnly = req.filterByFollowing();
         tripService.findTrip(tripId);
-        return reviewRepository.findByTripId(tripId, sort, pageable).stream()
+
+        return reviewRepository
+                .findByTripIdAndSort(tripId, userId, isFollowingOnly, sort, pageable)
+                .stream()
                 .map(
                         review ->
                                 ReviewListRes.builder()
