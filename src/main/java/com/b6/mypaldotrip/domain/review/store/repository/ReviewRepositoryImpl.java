@@ -10,10 +10,11 @@ import com.b6.mypaldotrip.global.exception.GlobalException;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -46,6 +47,9 @@ public class ReviewRepositoryImpl implements ReviewCustomRepository {
             }
             case RATING -> {
                 return review.score.desc();
+            }
+            case LEVEL -> {
+                return user.level.desc();
             }
             default -> throw new GlobalException(ReviewErrorCode.WRONG_REVIEW_SORT);
         }
