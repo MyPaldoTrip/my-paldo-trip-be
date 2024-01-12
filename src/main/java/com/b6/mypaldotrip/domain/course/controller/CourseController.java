@@ -70,16 +70,20 @@ public class CourseController {
 
     @PutMapping("{courseId}")
     public ResponseEntity<RestResponse<CourseUpdateRes>> updateCourse(
-            @PathVariable Long courseId, @RequestBody CourseUpdateReq req) {
-        CourseUpdateRes res = courseService.updateCourse(courseId, req);
+            @PathVariable Long courseId,
+            @RequestBody CourseUpdateReq req,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        CourseUpdateRes res =
+                courseService.updateCourse(courseId, req, userDetails.getUserEntity());
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
 
     @DeleteMapping("/{courseId}")
-    public ResponseEntity<RestResponse<CourseDeleteRes>> deleteCourse(@PathVariable Long courseId) {
-        CourseDeleteRes res = courseService.deleteCourse(courseId);
+    public ResponseEntity<RestResponse<CourseDeleteRes>> deleteCourse(
+            @PathVariable Long courseId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        CourseDeleteRes res = courseService.deleteCourse(courseId, userDetails.getUserEntity());
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
