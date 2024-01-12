@@ -50,8 +50,11 @@ public class CourseController {
     public ResponseEntity<RestResponse<List<CourseListRes>>> getCourseListByDynamicConditions(
             @RequestParam("page") int page,
             @RequestParam("size") int size,
-            @RequestBody CourseSearchReq req) {
-        List<CourseListRes> res = courseService.getCourseListByDynamicConditions(page, size, req);
+            @RequestBody CourseSearchReq req,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        List<CourseListRes> res =
+                courseService.getCourseListByDynamicConditions(
+                        page, size, req, userDetails.getUserEntity());
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();

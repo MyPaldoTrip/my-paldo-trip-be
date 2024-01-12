@@ -57,13 +57,13 @@ public class CourseService {
     }
 
     public List<CourseListRes> getCourseListByDynamicConditions(
-            int page, int size, CourseSearchReq req) {
+            int page, int size, CourseSearchReq req, UserEntity userEntity) {
         Pageable pageable = PageRequest.of(page, size);
         CourseSort courseSort = req.courseSort() != null ? req.courseSort() : CourseSort.MODIFIED;
 
         List<CourseListRes> res =
                 courseRepository
-                        .getCourseListByDynamicConditions(pageable, courseSort, req)
+                        .getCourseListByDynamicConditions(pageable, courseSort, req, userEntity)
                         .stream()
                         .map(
                                 c ->
