@@ -32,7 +32,7 @@ public class UserService {
     public UserSignUpRes signup(UserSignUpReq req) {
         if (!emailAuthService.isEmailVerified(req.email())) {
             log.error("해당 이메일 검증 false");
-            throw new GlobalException(UserErrorCode.VERIFIED_TIME_OUT);
+            throw new GlobalException(UserErrorCode.BEFORE_EMAIL_VALIDATION);
         }
         String password = passwordEncoder.encode(req.password());
 
