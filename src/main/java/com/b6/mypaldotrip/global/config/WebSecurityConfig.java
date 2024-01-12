@@ -51,27 +51,31 @@ public class WebSecurityConfig {
         http.csrf((csrf) -> csrf.disable());
 
         http.sessionManagement(
-                (sessionManagement) ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+            (sessionManagement) ->
+                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.authorizeHttpRequests(
-                (authorizeHttpRequests) ->
-                        authorizeHttpRequests
-                                .requestMatchers(
-                                        PathRequest.toStaticResources().atCommonLocations())
-                                .permitAll()
-                                .requestMatchers(
-                                        "/api/" + versionConfig.getVersion() + "/users/signup/**")
-                                .permitAll()
-                                .requestMatchers(
-                                        HttpMethod.GET,
-                                        "/api/" + versionConfig.getVersion() + "/trips/**")
-                                .permitAll()
-                                .requestMatchers(
-                                        "/api/" + versionConfig.getVersion() + "/users/email/**")
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated());
+            (authorizeHttpRequests) ->
+                authorizeHttpRequests
+                    .requestMatchers(
+                        PathRequest.toStaticResources().atCommonLocations())
+                    .permitAll()
+                    .requestMatchers(
+                        "/api/" + versionConfig.getVersion() + "/users/signup/**")
+                    .permitAll()
+                    .requestMatchers(
+                        HttpMethod.GET,
+                        "/api/" + versionConfig.getVersion() + "/trips/**")
+                    .permitAll()
+                    .requestMatchers(
+                        HttpMethod.GET,
+                        "/api/" + versionConfig.getVersion() + "/courses/**")
+                    .permitAll()
+                    .requestMatchers(
+                        "/api/" + versionConfig.getVersion() + "/users/email/**")
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated());
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
