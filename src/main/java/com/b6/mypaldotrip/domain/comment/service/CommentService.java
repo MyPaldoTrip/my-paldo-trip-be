@@ -3,6 +3,7 @@ package com.b6.mypaldotrip.domain.comment.service;
 import com.b6.mypaldotrip.domain.comment.controller.dto.request.CommentSaveReq;
 import com.b6.mypaldotrip.domain.comment.controller.dto.request.CommentSearchReq;
 import com.b6.mypaldotrip.domain.comment.controller.dto.request.CommentUpdateReq;
+import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentDeleteRes;
 import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentGetRes;
 import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentListRes;
 import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentSaveRes;
@@ -63,13 +64,22 @@ public class CommentService {
         return res;
     }
 
+    public CommentGetRes getComment(Long courseId, Long commentId) {
+        courseService.findCourse(courseId);
+
+        CommentEntity commentEntity = findComment(commentId);
+
+        CommentGetRes res = CommentGetRes.builder().content(commentEntity.getContent()).build();
+
+        return res;
+    }
+
     @Transactional
     public CommentUpdateRes updateComment(
             Long courseId, Long commentId, CommentUpdateReq req, UserEntity userEntity) {
         courseService.findCourse(courseId);
 
-        CommentEntity commentEntity =
-            findComment(commentId);
+        CommentEntity commentEntity = findComment(commentId);
 
         validateAuth(userEntity, commentEntity);
 
@@ -81,26 +91,31 @@ public class CommentService {
         return res;
     }
 
-    private static void validateAuth(UserEntity userEntity, CommentEntity commentEntity) {
-        if (userEntity.getUserRole() == UserRole.ROLE_USER
-                && !Objects.equals(userEntity.getUserId(), commentEntity.getUserEntity().getUserId())) {
-            throw new GlobalException(CommentErrorCode.USER_NOT_AUTHORIZED);
-        }
-    }
-
-    public CommentGetRes getComment(Long courseId, Long commentId) {
+    public CommentDeleteRes deleteComment(Long courseId, Long commentId, UserEntity userEntity) {
         courseService.findCourse(courseId);
 
         CommentEntity commentEntity = findComment(commentId);
 
-        CommentGetRes res = CommentGetRes.builder().content(commentEntity.getContent()).build();
+        validateAuth(userEntity, commentEntity);
+
+        commentRepository.delete(commentEntity);
+
+        CommentDeleteRes res = CommentDeleteRes.builder().msg(commentId + "번 댓글 삭제완료").build();
 
         return res;
     }
 
     private CommentEntity findComment(Long commentId) {
         return commentRepository
-            .findById(commentId)
-            .orElseThrow(() -> new GlobalException(CommentErrorCode.COMMENT_NOT_FOUND));
+                .findById(commentId)
+                .orElseThrow(() -> new GlobalException(CommentErrorCode.COMMENT_NOT_FOUND));
+    }
+
+    private static void validateAuth(UserEntity userEntity, CommentEntity commentEntity) {
+        if (userEntity.getUserRole() == UserRole.ROLE_USER
+                && !Objects.equals(
+                        userEntity.getUserId(), commentEntity.getUserEntity().getUserId())) {
+            throw new GlobalException(CommentErrorCode.USER_NOT_AUTHORIZED);
+        }
     }
 }

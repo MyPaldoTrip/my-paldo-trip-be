@@ -3,6 +3,7 @@ package com.b6.mypaldotrip.domain.comment.controller;
 import com.b6.mypaldotrip.domain.comment.controller.dto.request.CommentSaveReq;
 import com.b6.mypaldotrip.domain.comment.controller.dto.request.CommentSearchReq;
 import com.b6.mypaldotrip.domain.comment.controller.dto.request.CommentUpdateReq;
+import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentDeleteRes;
 import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentGetRes;
 import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentListRes;
 import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentSaveRes;
@@ -16,6 +17,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -61,12 +63,11 @@ public class CommentController {
 
     @GetMapping("/{commentId}")
     public ResponseEntity<RestResponse<CommentGetRes>> getComment(
-        @PathVariable Long courseId,
-        @PathVariable Long commentId
-    ) {
+            @PathVariable Long courseId, @PathVariable Long commentId) {
         CommentGetRes res = commentService.getComment(courseId, commentId);
 
-        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion()).toResponseEntity();
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                .toResponseEntity();
     }
 
     @PutMapping("/{commentId}")
@@ -77,6 +78,18 @@ public class CommentController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         CommentUpdateRes res =
                 commentService.updateComment(courseId, commentId, req, userDetails.getUserEntity());
+
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                .toResponseEntity();
+    }
+
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<RestResponse<CommentDeleteRes>> deleteComment(
+            @PathVariable Long courseId,
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        CommentDeleteRes res =
+                commentService.deleteComment(courseId, commentId, userDetails.getUserEntity());
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
