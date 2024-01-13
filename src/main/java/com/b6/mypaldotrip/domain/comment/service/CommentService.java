@@ -3,6 +3,7 @@ package com.b6.mypaldotrip.domain.comment.service;
 import com.b6.mypaldotrip.domain.comment.controller.dto.request.CommentSaveReq;
 import com.b6.mypaldotrip.domain.comment.controller.dto.request.CommentSearchReq;
 import com.b6.mypaldotrip.domain.comment.controller.dto.request.CommentUpdateReq;
+import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentGetRes;
 import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentListRes;
 import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentSaveRes;
 import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentUpdateRes;
@@ -68,9 +69,7 @@ public class CommentService {
         courseService.findCourse(courseId);
 
         CommentEntity commentEntity =
-                commentRepository
-                        .findById(commentId)
-                        .orElseThrow(() -> new GlobalException(CommentErrorCode.COMMENT_NOT_FOUND));
+            findComment(commentId);
 
         validateAuth(userEntity, commentEntity);
 
@@ -87,5 +86,21 @@ public class CommentService {
                 && !Objects.equals(userEntity.getUserId(), commentEntity.getUserEntity().getUserId())) {
             throw new GlobalException(CommentErrorCode.USER_NOT_AUTHORIZED);
         }
+    }
+
+    public CommentGetRes getComment(Long courseId, Long commentId) {
+        courseService.findCourse(courseId);
+
+        CommentEntity commentEntity = findComment(commentId);
+
+        CommentGetRes res = CommentGetRes.builder().content(commentEntity.getContent()).build();
+
+        return res;
+    }
+
+    private CommentEntity findComment(Long commentId) {
+        return commentRepository
+            .findById(commentId)
+            .orElseThrow(() -> new GlobalException(CommentErrorCode.COMMENT_NOT_FOUND));
     }
 }

@@ -3,6 +3,7 @@ package com.b6.mypaldotrip.domain.comment.controller;
 import com.b6.mypaldotrip.domain.comment.controller.dto.request.CommentSaveReq;
 import com.b6.mypaldotrip.domain.comment.controller.dto.request.CommentSearchReq;
 import com.b6.mypaldotrip.domain.comment.controller.dto.request.CommentUpdateReq;
+import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentGetRes;
 import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentListRes;
 import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentSaveRes;
 import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentUpdateRes;
@@ -56,6 +57,16 @@ public class CommentController {
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
+    }
+
+    @GetMapping("/{commentId}")
+    public ResponseEntity<RestResponse<CommentGetRes>> getComment(
+        @PathVariable Long courseId,
+        @PathVariable Long commentId
+    ) {
+        CommentGetRes res = commentService.getComment(courseId, commentId);
+
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion()).toResponseEntity();
     }
 
     @PutMapping("/{commentId}")
