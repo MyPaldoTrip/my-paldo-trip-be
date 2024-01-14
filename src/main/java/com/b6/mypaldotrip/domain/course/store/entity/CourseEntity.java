@@ -2,6 +2,7 @@ package com.b6.mypaldotrip.domain.course.store.entity;
 
 import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
 import com.b6.mypaldotrip.domain.comment.store.entity.CommentEntity;
+import com.b6.mypaldotrip.domain.courseFile.store.entity.CourseFileEntity;
 import com.b6.mypaldotrip.domain.like.store.entity.LikeEntity;
 import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.global.common.BaseEntity;
@@ -58,6 +59,9 @@ public class CourseEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id")
     private CityEntity cityEntity;
+
+    @OneToMany(mappedBy = "courseEntity")
+    private List<CourseFileEntity> files = new ArrayList<>();
 
     public void updateCourse(String title, String content) {
         this.title = title;
