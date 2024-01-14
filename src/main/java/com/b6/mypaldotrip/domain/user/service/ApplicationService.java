@@ -2,6 +2,7 @@ package com.b6.mypaldotrip.domain.user.service;
 
 import com.b6.mypaldotrip.domain.user.controller.dto.request.ApplicationSubmitReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.ApplicationGetListRes;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.ApplicationGetRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.ApplicationSubmitRes;
 import com.b6.mypaldotrip.domain.user.store.entity.ApplicationEntity;
 import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
@@ -34,5 +35,9 @@ public class ApplicationService {
 
     public List<ApplicationGetListRes> getList() {
         return applicationRepository.findByVerifiedIsFalse();
+    }
+
+    public ApplicationGetRes getApplication(Long applicationId) {
+        return applicationRepository.findApplication(applicationId);
     }
 }
