@@ -40,4 +40,8 @@ public class ApplicationEntity {
         this.content = content;
         this.verified = false;
     }
+
+    public void confirm() {
+        this.verified = true;
+    }
 }

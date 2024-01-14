@@ -4,7 +4,16 @@ import com.b6.mypaldotrip.domain.follow.store.entity.FollowerEntity;
 import com.b6.mypaldotrip.domain.follow.store.entity.FollowingEntity;
 import com.b6.mypaldotrip.domain.review.store.entity.ReviewEntity;
 import com.b6.mypaldotrip.global.common.BaseEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -74,5 +83,13 @@ public class UserEntity extends BaseEntity {
         this.age = age;
         this.password = password;
         this.fileURL = fileURL;
+    }
+
+    public void acceptPermission() {
+        this.userRole = UserRole.ROLE_OPERATOR;
+    }
+
+    public void reject() {
+        this.userRole = UserRole.ROLE_USER;
     }
 }
