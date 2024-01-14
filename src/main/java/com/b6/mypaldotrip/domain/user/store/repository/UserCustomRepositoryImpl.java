@@ -87,8 +87,9 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         if (userDetails == null) return null;
         UserEntity loggedUser = userDetails.getUserEntity();
         return followerCondition != null
-                ? userEntity.followerList.contains(
-                        JPAExpressions.selectFrom(followerEntity)
+                ? userEntity.eqAny(
+                        JPAExpressions.select(followerEntity.followedUser)
+                                .from(followerEntity)
                                 .where(followerEntity.user.eq(loggedUser)))
                 : null;
     }
@@ -98,8 +99,9 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         if (userDetails == null) return null;
         UserEntity loggedUser = userDetails.getUserEntity();
         return followingCondition != null
-                ? userEntity.followingList.contains(
-                        JPAExpressions.selectFrom(followingEntity)
+                ? userEntity.eqAny(
+                        JPAExpressions.select(followingEntity.followingUser)
+                                .from(followingEntity)
                                 .where(followingEntity.user.eq(loggedUser)))
                 : null;
     }
