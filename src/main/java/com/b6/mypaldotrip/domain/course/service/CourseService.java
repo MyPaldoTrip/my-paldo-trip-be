@@ -59,13 +59,15 @@ public class CourseService {
     }
 
     public List<CourseListRes> getCourseListByDynamicConditions(
-            int page, int size, CourseSearchReq req, UserEntity userEntity) {
+            int page, int size, CourseSearchReq req, Long userId) {
         Pageable pageable = PageRequest.of(page, size);
         CourseSort courseSort = req.courseSort() != null ? req.courseSort() : CourseSort.MODIFIED;
+        Boolean filterByFollowing = req.filterByFollowing();
 
         List<CourseListRes> res =
                 courseRepository
-                        .getCourseListByDynamicConditions(pageable, courseSort, req, userEntity)
+                        .getCourseListByDynamicConditions(
+                                pageable, courseSort, req, userId, filterByFollowing)
                         .stream()
                         .map(
                                 c ->
@@ -107,7 +109,6 @@ public class CourseService {
         return res;
     }
 
-    @Transactional
     public CourseDeleteRes deleteCourse(Long courseId, UserEntity userEntity) {
         CourseEntity course = findCourse(courseId);
 
@@ -128,7 +129,7 @@ public class CourseService {
 
     private static void validateAuth(UserEntity userEntity, CourseEntity course) {
         if (userEntity.getUserRole() == UserRole.ROLE_USER
-                && !Objects.equals(course.getUserEntity(), userEntity)) {
+                && !Objects.equals(course.getUserEntity().getUserId(), userEntity.getUserId())) {
             throw new GlobalException(CourseErrorCode.USER_NOT_AUTHORIZED);
         }
     }

@@ -6,7 +6,6 @@ import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSearchReq;
 import com.b6.mypaldotrip.domain.course.exception.CourseErrorCode;
 import com.b6.mypaldotrip.domain.course.store.entity.CourseEntity;
 import com.b6.mypaldotrip.domain.course.store.entity.CourseSort;
-import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -23,11 +22,15 @@ public class CustomCourseRepositoryImpl implements CustomCourseRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     public List<CourseEntity> getCourseListByDynamicConditions(
-            Pageable pageable, CourseSort courseSort, CourseSearchReq req, UserEntity userEntity) {
+            Pageable pageable,
+            CourseSort courseSort,
+            CourseSearchReq req,
+            Long userId,
+            Boolean filterByFollowing) {
 
         return jpaQueryFactory
                 .selectFrom(courseEntity)
-                .where(cityNameEq(req.cityName()), isFollowing(userEntity))
+                .where(cityNameEq(req.cityName()), isFollowing(userId, filterByFollowing))
                 .leftJoin(courseEntity.cityEntity)
                 .orderBy(courseSort(courseSort))
                 .offset(pageable.getOffset())
@@ -39,9 +42,9 @@ public class CustomCourseRepositoryImpl implements CustomCourseRepository {
         return cityName != null ? courseEntity.cityEntity.cityName.eq(cityName) : null;
     }
 
-    private BooleanExpression isFollowing(UserEntity userEntity) {
-        return userEntity != null
-                ? courseEntity.userEntity.followerList.any().followedUser.eq(userEntity)
+    private BooleanExpression isFollowing(Long userId, Boolean filterByFollowing) {
+        return (userId != null && filterByFollowing)
+                ? courseEntity.userEntity.followerList.any().followedUser.userId.eq(userId)
                 : null;
     }
 

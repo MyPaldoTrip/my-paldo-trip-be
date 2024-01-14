@@ -52,9 +52,10 @@ public class CourseController {
             @RequestParam("size") int size,
             @RequestBody CourseSearchReq req,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long userId = userDetails != null ? userDetails.getUserEntity().getUserId() : null;
+
         List<CourseListRes> res =
-                courseService.getCourseListByDynamicConditions(
-                        page, size, req, userDetails.getUserEntity());
+                courseService.getCourseListByDynamicConditions(page, size, req, userId);
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
