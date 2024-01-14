@@ -1,9 +1,11 @@
 package com.b6.mypaldotrip.domain.user.controller;
 
+import com.b6.mypaldotrip.domain.user.controller.dto.request.UserListReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserSignUpReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserUpdateReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserDeleteRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetProfileRes;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.UserListRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserSignUpRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserUpdateRes;
 import com.b6.mypaldotrip.domain.user.service.UserService;
@@ -13,6 +15,7 @@ import com.b6.mypaldotrip.global.response.RestResponse;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -67,6 +70,14 @@ public class UserController {
         UserUpdateRes res =
                 userService.updateProfile(
                         multipartFile, req, userDetails.getUserEntity().getUserId());
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                .toResponseEntity();
+    }
+
+    @GetMapping
+    public ResponseEntity<RestResponse<List<UserListRes>>> getUserList(
+            @RequestBody UserListReq req, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        List<UserListRes> res = userService.getUserList(req, userDetails);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
