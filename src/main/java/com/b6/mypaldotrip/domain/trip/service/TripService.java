@@ -7,6 +7,7 @@ import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripUpdateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.*;
 import com.b6.mypaldotrip.domain.trip.exception.TripErrorCode;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
+import com.b6.mypaldotrip.domain.trip.store.entity.TripSort;
 import com.b6.mypaldotrip.domain.trip.store.repository.TripRepository;
 import com.b6.mypaldotrip.domain.user.store.entity.UserRole;
 import com.b6.mypaldotrip.global.exception.GlobalException;
@@ -49,13 +50,18 @@ public class TripService {
 
     public List<TripListRes> getTripList(TripListReq req) {
         Pageable pageable = PageRequest.of(req.page(), 20);
-        return tripRepository.searchTripsAndSort(req.cityName(), req.category(), pageable).stream()
+        TripSort sort = (req.tripSort() != null) ? req.tripSort() : TripSort.CREATED;
+        return tripRepository
+                .searchTripsAndSort(req.cityName(), req.category(), sort, pageable)
+                .stream()
                 .map(
                         trip ->
                                 TripListRes.builder()
                                         .city(trip.getCity().getCityName())
                                         .category(trip.getCategory())
                                         .name(trip.getName())
+                                        .averageRating(trip.getAverageRating())
+                                        .reviews(trip.getReviewList().size())
                                         .build())
                 .toList();
     }
@@ -96,11 +102,6 @@ public class TripService {
         if (userDetails.getUserEntity().getUserRole() == UserRole.ROLE_USER) {
             throw new GlobalException(TripErrorCode.UNAUTHORIZED_ROLE_ERROR);
         }
-    }
-
-    // 여행정보 전체 조회 메서드
-    public List<TripEntity> findAllTrips() {
-        return tripRepository.findAll();
     }
 
     // 여행정보 조회 메서드
