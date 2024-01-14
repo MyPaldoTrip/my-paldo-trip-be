@@ -101,4 +101,12 @@ public class UserService {
                 .findById(userId)
                 .orElseThrow(() -> new GlobalException(UserErrorCode.NOT_FOUND_USER_BY_USERID));
     }
+
+    public void acceptApplication(UserEntity userEntity) {
+        userEntity.acceptPermission();
+    }
+
+    public void rejectApplication(UserEntity userEntity) {
+        userEntity.reject();
+    }
 }

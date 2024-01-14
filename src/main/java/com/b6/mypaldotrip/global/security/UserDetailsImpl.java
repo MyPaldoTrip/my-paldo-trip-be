@@ -1,10 +1,13 @@
 package com.b6.mypaldotrip.global.security;
 
 import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
+import com.b6.mypaldotrip.domain.user.store.entity.UserRole;
 import java.util.Collection;
+import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Getter
@@ -19,7 +22,9 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        UserRole role = userEntity.getUserRole();
+
+        return List.of(new SimpleGrantedAuthority(role.toString()));
     }
 
     @Override
