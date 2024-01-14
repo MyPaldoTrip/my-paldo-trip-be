@@ -66,6 +66,9 @@ public class WebSecurityConfig {
                                 .requestMatchers(
                                         HttpMethod.GET,
                                         "/api/" + versionConfig.getVersion() + "/trips/**")
+                                .permitAll().requestMatchers(
+                                        HttpMethod.GET,
+                                        "/api/" + versionConfig.getVersion() + "/courses/**")
                                 .permitAll()
                                 .requestMatchers(
                                         "/api/" + versionConfig.getVersion() + "/users/email/**")

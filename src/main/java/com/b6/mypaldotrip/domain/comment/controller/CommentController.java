@@ -53,9 +53,9 @@ public class CommentController {
             @RequestParam("size") int size,
             @RequestBody CommentSearchReq req,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long userId = userDetails != null ? userDetails.getUserEntity().getUserId() : null;
         List<CommentListRes> res =
-                commentService.getCommentListByDynamicConditions(
-                        courseId, page, size, req, userDetails.getUserEntity());
+                commentService.getCommentListByDynamicConditions(courseId, page, size, req, userId);
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();

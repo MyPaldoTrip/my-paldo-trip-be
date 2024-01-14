@@ -48,15 +48,15 @@ public class CommentService {
     }
 
     public List<CommentListRes> getCommentListByDynamicConditions(
-            Long courseId, int page, int size, CommentSearchReq req, UserEntity userEntity) {
+            Long courseId, int page, int size, CommentSearchReq req, Long userId) {
         Pageable pageable = PageRequest.of(page, size);
         CommentSort commentSort =
                 req.commentSort() != null ? req.commentSort() : CommentSort.MODIFIED;
-
+        Boolean filterByFollowing = req.filterByFollowing();
         List<CommentListRes> res =
                 commentRepository
                         .getCommentListByDynamicConditions(
-                                courseId, pageable, commentSort, userEntity)
+                                courseId, pageable, commentSort, userId, filterByFollowing)
                         .stream()
                         .map(c -> CommentListRes.builder().content(c.getContent()).build())
                         .toList();
