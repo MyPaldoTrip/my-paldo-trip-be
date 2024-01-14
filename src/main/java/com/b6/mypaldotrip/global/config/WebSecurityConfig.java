@@ -72,6 +72,10 @@ public class WebSecurityConfig {
                                 .permitAll()
                                 .requestMatchers("/kakao-login/**")
                                 .permitAll()
+                                .requestMatchers(
+                                        HttpMethod.GET,
+                                        "/api/" + versionConfig.getVersion() + "/users/**")
+                                .permitAll()
                                 .anyRequest()
                                 .authenticated());
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
