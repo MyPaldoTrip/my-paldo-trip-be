@@ -38,6 +38,6 @@ public class ApplicationEntity {
         this.userEntity = userEntity;
         this.title = title;
         this.content = content;
-        this.verified =false;
+        this.verified = false;
     }
 }

@@ -1,10 +1,12 @@
 package com.b6.mypaldotrip.domain.user.service;
 
 import com.b6.mypaldotrip.domain.user.controller.dto.request.ApplicationSubmitReq;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.ApplicationGetListRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.ApplicationSubmitRes;
 import com.b6.mypaldotrip.domain.user.store.entity.ApplicationEntity;
 import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.domain.user.store.repository.ApplicationRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,5 +30,9 @@ public class ApplicationService {
                 .title(applicationEntity.getTitle())
                 .content(applicationEntity.getContent())
                 .build();
+    }
+
+    public List<ApplicationGetListRes> getList() {
+        return applicationRepository.findByVerifiedIsFalse();
     }
 }
