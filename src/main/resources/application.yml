@@ -62,3 +62,8 @@ cloud:
       auto: false
     stack:
       auto: false
+
+kakao:
+  redirect-uri : ${KAKAO_REDIRECT_URI}
+  rest-api-key : ${KAKAO_REST_API_KEY}
+  secret-key : ${KAKAO_SECRET_KEY}
