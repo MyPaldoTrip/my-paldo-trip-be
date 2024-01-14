@@ -1,19 +1,24 @@
 package com.b6.mypaldotrip.domain.comment.controller;
 
 import com.b6.mypaldotrip.domain.comment.controller.dto.request.CommentSaveReq;
+import com.b6.mypaldotrip.domain.comment.controller.dto.request.CommentSearchReq;
+import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentListRes;
 import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentSaveRes;
 import com.b6.mypaldotrip.domain.comment.service.CommentService;
 import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.response.RestResponse;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -32,6 +37,21 @@ public class CommentController {
         CommentSaveRes res = commentService.saveComment(courseId, req, userDetails.getUserEntity());
 
         return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
+                .toResponseEntity();
+    }
+
+    @GetMapping
+    public ResponseEntity<RestResponse<List<CommentListRes>>> getCommentListByDynamicConditions(
+            @PathVariable Long courseId,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @RequestBody CommentSearchReq req,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        List<CommentListRes> res =
+                commentService.getCommentListByDynamicConditions(
+                        courseId, page, size, req, userDetails.getUserEntity());
+
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
 }
