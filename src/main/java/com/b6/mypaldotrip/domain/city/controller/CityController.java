@@ -78,4 +78,12 @@ public class CityController {
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
+
+    @GetMapping("/provinces/infoSort")
+    public ResponseEntity<RestResponse<List<ProvinceListRes>>> getProvinceListInfoSort() {
+        List<ProvinceListRes> res = cityService.getProvinceListInfoSort();
+
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                .toResponseEntity();
+    }
 }
