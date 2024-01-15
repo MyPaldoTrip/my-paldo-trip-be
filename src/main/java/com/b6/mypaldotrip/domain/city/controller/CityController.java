@@ -2,6 +2,7 @@ package com.b6.mypaldotrip.domain.city.controller;
 
 import com.b6.mypaldotrip.domain.city.controller.dto.request.CityCreateReq;
 import com.b6.mypaldotrip.domain.city.controller.dto.request.CityUpdateReq;
+import com.b6.mypaldotrip.domain.city.controller.dto.request.ProvinceListReq;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityCreateRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityDeleteRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityListRes;
@@ -80,8 +81,9 @@ public class CityController {
     }
 
     @GetMapping("/provinces/infoSort")
-    public ResponseEntity<RestResponse<List<ProvinceListRes>>> getProvinceListInfoSort() {
-        List<ProvinceListRes> res = cityService.getProvinceListInfoSort();
+    public ResponseEntity<RestResponse<List<ProvinceListRes>>> getProvinceListInfoSort(
+            @RequestBody ProvinceListReq req) {
+        List<ProvinceListRes> res = cityService.getProvinceListInfoSort(req);
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();

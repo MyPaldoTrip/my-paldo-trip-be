@@ -5,7 +5,8 @@ import com.b6.mypaldotrip.global.exception.GlobalException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 public enum CitySort {
-    COUNT;
+    INITIAL, // 초기 설정
+    COUNT; // 여행정보가 많은 순
 
     @JsonCreator
     public static CitySort forValue(String value) {

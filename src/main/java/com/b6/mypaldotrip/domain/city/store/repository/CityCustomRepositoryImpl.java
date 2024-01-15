@@ -32,9 +32,13 @@ public class CityCustomRepositoryImpl implements CityCustomRepository {
 
     public OrderSpecifier<?> checkCitySort(CitySort citySort) {
         switch (citySort) {
+            case INITIAL -> {
+                return cityEntity.cityId.desc();
+            }
             case COUNT -> {
                 return cityEntity.tripEntityList.size().desc();
             }
+
             default -> throw new GlobalException(CityErrorCode.WRONG_CITY_SORT);
         }
     }

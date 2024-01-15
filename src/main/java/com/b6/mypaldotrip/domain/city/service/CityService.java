@@ -2,6 +2,7 @@ package com.b6.mypaldotrip.domain.city.service;
 
 import com.b6.mypaldotrip.domain.city.controller.dto.request.CityCreateReq;
 import com.b6.mypaldotrip.domain.city.controller.dto.request.CityUpdateReq;
+import com.b6.mypaldotrip.domain.city.controller.dto.request.ProvinceListReq;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityCreateRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityDeleteRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityListRes;
@@ -95,8 +96,8 @@ public class CityService {
         return res;
     }
 
-    public List<ProvinceListRes> getProvinceListInfoSort() { // 여행정보 많은 순 정렬
-        CitySort sort = CitySort.COUNT;
+    public List<ProvinceListRes> getProvinceListInfoSort(ProvinceListReq req) { // 여행정보 많은 순 정렬
+        CitySort sort = (req.citySort() != null) ? req.citySort() : CitySort.INITIAL;
 
         List<ProvinceListRes> res =
                 cityRepository.getProvinceSort(sort).stream()
