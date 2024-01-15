@@ -1,5 +1,6 @@
 package com.b6.mypaldotrip.domain.tripFile.controller;
 
+import com.b6.mypaldotrip.domain.tripFile.controller.dto.response.TripFileListRes;
 import com.b6.mypaldotrip.domain.tripFile.controller.dto.response.TripFileUploadRes;
 import com.b6.mypaldotrip.domain.tripFile.service.TripFileService;
 import com.b6.mypaldotrip.global.common.GlobalResultCode;
@@ -7,6 +8,7 @@ import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.response.RestResponse;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,6 +30,14 @@ public class TripFileController {
             @AuthenticationPrincipal UserDetailsImpl userDetails)
             throws IOException {
         TripFileUploadRes res = tripFileService.uploadTrip(tripId, multipartFile);
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                .toResponseEntity();
+    }
+
+    @GetMapping
+    public ResponseEntity<RestResponse<List<TripFileListRes>>> getTripFileList(
+            @PathVariable Long tripId) {
+        List<TripFileListRes> res = tripFileService.getTripFileList(tripId);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
