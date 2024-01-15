@@ -28,6 +28,8 @@ public class TripEntity extends BaseEntity {
 
     private String description;
 
+    private double averageRating;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id")
     private CityEntity city;
@@ -48,5 +50,13 @@ public class TripEntity extends BaseEntity {
         this.category = category == null ? this.category : category;
         this.name = name == null ? this.name : name;
         this.description = description == null ? this.description : description;
+    }
+
+    public void calculateAverageRating() {
+        double totalScore = 0;
+        for (ReviewEntity review : reviewList) {
+            totalScore += review.getScore();
+        }
+        this.averageRating = (double) Math.round((totalScore / reviewList.size()) * 10) / 10;
     }
 }

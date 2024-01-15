@@ -7,8 +7,11 @@ import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripUpdateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.*;
 import com.b6.mypaldotrip.domain.trip.exception.TripErrorCode;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
+import com.b6.mypaldotrip.domain.trip.store.entity.TripSort;
 import com.b6.mypaldotrip.domain.trip.store.repository.TripRepository;
+import com.b6.mypaldotrip.domain.user.store.entity.UserRole;
 import com.b6.mypaldotrip.global.exception.GlobalException;
+import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -23,10 +26,9 @@ public class TripService {
     private final TripRepository tripRepository;
     private final CityService cityService;
 
-    public TripCreateRes createTrip(TripCreateReq req) {
+    public TripCreateRes createTrip(TripCreateReq req, UserDetailsImpl userDetails) {
         String name = req.name();
-
-        /** TODO: 2024-01-08 운영자 검증 로직 추가 필요 */
+        checkAuthorization(userDetails);
         if (tripRepository.findByName(name).isPresent()) {
             throw new GlobalException(TripErrorCode.ALREADY_EXIST_TRIP);
         }
@@ -48,13 +50,18 @@ public class TripService {
 
     public List<TripListRes> getTripList(TripListReq req) {
         Pageable pageable = PageRequest.of(req.page(), 20);
-        return tripRepository.searchTripsAndSort(req.cityName(), req.category(), pageable).stream()
+        TripSort sort = (req.tripSort() != null) ? req.tripSort() : TripSort.CREATED;
+        return tripRepository
+                .searchTripsAndSort(req.cityName(), req.category(), sort, pageable)
+                .stream()
                 .map(
                         trip ->
                                 TripListRes.builder()
                                         .city(trip.getCity().getCityName())
                                         .category(trip.getCategory())
                                         .name(trip.getName())
+                                        .averageRating(trip.getAverageRating())
+                                        .reviews(trip.getReviewList().size())
                                         .build())
                 .toList();
     }
@@ -70,8 +77,8 @@ public class TripService {
     }
 
     @Transactional
-    public TripUpdateRes updateTrip(Long tripId, TripUpdateReq req) {
-        // TODO: 2024-01-08 운영자 검증 로직 추가 필요
+    public TripUpdateRes updateTrip(Long tripId, TripUpdateReq req, UserDetailsImpl userDetails) {
+        checkAuthorization(userDetails);
         TripEntity trip = findTrip(tripId);
         trip.updateTrip(
                 cityService.findCity(req.cityId()), req.category(), req.name(), req.description());
@@ -83,16 +90,18 @@ public class TripService {
                 .build();
     }
 
-    public TripDeleteRes deleteTrip(Long tripId) {
-        // TODO: 2024-01-08 운영자 검증 로직 추가 필요
+    public TripDeleteRes deleteTrip(Long tripId, UserDetailsImpl userDetails) {
+        checkAuthorization(userDetails);
         TripEntity trip = findTrip(tripId);
         tripRepository.delete(trip);
         return TripDeleteRes.builder().message("여행 정보가 삭제되었습니다.").build();
     }
 
-    // 여행정보 전체 조회 메서드
-    public List<TripEntity> findAllTrips() {
-        return tripRepository.findAll();
+    // 권한 체크 메서드
+    private static void checkAuthorization(UserDetailsImpl userDetails) {
+        if (userDetails.getUserEntity().getUserRole() == UserRole.ROLE_USER) {
+            throw new GlobalException(TripErrorCode.UNAUTHORIZED_ROLE_ERROR);
+        }
     }
 
     // 여행정보 조회 메서드

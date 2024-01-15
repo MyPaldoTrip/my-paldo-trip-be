@@ -30,6 +30,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final TripService tripService;
 
+    @Transactional
     public ReviewCreateRes createReview(
             Long tripId, ReviewCreateReq req, UserDetailsImpl userDetails) {
         TripEntity trip = tripService.findTrip(tripId);
@@ -41,6 +42,7 @@ public class ReviewService {
                         .trip(trip)
                         .build();
         reviewRepository.save(review);
+        trip.calculateAverageRating();
         return ReviewCreateRes.builder()
                 .username(userDetails.getUsername())
                 .content(review.getContent())
@@ -79,6 +81,7 @@ public class ReviewService {
         matchReviewAndTrip(review, trip);
         checkAuthor(userDetails, review);
         review.updateReview(req.content(), req.score());
+        trip.calculateAverageRating();
 
         return ReviewUpdateRes.builder()
                 .username(review.getUser().getUsername())
@@ -88,12 +91,14 @@ public class ReviewService {
                 .build();
     }
 
+    @Transactional
     public ReviewDeleteRes deleteReview(Long tripId, Long reviewId, UserDetailsImpl userDetails) {
         TripEntity trip = tripService.findTrip(tripId);
         ReviewEntity review = findReview(reviewId);
         matchReviewAndTrip(review, trip);
         checkAuthor(userDetails, review);
         reviewRepository.delete(review);
+        trip.calculateAverageRating();
         return ReviewDeleteRes.builder().message("리뷰가 삭제되었습니다.").build();
     }
 

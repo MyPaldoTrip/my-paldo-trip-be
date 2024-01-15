@@ -8,10 +8,12 @@ import com.b6.mypaldotrip.domain.trip.service.TripService;
 import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.response.RestResponse;
+import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,8 +26,9 @@ public class TripController {
 
     @PostMapping
     public ResponseEntity<RestResponse<TripCreateRes>> createTrip(
-            @Valid @RequestBody TripCreateReq req) {
-        TripCreateRes res = tripService.createTrip(req);
+            @Valid @RequestBody TripCreateReq req,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        TripCreateRes res = tripService.createTrip(req, userDetails);
         return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
                 .toResponseEntity();
     }
@@ -47,15 +50,18 @@ public class TripController {
 
     @PatchMapping("/{tripId}")
     public ResponseEntity<RestResponse<TripUpdateRes>> updateTrip(
-            @PathVariable Long tripId, @RequestBody TripUpdateReq req) {
-        TripUpdateRes res = tripService.updateTrip(tripId, req);
+            @PathVariable Long tripId,
+            @RequestBody TripUpdateReq req,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        TripUpdateRes res = tripService.updateTrip(tripId, req, userDetails);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
 
     @DeleteMapping("/{tripId}")
-    public ResponseEntity<RestResponse<TripDeleteRes>> deleteTrip(@PathVariable Long tripId) {
-        TripDeleteRes res = tripService.deleteTrip(tripId);
+    public ResponseEntity<RestResponse<TripDeleteRes>> deleteTrip(
+            @PathVariable Long tripId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        TripDeleteRes res = tripService.deleteTrip(tripId, userDetails);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
