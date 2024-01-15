@@ -5,7 +5,6 @@ import static com.b6.mypaldotrip.domain.comment.store.entity.QCommentEntity.comm
 import com.b6.mypaldotrip.domain.comment.exception.CommentErrorCode;
 import com.b6.mypaldotrip.domain.comment.store.entity.CommentEntity;
 import com.b6.mypaldotrip.domain.comment.store.entity.CommentSort;
-import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -22,11 +21,15 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     public List<CommentEntity> getCommentListByDynamicConditions(
-            Long courseId, Pageable pageable, CommentSort commentSort, UserEntity userEntity) {
+            Long courseId,
+            Pageable pageable,
+            CommentSort commentSort,
+            Long userId,
+            Boolean filterByFollowing) {
 
         return jpaQueryFactory
                 .selectFrom(commentEntity)
-                .where(courseIdEq(courseId), isFollowing(userEntity))
+                .where(courseIdEq(courseId), isFollowing(userId, filterByFollowing))
                 .orderBy(commentSort(commentSort))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -37,9 +40,9 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
         return courseId != null ? commentEntity.courseEntity.courseId.eq(courseId) : null;
     }
 
-    private BooleanExpression isFollowing(UserEntity userEntity) {
-        return userEntity != null
-                ? commentEntity.userEntity.followerList.any().followedUser.eq(userEntity)
+    private BooleanExpression isFollowing(Long userId, Boolean filterByFollowing) {
+        return (userId != null && filterByFollowing)
+                ? commentEntity.userEntity.followerList.any().followedUser.userId.eq(userId)
                 : null;
     }
 
