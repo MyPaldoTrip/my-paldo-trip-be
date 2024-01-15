@@ -2,6 +2,7 @@ package com.b6.mypaldotrip.domain.follow.store.entity;
 
 import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,11 +24,11 @@ public class FollowingEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long followingId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "following_user_id")
     private UserEntity followingUser;
 

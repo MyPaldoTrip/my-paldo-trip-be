@@ -1,9 +1,11 @@
 package com.b6.mypaldotrip.domain.user.service;
 
+import com.b6.mypaldotrip.domain.user.controller.dto.request.UserListReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserSignUpReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserUpdateReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserDeleteRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetProfileRes;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.UserListRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserSignUpRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserUpdateRes;
 import com.b6.mypaldotrip.domain.user.exception.UserErrorCode;
@@ -11,7 +13,9 @@ import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.domain.user.store.repository.UserRepository;
 import com.b6.mypaldotrip.global.common.S3Provider;
 import com.b6.mypaldotrip.global.exception.GlobalException;
+import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -100,6 +104,25 @@ public class UserService {
         return userRepository
                 .findById(userId)
                 .orElseThrow(() -> new GlobalException(UserErrorCode.NOT_FOUND_USER_BY_USERID));
+    }
+
+    public List<UserListRes> getUserList(UserListReq req, UserDetailsImpl userDetails) {
+
+        List<UserEntity> userEntityList = userRepository.findByDynamicConditions(req, userDetails);
+        return userEntityList.stream()
+                .map(
+                        userEntity ->
+                                UserListRes.builder()
+                                        .userId(userEntity.getUserId())
+                                        .email(userEntity.getEmail())
+                                        .username(userEntity.getUsername())
+                                        .age(userEntity.getAge())
+                                        .level(userEntity.getLevel())
+                                        .userRoleValue(userEntity.getUserRole().getValue())
+                                        .writeReviewCnt(userEntity.getReviewList().size())
+                                        .followerCnt(userEntity.getFollowerList().size())
+                                        .build())
+                .toList();
     }
 
     public void acceptApplication(UserEntity userEntity) {
