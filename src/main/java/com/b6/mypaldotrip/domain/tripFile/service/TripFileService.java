@@ -3,6 +3,7 @@ package com.b6.mypaldotrip.domain.tripFile.service;
 import com.b6.mypaldotrip.domain.trip.service.TripService;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
 import com.b6.mypaldotrip.domain.tripFile.controller.dto.TripFileGetRes;
+import com.b6.mypaldotrip.domain.tripFile.controller.dto.response.TripFileDeleteRes;
 import com.b6.mypaldotrip.domain.tripFile.controller.dto.response.TripFileListRes;
 import com.b6.mypaldotrip.domain.tripFile.controller.dto.response.TripFileUploadRes;
 import com.b6.mypaldotrip.domain.tripFile.exception.TripFileErrorCode;
@@ -10,6 +11,7 @@ import com.b6.mypaldotrip.domain.tripFile.store.entity.TripFileEntity;
 import com.b6.mypaldotrip.domain.tripFile.store.repository.TripFileRepository;
 import com.b6.mypaldotrip.global.common.S3Provider;
 import com.b6.mypaldotrip.global.exception.GlobalException;
+import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +66,17 @@ public class TripFileService {
                 .tripFileId(tripFile.getTripFileId())
                 .fileUrl(tripFile.getFileUrl())
                 .build();
+    }
+
+    public TripFileDeleteRes deleteTripFile(
+            Long tripId, Long tripFileId, UserDetailsImpl userDetails) {
+        TripFileEntity tripFile =
+                tripFileRepository.findByTrip_TripIdAndTripFileId(tripId, tripFileId);
+        if (tripFile == null) {
+            throw new GlobalException(TripFileErrorCode.NON_EXIST_FILE);
+        }
+        tripFileRepository.delete(tripFile);
+        return TripFileDeleteRes.builder().message("파일이 삭제 되었습니다.").build();
     }
 
     public void saveTripFile(TripFileEntity tripFile) {

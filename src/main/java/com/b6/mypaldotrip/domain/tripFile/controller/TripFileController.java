@@ -1,6 +1,7 @@
 package com.b6.mypaldotrip.domain.tripFile.controller;
 
 import com.b6.mypaldotrip.domain.tripFile.controller.dto.TripFileGetRes;
+import com.b6.mypaldotrip.domain.tripFile.controller.dto.response.TripFileDeleteRes;
 import com.b6.mypaldotrip.domain.tripFile.controller.dto.response.TripFileListRes;
 import com.b6.mypaldotrip.domain.tripFile.controller.dto.response.TripFileUploadRes;
 import com.b6.mypaldotrip.domain.tripFile.service.TripFileService;
@@ -47,6 +48,16 @@ public class TripFileController {
     public ResponseEntity<RestResponse<TripFileGetRes>> getTripFile(
             @PathVariable Long tripId, @PathVariable Long tripFileId) {
         TripFileGetRes res = tripFileService.getTripFile(tripId, tripFileId);
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                .toResponseEntity();
+    }
+
+    @DeleteMapping("/{tripFileId}")
+    public ResponseEntity<RestResponse<TripFileDeleteRes>> deleteTripFile(
+            @PathVariable Long tripId,
+            @PathVariable Long tripFileId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        TripFileDeleteRes res = tripFileService.deleteTripFile(tripId, tripFileId, userDetails);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
