@@ -7,5 +7,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CourseFileRepository extends JpaRepository<CourseFileEntity, Long> {
     List<CourseFileEntity> findAllByCourseEntity(CourseEntity courseEntity);
-
 }

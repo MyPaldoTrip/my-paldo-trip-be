@@ -60,7 +60,7 @@ public class CourseEntity extends BaseEntity {
     @JoinColumn(name = "city_id")
     private CityEntity cityEntity;
 
-    @OneToMany(mappedBy = "courseEntity")
+    @OneToMany(mappedBy = "courseEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CourseFileEntity> files = new ArrayList<>();
 
     public void updateCourse(String title, String content) {
