@@ -110,19 +110,19 @@ public class UserService {
 
         List<UserEntity> userEntityList = userRepository.findByDynamicConditions(req, userDetails);
         return userEntityList.stream()
-            .map(
-                userEntity ->
-                    UserListRes.builder()
-                        .userId(userEntity.getUserId())
-                        .email(userEntity.getEmail())
-                        .username(userEntity.getUsername())
-                        .age(userEntity.getAge())
-                        .level(userEntity.getLevel())
-                        .userRoleValue(userEntity.getUserRole().getValue())
-                        .writeReviewCnt(userEntity.getReviewList().size())
-                        .followerCnt(userEntity.getFollowerList().size())
-                        .build())
-            .toList();
+                .map(
+                        userEntity ->
+                                UserListRes.builder()
+                                        .userId(userEntity.getUserId())
+                                        .email(userEntity.getEmail())
+                                        .username(userEntity.getUsername())
+                                        .age(userEntity.getAge())
+                                        .level(userEntity.getLevel())
+                                        .userRoleValue(userEntity.getUserRole().getValue())
+                                        .writeReviewCnt(userEntity.getReviewList().size())
+                                        .followerCnt(userEntity.getFollowerList().size())
+                                        .build())
+                .toList();
     }
 
     public void acceptApplication(UserEntity userEntity) {
