@@ -2,11 +2,14 @@ package com.b6.mypaldotrip.domain.tripFile.service;
 
 import com.b6.mypaldotrip.domain.trip.service.TripService;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
+import com.b6.mypaldotrip.domain.tripFile.controller.dto.TripFileGetRes;
 import com.b6.mypaldotrip.domain.tripFile.controller.dto.response.TripFileListRes;
 import com.b6.mypaldotrip.domain.tripFile.controller.dto.response.TripFileUploadRes;
+import com.b6.mypaldotrip.domain.tripFile.exception.TripFileErrorCode;
 import com.b6.mypaldotrip.domain.tripFile.store.entity.TripFileEntity;
 import com.b6.mypaldotrip.domain.tripFile.store.repository.TripFileRepository;
 import com.b6.mypaldotrip.global.common.S3Provider;
+import com.b6.mypaldotrip.global.exception.GlobalException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +52,18 @@ public class TripFileService {
             tripFileListRes.add(res);
         }
         return tripFileListRes;
+    }
+
+    public TripFileGetRes getTripFile(Long tripId, Long tripFileId) {
+        TripFileEntity tripFile =
+                tripFileRepository.findByTrip_TripIdAndTripFileId(tripId, tripFileId);
+        if (tripFile == null) {
+            throw new GlobalException(TripFileErrorCode.NON_EXIST_FILE);
+        }
+        return TripFileGetRes.builder()
+                .tripFileId(tripFile.getTripFileId())
+                .fileUrl(tripFile.getFileUrl())
+                .build();
     }
 
     public void saveTripFile(TripFileEntity tripFile) {
