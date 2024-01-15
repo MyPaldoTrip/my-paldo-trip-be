@@ -58,7 +58,12 @@ public class CommentService {
                         .getCommentListByDynamicConditions(
                                 courseId, pageable, commentSort, userId, filterByFollowing)
                         .stream()
-                        .map(c -> CommentListRes.builder().content(c.getContent()).build())
+                        .map(
+                                c ->
+                                        CommentListRes.builder()
+                                                .username(c.getUserEntity().getUsername())
+                                                .content(c.getContent())
+                                                .build())
                         .toList();
 
         return res;

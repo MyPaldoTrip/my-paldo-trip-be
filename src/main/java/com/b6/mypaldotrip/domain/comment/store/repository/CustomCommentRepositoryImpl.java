@@ -29,6 +29,8 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
 
         return jpaQueryFactory
                 .selectFrom(commentEntity)
+                .leftJoin(commentEntity.userEntity)
+                .fetchJoin()
                 .where(courseIdEq(courseId), isFollowing(userId, filterByFollowing))
                 .orderBy(commentSort(commentSort))
                 .offset(pageable.getOffset())
