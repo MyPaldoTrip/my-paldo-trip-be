@@ -50,9 +50,13 @@ public class TripService {
                         .name(req.name())
                         .description(req.description())
                         .build();
-        String fileUrl = s3Provider.saveFile(multipartFile, "trip");
-        TripFileEntity tripFile = TripFileEntity.builder().trip(trip).fileUrl(fileUrl).build();
-        tripFileRepository.save(tripFile);
+
+        if (multipartFile != null) {
+            String fileUrl = s3Provider.saveFile(multipartFile, "trip");
+            TripFileEntity tripFile = TripFileEntity.builder().trip(trip).fileUrl(fileUrl).build();
+            tripFileRepository.save(tripFile);
+        }
+
         tripRepository.save(trip);
 
         return TripCreateRes.builder()
