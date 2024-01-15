@@ -31,9 +31,9 @@ public class TripFileService {
     public TripFileUploadRes uploadTrip(Long tripId, MultipartFile multipartFile)
             throws IOException {
         String fileUrl = s3Provider.saveFile(multipartFile, "trip");
-        TripEntity trip = tripService.findTrip(tripId);
+        TripEntity trip = checkTripId(tripId);
         TripFileEntity tripFile = TripFileEntity.builder().trip(trip).fileUrl(fileUrl).build();
-        saveTripFile(tripFile);
+        tripFileRepository.save(tripFile);
         return TripFileUploadRes.builder()
                 .tripFileId(tripFile.getTripFileId())
                 .fileUrl(tripFile.getFileUrl())
@@ -42,7 +42,7 @@ public class TripFileService {
 
     @Transactional
     public List<TripFileListRes> getTripFileList(Long tripId) {
-        TripEntity trip = tripService.findTrip(tripId);
+        TripEntity trip = checkTripId(tripId);
         List<TripFileEntity> tripFileEntityList = trip.getTripFileList();
         List<TripFileListRes> tripFileListRes = new ArrayList<>();
         for (TripFileEntity tripFile : tripFileEntityList) {
@@ -57,11 +57,7 @@ public class TripFileService {
     }
 
     public TripFileGetRes getTripFile(Long tripId, Long tripFileId) {
-        TripFileEntity tripFile =
-                tripFileRepository.findByTrip_TripIdAndTripFileId(tripId, tripFileId);
-        if (tripFile == null) {
-            throw new GlobalException(TripFileErrorCode.NON_EXIST_FILE);
-        }
+        TripFileEntity tripFile = checkTripAndFile(tripId, tripFileId);
         return TripFileGetRes.builder()
                 .tripFileId(tripFile.getTripFileId())
                 .fileUrl(tripFile.getFileUrl())
@@ -70,16 +66,24 @@ public class TripFileService {
 
     public TripFileDeleteRes deleteTripFile(
             Long tripId, Long tripFileId, UserDetailsImpl userDetails) {
+        TripFileEntity tripFile = checkTripAndFile(tripId, tripFileId);
+        tripFileRepository.delete(tripFile);
+        return TripFileDeleteRes.builder().message("파일이 삭제 되었습니다.").build();
+    }
+
+    // 여행정보와 파일 검증 메서드
+    private TripFileEntity checkTripAndFile(Long tripId, Long tripFileId) {
         TripFileEntity tripFile =
                 tripFileRepository.findByTrip_TripIdAndTripFileId(tripId, tripFileId);
         if (tripFile == null) {
             throw new GlobalException(TripFileErrorCode.NON_EXIST_FILE);
         }
-        tripFileRepository.delete(tripFile);
-        return TripFileDeleteRes.builder().message("파일이 삭제 되었습니다.").build();
+        return tripFile;
     }
 
-    public void saveTripFile(TripFileEntity tripFile) {
-        tripFileRepository.save(tripFile);
+    // 여행정보 검증 메서드
+    private TripEntity checkTripId(Long tripId) {
+        TripEntity trip = tripService.findTrip(tripId);
+        return trip;
     }
 }
