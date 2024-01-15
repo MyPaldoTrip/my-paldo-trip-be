@@ -9,15 +9,21 @@ import com.b6.mypaldotrip.domain.trip.exception.TripErrorCode;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripSort;
 import com.b6.mypaldotrip.domain.trip.store.repository.TripRepository;
+import com.b6.mypaldotrip.domain.tripFile.store.entity.TripFileEntity;
+import com.b6.mypaldotrip.domain.tripFile.store.repository.TripFileRepository;
 import com.b6.mypaldotrip.domain.user.store.entity.UserRole;
+import com.b6.mypaldotrip.global.common.S3Provider;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -25,8 +31,13 @@ public class TripService {
 
     private final TripRepository tripRepository;
     private final CityService cityService;
+    private final S3Provider s3Provider;
+    private final TripFileRepository tripFileRepository;
 
-    public TripCreateRes createTrip(TripCreateReq req, UserDetailsImpl userDetails) {
+    @Transactional
+    public TripCreateRes createTrip(
+            TripCreateReq req, MultipartFile multipartFile, UserDetailsImpl userDetails)
+            throws IOException {
         String name = req.name();
         checkAuthorization(userDetails);
         if (tripRepository.findByName(name).isPresent()) {
@@ -39,12 +50,17 @@ public class TripService {
                         .name(req.name())
                         .description(req.description())
                         .build();
+        String fileUrl = s3Provider.saveFile(multipartFile, "trip");
+        TripFileEntity tripFile = TripFileEntity.builder().trip(trip).fileUrl(fileUrl).build();
+        tripFileRepository.save(tripFile);
         tripRepository.save(trip);
+
         return TripCreateRes.builder()
                 .city(trip.getCity().getCityName())
                 .category(trip.getCategory())
                 .name(trip.getName())
                 .description(trip.getDescription())
+                .tripFileList(trip.getTripFileList())
                 .build();
     }
 
@@ -66,13 +82,21 @@ public class TripService {
                 .toList();
     }
 
+    @Transactional
     public TripGetRes getTrip(Long tripId) {
         TripEntity trip = findTrip(tripId);
+
+        List<String> fileUrlList = new ArrayList<>();
+        for (TripFileEntity tripFile : trip.getTripFileList()) {
+            fileUrlList.add(tripFile.getFileUrl());
+        }
+
         return TripGetRes.builder()
                 .city(trip.getCity().getCityName())
                 .category(trip.getCategory())
                 .name(trip.getName())
                 .description(trip.getDescription())
+                .urlList(fileUrlList)
                 .build();
     }
 
