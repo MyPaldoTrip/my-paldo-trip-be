@@ -2,6 +2,7 @@ package com.b6.mypaldotrip.domain.trip.store.entity;
 
 import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
 import com.b6.mypaldotrip.domain.review.store.entity.ReviewEntity;
+import com.b6.mypaldotrip.domain.tripCourse.store.entity.TripCourseEntity;
 import com.b6.mypaldotrip.domain.tripFile.store.entity.TripFileEntity;
 import com.b6.mypaldotrip.global.common.BaseEntity;
 import jakarta.persistence.*;
@@ -40,6 +41,9 @@ public class TripEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TripFileEntity> tripFileList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TripCourseEntity> tripCourseList = new ArrayList<>();
 
     @Builder
     private TripEntity(
