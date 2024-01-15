@@ -12,9 +12,9 @@ public enum CourseSort {
 
     @JsonCreator
     public static CourseSort forValue(String value) {
-        for (CourseSort reviewSort : CourseSort.values()) {
-            if (reviewSort.name().equalsIgnoreCase(value)) {
-                return reviewSort;
+        for (CourseSort courseSort : CourseSort.values()) {
+            if (courseSort.name().equalsIgnoreCase(value)) {
+                return courseSort;
             }
         }
         throw new GlobalException(CourseErrorCode.WRONG_COURSE_SORT);

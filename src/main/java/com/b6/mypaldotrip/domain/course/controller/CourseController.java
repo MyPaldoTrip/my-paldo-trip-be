@@ -50,8 +50,12 @@ public class CourseController {
     public ResponseEntity<RestResponse<List<CourseListRes>>> getCourseListByDynamicConditions(
             @RequestParam("page") int page,
             @RequestParam("size") int size,
-            @RequestBody CourseSearchReq req) {
-        List<CourseListRes> res = courseService.getCourseListByDynamicConditions(page, size, req);
+            @RequestBody CourseSearchReq req,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long userId = userDetails != null ? userDetails.getUserEntity().getUserId() : null;
+
+        List<CourseListRes> res =
+                courseService.getCourseListByDynamicConditions(page, size, req, userId);
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
@@ -67,16 +71,20 @@ public class CourseController {
 
     @PutMapping("{courseId}")
     public ResponseEntity<RestResponse<CourseUpdateRes>> updateCourse(
-            @PathVariable Long courseId, @RequestBody CourseUpdateReq req) {
-        CourseUpdateRes res = courseService.updateCourse(courseId, req);
+            @PathVariable Long courseId,
+            @RequestBody CourseUpdateReq req,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        CourseUpdateRes res =
+                courseService.updateCourse(courseId, req, userDetails.getUserEntity());
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
 
     @DeleteMapping("/{courseId}")
-    public ResponseEntity<RestResponse<CourseDeleteRes>> deleteCourse(@PathVariable Long courseId) {
-        CourseDeleteRes res = courseService.deleteCourse(courseId);
+    public ResponseEntity<RestResponse<CourseDeleteRes>> deleteCourse(
+            @PathVariable Long courseId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        CourseDeleteRes res = courseService.deleteCourse(courseId, userDetails.getUserEntity());
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();

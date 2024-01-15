@@ -22,11 +22,15 @@ public class CustomCourseRepositoryImpl implements CustomCourseRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     public List<CourseEntity> getCourseListByDynamicConditions(
-            Pageable pageable, CourseSort courseSort, CourseSearchReq req) {
+            Pageable pageable,
+            CourseSort courseSort,
+            CourseSearchReq req,
+            Long userId,
+            Boolean filterByFollowing) {
 
         return jpaQueryFactory
                 .selectFrom(courseEntity)
-                .where(cityNameEq(req.cityName()), following(req.username()))
+                .where(cityNameEq(req.cityName()), isFollowing(userId, filterByFollowing))
                 .leftJoin(courseEntity.cityEntity)
                 .orderBy(courseSort(courseSort))
                 .offset(pageable.getOffset())
@@ -38,8 +42,10 @@ public class CustomCourseRepositoryImpl implements CustomCourseRepository {
         return cityName != null ? courseEntity.cityEntity.cityName.eq(cityName) : null;
     }
 
-    private BooleanExpression following(String username) {
-        return null;
+    private BooleanExpression isFollowing(Long userId, Boolean filterByFollowing) {
+        return (userId != null && filterByFollowing)
+                ? courseEntity.userEntity.followerList.any().followedUser.userId.eq(userId)
+                : null;
     }
 
     public OrderSpecifier<?> courseSort(CourseSort courseSort) {

@@ -16,9 +16,11 @@ import com.b6.mypaldotrip.domain.course.store.entity.CourseEntity;
 import com.b6.mypaldotrip.domain.course.store.entity.CourseSort;
 import com.b6.mypaldotrip.domain.course.store.repository.CourseRepository;
 import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
+import com.b6.mypaldotrip.domain.user.store.entity.UserRole;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -57,13 +59,15 @@ public class CourseService {
     }
 
     public List<CourseListRes> getCourseListByDynamicConditions(
-            int page, int size, CourseSearchReq req) {
+            int page, int size, CourseSearchReq req, Long userId) {
         Pageable pageable = PageRequest.of(page, size);
         CourseSort courseSort = req.courseSort() != null ? req.courseSort() : CourseSort.MODIFIED;
+        Boolean filterByFollowing = req.filterByFollowing();
 
         List<CourseListRes> res =
                 courseRepository
-                        .getCourseListByDynamicConditions(pageable, courseSort, req)
+                        .getCourseListByDynamicConditions(
+                                pageable, courseSort, req, userId, filterByFollowing)
                         .stream()
                         .map(
                                 c ->
@@ -89,8 +93,10 @@ public class CourseService {
     }
 
     @Transactional
-    public CourseUpdateRes updateCourse(Long courseId, CourseUpdateReq req) {
+    public CourseUpdateRes updateCourse(Long courseId, CourseUpdateReq req, UserEntity userEntity) {
         CourseEntity course = findCourse(courseId);
+
+        validateAuth(userEntity, course);
 
         course.updateCourse(req.title(), req.content());
 
@@ -103,9 +109,10 @@ public class CourseService {
         return res;
     }
 
-    @Transactional
-    public CourseDeleteRes deleteCourse(Long courseId) {
+    public CourseDeleteRes deleteCourse(Long courseId, UserEntity userEntity) {
         CourseEntity course = findCourse(courseId);
+
+        validateAuth(userEntity, course);
 
         courseRepository.delete(course);
 
@@ -118,5 +125,12 @@ public class CourseService {
         return courseRepository
                 .findById(courseId)
                 .orElseThrow(() -> new GlobalException(CourseErrorCode.COURSE_NOT_FOUND));
+    }
+
+    private static void validateAuth(UserEntity userEntity, CourseEntity course) {
+        if (userEntity.getUserRole() == UserRole.ROLE_USER
+                && !Objects.equals(course.getUserEntity().getUserId(), userEntity.getUserId())) {
+            throw new GlobalException(CourseErrorCode.USER_NOT_AUTHORIZED);
+        }
     }
 }
