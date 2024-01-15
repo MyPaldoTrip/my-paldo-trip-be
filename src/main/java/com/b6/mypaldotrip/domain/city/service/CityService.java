@@ -2,6 +2,7 @@ package com.b6.mypaldotrip.domain.city.service;
 
 import com.b6.mypaldotrip.domain.city.controller.dto.request.CityCreateReq;
 import com.b6.mypaldotrip.domain.city.controller.dto.request.CityUpdateReq;
+import com.b6.mypaldotrip.domain.city.controller.dto.request.ProvinceListReq;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityCreateRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityDeleteRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityListRes;
@@ -9,6 +10,7 @@ import com.b6.mypaldotrip.domain.city.controller.dto.response.CityUpdateRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.ProvinceListRes;
 import com.b6.mypaldotrip.domain.city.exception.CityErrorCode;
 import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
+import com.b6.mypaldotrip.domain.city.store.entity.CitySort;
 import com.b6.mypaldotrip.domain.city.store.repository.CityRepository;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import java.util.List;
@@ -74,7 +76,6 @@ public class CityService {
         return res;
     }
 
-    @Transactional
     public List<ProvinceListRes> getProvinceList() {
         List<String> provinces = cityRepository.findDistinctByProvinceName();
         if (provinces.isEmpty()) {
@@ -92,6 +93,20 @@ public class CityService {
         if (res.isEmpty()) {
             throw new GlobalException(CityErrorCode.CITY_NOT_FOUND);
         }
+        return res;
+    }
+
+    public List<ProvinceListRes> getProvinceListInfoSort(ProvinceListReq req) { // 여행정보 많은 순 정렬
+        CitySort sort = (req.citySort() != null) ? req.citySort() : CitySort.INITIAL;
+
+        List<ProvinceListRes> res =
+                cityRepository.getProvinceSort(sort).stream()
+                        .map(
+                                city ->
+                                        ProvinceListRes.builder()
+                                                .provinceName(city.getProvinceName())
+                                                .build())
+                        .toList();
         return res;
     }
 
