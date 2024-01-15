@@ -30,10 +30,15 @@ public class TripFileService {
 
     public TripFileUploadRes uploadTrip(Long tripId, MultipartFile multipartFile)
             throws IOException {
+        if (multipartFile == null || multipartFile.isEmpty()) {
+            throw new GlobalException(TripFileErrorCode.FILE_NOT_ATTACHED);
+        }
+
         String fileUrl = s3Provider.saveFile(multipartFile, "trip");
         TripEntity trip = checkTripId(tripId);
         TripFileEntity tripFile = TripFileEntity.builder().trip(trip).fileUrl(fileUrl).build();
         tripFileRepository.save(tripFile);
+
         return TripFileUploadRes.builder()
                 .tripFileId(tripFile.getTripFileId())
                 .fileUrl(tripFile.getFileUrl())
@@ -83,7 +88,6 @@ public class TripFileService {
 
     // 여행정보 검증 메서드
     private TripEntity checkTripId(Long tripId) {
-        TripEntity trip = tripService.findTrip(tripId);
-        return trip;
+        return tripService.findTrip(tripId);
     }
 }
