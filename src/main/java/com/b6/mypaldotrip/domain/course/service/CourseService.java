@@ -22,6 +22,7 @@ import com.b6.mypaldotrip.global.common.S3Provider;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -52,18 +53,11 @@ public class CourseService {
                         .cityEntity(city)
                         .build();
 
-        CourseFileEntity courseFileEntity = CourseFileEntity.builder().build();
-
         String fileUrl;
-        try {
-            fileUrl = s3Provider.updateFile(courseFileEntity, multipartFile);
-        } catch (GlobalException e) {
-            fileUrl = s3Provider.saveFile(multipartFile, "course");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        fileUrl = s3Provider.saveFile(multipartFile, "course");
 
-        courseFileEntity = CourseFileEntity.builder().courseEntity(course).fileURL(fileUrl).build();
+        CourseFileEntity courseFileEntity =
+                CourseFileEntity.builder().courseEntity(course).fileURL(fileUrl).build();
 
         courseFileRepository.save(courseFileEntity);
 
@@ -101,13 +95,22 @@ public class CourseService {
         return res;
     }
 
+    @Transactional
     public CourseGetRes getCourse(Long courseId) {
         CourseEntity course = findCourse(courseId);
 
+        List<String> UrlList = new ArrayList<>();
+
+        for (CourseFileEntity courseFileEntity : course.getFiles()) {
+            UrlList.add(courseFileEntity.getFileURL());
+        }
+
         CourseGetRes res =
                 CourseGetRes.builder()
+                        .courseId(courseId)
                         .title(course.getTitle())
                         .content(course.getContent())
+                        .fileURL(UrlList)
                         .build();
 
         return res;
