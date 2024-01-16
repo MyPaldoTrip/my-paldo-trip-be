@@ -34,8 +34,6 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                 .selectFrom(userEntity)
                 .leftJoin(userEntity.reviewList)
                 .fetchJoin()
-                .leftJoin(userEntity.followerList)
-                .fetchJoin()
                 .where(
                         ageEq(req.ageCondition()),
                         levelEq(req.levelCondition()),
@@ -46,6 +44,22 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+    }
+
+    @Override
+    public void fetchFollowerList(UserListReq req, UserDetailsImpl userDetails) {
+
+        jpaQueryFactory
+            .selectFrom(userEntity)
+            .leftJoin(userEntity.followerList)
+            .fetchJoin()
+            .where(
+                ageEq(req.ageCondition()),
+                levelEq(req.levelCondition()),
+                userRoleEq(req.userRoleCondition()),
+                existFollowerCondition(req.followerCondition(), userDetails),
+                existFollowingCondition(req.followingCondition(), userDetails))
+            .fetch();
     }
 
     private OrderSpecifier<?> sortCondition(UserSort userSort, Boolean isAsc) {
