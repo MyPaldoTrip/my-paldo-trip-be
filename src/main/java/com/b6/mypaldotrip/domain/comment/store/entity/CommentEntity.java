@@ -42,7 +42,6 @@ public class CommentEntity extends BaseEntity {
     @JoinColumn(name = "course_id")
     private CourseEntity courseEntity;
 
-    // Builder 를 쓰는게 나을까?
     public void updateComment(String content) {
         this.content = content;
     }

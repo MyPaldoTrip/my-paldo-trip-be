@@ -3,4 +3,4 @@ package com.b6.mypaldotrip.domain.comment.controller.dto.response;
 import lombok.Builder;
 
 @Builder
-public record CommentListRes(String content) {}
+public record CommentListRes(String username, String content) {}

@@ -2,6 +2,7 @@ package com.b6.mypaldotrip.domain.trip.store.entity;
 
 import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
 import com.b6.mypaldotrip.domain.review.store.entity.ReviewEntity;
+import com.b6.mypaldotrip.domain.tripFile.store.entity.TripFileEntity;
 import com.b6.mypaldotrip.global.common.BaseEntity;
 import jakarta.persistence.*;
 import java.util.ArrayList;
@@ -37,8 +38,16 @@ public class TripEntity extends BaseEntity {
     @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewEntity> reviewList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TripFileEntity> tripFileList = new ArrayList<>();
+
     @Builder
-    private TripEntity(CityEntity city, Category category, String name, String description) {
+    private TripEntity(
+            CityEntity city,
+            Category category,
+            String name,
+            String description,
+            List<TripFileEntity> tripFileList) {
         this.city = city;
         this.category = category;
         this.name = name;

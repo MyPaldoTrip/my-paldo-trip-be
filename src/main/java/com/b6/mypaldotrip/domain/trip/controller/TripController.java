@@ -10,11 +10,13 @@ import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.response.RestResponse;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/${mpt.version}/trips")
@@ -26,9 +28,11 @@ public class TripController {
 
     @PostMapping
     public ResponseEntity<RestResponse<TripCreateRes>> createTrip(
-            @Valid @RequestBody TripCreateReq req,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        TripCreateRes res = tripService.createTrip(req, userDetails);
+            @Valid @RequestPart TripCreateReq req,
+            @RequestPart MultipartFile multipartFile,
+            @AuthenticationPrincipal UserDetailsImpl userDetails)
+            throws IOException {
+        TripCreateRes res = tripService.createTrip(req, multipartFile, userDetails);
         return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
                 .toResponseEntity();
     }
