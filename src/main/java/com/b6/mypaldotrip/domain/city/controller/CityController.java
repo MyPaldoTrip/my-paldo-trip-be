@@ -8,6 +8,7 @@ import com.b6.mypaldotrip.domain.city.controller.dto.response.CityDeleteRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityListRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityUpdateRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.ProvinceListRes;
+import com.b6.mypaldotrip.domain.city.s3.dto.S3ListRes;
 import com.b6.mypaldotrip.domain.city.s3.dto.S3Res;
 import com.b6.mypaldotrip.domain.city.s3.service.S3Service;
 import com.b6.mypaldotrip.domain.city.service.CityService;
@@ -116,6 +117,13 @@ public class CityController {
     @DeleteMapping("/files/{fileId}") // 파일 삭제
     public ResponseEntity<RestResponse<S3Res>> deleteFile(@PathVariable Long fileId) {
         S3Res res = s3Service.deleteFile(fileId);
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                .toResponseEntity();
+    }
+
+    @GetMapping("/files/{cityId}") // 파일 조회
+    public ResponseEntity<RestResponse<List<S3ListRes>>> getFileList(@PathVariable Long cityId) {
+        List<S3ListRes> res = s3Service.getFileList(cityId);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }

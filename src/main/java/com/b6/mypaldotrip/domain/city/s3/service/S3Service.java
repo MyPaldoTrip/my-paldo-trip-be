@@ -1,6 +1,7 @@
 package com.b6.mypaldotrip.domain.city.s3.service;
 
 import com.b6.mypaldotrip.domain.city.exception.CityErrorCode;
+import com.b6.mypaldotrip.domain.city.s3.dto.S3ListRes;
 import com.b6.mypaldotrip.domain.city.s3.dto.S3Res;
 import com.b6.mypaldotrip.domain.city.s3.entity.S3Entity;
 import com.b6.mypaldotrip.domain.city.s3.repository.S3Repository;
@@ -9,6 +10,7 @@ import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
 import com.b6.mypaldotrip.global.common.S3Provider;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,5 +51,20 @@ public class S3Service {
         s3Repository.delete(s3Entity);
         s3Provider.deleteFile(s3Entity);
         return S3Res.builder().msg("파일이 성공적으로 삭제 되었습니다.").build();
+    }
+
+    public List<S3ListRes> getFileList(Long cityId) {
+        CityEntity city = cityService.findCity(cityId);
+
+        List<S3ListRes> res =
+                s3Repository.findAllByCityEntity(city).stream()
+                        .map(
+                                s3List ->
+                                        S3ListRes.builder()
+                                                .Id(s3List.Id())
+                                                .FileURL(s3List.FileURL())
+                                                .build())
+                        .toList();
+        return res;
     }
 }
