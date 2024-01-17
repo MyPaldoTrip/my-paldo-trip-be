@@ -14,14 +14,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class ChatRoomEntity {
 
-    @Id
-    private String chatRoomId;
+    @Id private String chatRoomId;
 
     private String chatRoomName;
 
     public void updateChatRoomName(String updateRoomName) {
         chatRoomName = updateRoomName;
     }
-
 }
-

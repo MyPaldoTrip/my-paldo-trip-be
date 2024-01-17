@@ -38,7 +38,6 @@ public class ChatController {
         return chatMessageService.findAllMessagesByChatRoomId(chatRoomId);
     }
 
-
     @MessageMapping("/chat/rooms")
     @SendTo("/topic/rooms")
     public ChatRoomSaveRes createChatRoom(@RequestBody CreateRoomReq req) {
@@ -51,8 +50,8 @@ public class ChatController {
     }
 
     @MessageMapping("/chatting/{chatRoomId}")
-    public void chatRoomToUsers(@DestinationVariable String chatRoomId,
-        @Payload ChatMessage chatMessage) {
+    public void chatRoomToUsers(
+            @DestinationVariable String chatRoomId, @Payload ChatMessage chatMessage) {
 
         ChatMessage chatRoom = chatMessageService.findByRoomIdAndSave(chatRoomId, chatMessage);
 
@@ -60,23 +59,25 @@ public class ChatController {
     }
 
     @DeleteMapping("/chat/{chatRoomName}")
-    public ResponseEntity<RestResponse<ChatRoomEntity>> deleteChatRoom(@PathVariable String chatRoomName) {
+    public ResponseEntity<RestResponse<ChatRoomEntity>> deleteChatRoom(
+            @PathVariable String chatRoomName) {
 
         ChatRoomEntity chatRoomEntity = chatMessageService.deleteChatRoom(chatRoomName);
 
-        return RestResponse.success(chatRoomEntity, GlobalResultCode.SUCCESS, versionConfig.getVersion())
-            .toResponseEntity();
+        return RestResponse.success(
+                        chatRoomEntity, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                .toResponseEntity();
     }
 
     @PutMapping("/chat/chatRoomName/{chatRoomName}/updateRoomName/{updateRoomName}")
-    public ResponseEntity<RestResponse<ChatRoomEntity>> updateChatRoom(@PathVariable String chatRoomName,
-        @PathVariable String updateRoomName) {
+    public ResponseEntity<RestResponse<ChatRoomEntity>> updateChatRoom(
+            @PathVariable String chatRoomName, @PathVariable String updateRoomName) {
 
-        ChatRoomEntity chatRoomEntity = chatMessageService.updateChatRoom(chatRoomName,
-            updateRoomName);
+        ChatRoomEntity chatRoomEntity =
+                chatMessageService.updateChatRoom(chatRoomName, updateRoomName);
 
-        return RestResponse.success(chatRoomEntity, GlobalResultCode.SUCCESS, versionConfig.getVersion())
-            .toResponseEntity();
+        return RestResponse.success(
+                        chatRoomEntity, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                .toResponseEntity();
     }
-
 }

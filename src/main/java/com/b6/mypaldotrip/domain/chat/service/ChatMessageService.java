@@ -22,16 +22,13 @@ public class ChatMessageService {
 
     public ChatRoomSaveRes createARoom(String chatRoomName) {
         String chatRoomId = UUID.randomUUID().toString();
-        ChatRoomEntity chatMessageEntity = ChatRoomEntity.builder()
-            .chatRoomId(chatRoomId)
-            .chatRoomName(chatRoomName)
-            .build();
+        ChatRoomEntity chatMessageEntity =
+                ChatRoomEntity.builder().chatRoomId(chatRoomId).chatRoomName(chatRoomName).build();
 
         chatRoomEntityRepository.save(chatMessageEntity);
 
         return ChatRoomSaveRes.builder().content(chatMessageEntity.getChatRoomName()).build();
     }
-
 
     public List<ChatRoomEntity> getChatRoomList() {
         List<ChatRoomEntity> chatMessageList = chatRoomEntityRepository.findAll();
@@ -52,16 +49,20 @@ public class ChatMessageService {
     }
 
     public ChatRoomEntity updateChatRoom(String chatRoomName, String updateRoomName) {
-        ChatRoomEntity chatRoomEntity = chatRoomEntityRepository.findByChatRoomName(chatRoomName)
-            .orElseThrow(() -> new GlobalException(ChatErrorCode.CHATROOM_NOT_FOUND));
+        ChatRoomEntity chatRoomEntity =
+                chatRoomEntityRepository
+                        .findByChatRoomName(chatRoomName)
+                        .orElseThrow(() -> new GlobalException(ChatErrorCode.CHATROOM_NOT_FOUND));
         chatRoomEntity.updateChatRoomName(updateRoomName);
         chatRoomEntityRepository.save(chatRoomEntity);
         return chatRoomEntity;
     }
 
     public ChatRoomEntity deleteChatRoom(String chatRoomName) {
-        ChatRoomEntity chatRoomEntity = chatRoomEntityRepository.findByChatRoomName(chatRoomName)
-            .orElseThrow(() -> new GlobalException(ChatErrorCode.CHATROOM_NOT_FOUND));
+        ChatRoomEntity chatRoomEntity =
+                chatRoomEntityRepository
+                        .findByChatRoomName(chatRoomName)
+                        .orElseThrow(() -> new GlobalException(ChatErrorCode.CHATROOM_NOT_FOUND));
 
         chatRoomEntityRepository.delete(chatRoomEntity);
         return chatRoomEntity;
