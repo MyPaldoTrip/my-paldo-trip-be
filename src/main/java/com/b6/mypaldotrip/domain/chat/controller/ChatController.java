@@ -1,16 +1,10 @@
 package com.b6.mypaldotrip.domain.chat.controller;
 
-import static com.b6.mypaldotrip.domain.chat.exception.ChatErrorCode.CHATROOM_NOT_FOUND;
-
 import com.b6.mypaldotrip.domain.chat.controller.dto.request.CreateRoomReq;
-import com.b6.mypaldotrip.domain.chat.exception.ChatErrorCode;
+import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomSaveRes;
 import com.b6.mypaldotrip.domain.chat.service.ChatMessageService;
 import com.b6.mypaldotrip.domain.chat.store.entity.ChatMessage;
 import com.b6.mypaldotrip.domain.chat.store.entity.ChatRoomEntity;
-import com.b6.mypaldotrip.domain.chat.store.repository.ChatRoomEntityRepository;
-import com.b6.mypaldotrip.global.common.GlobalResultCode;
-import com.b6.mypaldotrip.global.exception.GlobalException;
-import com.b6.mypaldotrip.global.response.RestResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +28,6 @@ public class ChatController {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatMessageService chatMessageService;
-    private final ChatRoomEntityRepository chatRoomEntityRepository;
 
     @GetMapping("/messages/{chatRoomId}/{senderId}")
     public ResponseEntity<List<ChatMessage>> findChatMessagesByChatRoomIdAndSenderId(
@@ -51,8 +44,8 @@ public class ChatController {
 
     @MessageMapping("/chat/rooms")
     @SendTo("/topic/rooms")
-    public ResponseEntity<?> createChatRoom(@RequestBody CreateRoomReq request) {
-        return chatMessageService.createARoom(request.chatRoomName());
+    public ChatRoomSaveRes createChatRoom(@RequestBody CreateRoomReq req) {
+        return chatMessageService.createARoom(req.chatRoomName());
     }
 
     @GetMapping("/rooms")
@@ -71,24 +64,21 @@ public class ChatController {
 
     @DeleteMapping("/chat/{chatRoomName}")
     public ResponseEntity<?> deleteChatRoom(@PathVariable String chatRoomName) {
-        ChatRoomEntity chatRoomEntity = chatRoomEntityRepository.findByChatRoomName(chatRoomName)
-            .orElseThrow(()->new GlobalException(ChatErrorCode.CHATROOM_NOT_FOUND));
 
-        chatRoomEntityRepository.delete(chatRoomEntity);
+        ChatRoomEntity chatRoomEntity = chatMessageService.deleteChatRoom(chatRoomName);
 
         // 삭제 성공 메시지를 포함한 응답 반환
-        return ResponseEntity.ok()
-            .body("Chat room with ID " + chatRoomName + " was deleted successfully.");
+        return ResponseEntity.ok().body(
+            "Chat room with ID " + chatRoomEntity.getChatRoomName() + " was deleted successfully.");
     }
 
     @PutMapping("/chat/chatRoomName/{chatRoomName}/updateRoomName/{updateRoomName}")
     public ResponseEntity<?> updateChatRoom(@PathVariable String chatRoomName,
         @PathVariable String updateRoomName) {
-        ChatRoomEntity chatRoomEntity = chatRoomEntityRepository.findByChatRoomName(chatRoomName)
-            .orElseThrow(()-> new GlobalException(ChatErrorCode.CHATROOM_NOT_FOUND));
 
-        chatRoomEntity.updateChatRoomName(updateRoomName);
-        chatRoomEntityRepository.save(chatRoomEntity);
+        ChatRoomEntity chatRoomEntity = chatMessageService.updateChatRoom(chatRoomName,
+            updateRoomName);
+
         return ResponseEntity.ok().body(
             "Chat room with ID " + chatRoomEntity.getChatRoomName() + " was updated successfully.");
     }

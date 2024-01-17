@@ -22,5 +22,6 @@ public class ChatRoomEntity {
     public void updateChatRoomName(String updateRoomName) {
         chatRoomName = updateRoomName;
     }
+
 }
 
