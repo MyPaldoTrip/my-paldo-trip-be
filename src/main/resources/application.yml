@@ -4,6 +4,16 @@ spring:
     url: jdbc:mysql://localhost:${DB_PORT}/${DB_DATABASE_NAME}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+  data:
+    mongodb:
+      username: ${MONGO_DB_USERNAME}
+      password: ${MONGO_DB_PASSWORD}
+      host: localhost
+      port: 27017
+      database: chat_app
+      authentication-database: admin
+server:
+  port: 8089
 
   jpa:
     open-in-view: false
@@ -67,3 +77,6 @@ kakao:
   redirect-uri : ${KAKAO_REDIRECT_URI}
   rest-api-key : ${KAKAO_REST_API_KEY}
   secret-key : ${KAKAO_SECRET_KEY}
+
+
+

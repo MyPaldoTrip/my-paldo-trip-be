@@ -51,6 +51,10 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    // mongodb
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    // websocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
 }
 
 tasks.named('test') {

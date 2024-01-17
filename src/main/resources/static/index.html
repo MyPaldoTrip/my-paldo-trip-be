@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/main.css">
+    <title>Chat Application</title>
+</head>
+<body>
+
+<h2>One to One Chat | Spring boot & Websocket | By Alibou</h2>
+
+<div class="user-form" id="username-page">
+    <h2>Enter Chatroom</h2>
+    <form id="usernameForm">
+        <label for="nickname">Nickname:</label>
+        <input type="text" id="nickname" name="nickname" required>
+
+        <label for="fullname">Real Name:</label>
+        <input type="text" id="fullname" name="realname" required>
+
+        <button type="submit">Enter Chatroom</button>
+    </form>
+</div>
+
+<div class="chat-container hidden" id="chat-page">
+    <div class="users-list">
+        <div class="users-list-container">
+            <h2>Online Users</h2>
+            <ul id="connectedUsers">
+            </ul>
+        </div>
+        <div>
+            <p id="connected-user-fullname"></p>
+            <a class="logout" href="javascript:void(0)" id="logout">Logout</a>
+        </div>
+    </div>
+
+    <div class="chat-area">
+        <div class="chat-area" id="chat-messages">
+        </div>
+
+        <form id="messageForm" name="messageForm" class="hidden">
+            <div class="message-input">
+                <input autocomplete="off" type="text" id="message" placeholder="Type your message...">
+                <button>Send</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <div>
+        <h2>Create ChatRoom</h2>
+    </div>
+    <input type="text" id="createText" placeholder="방 생성">
+    <button id="createRoomButton">생성</button>
+
+</div>
+<div>
+    <div>
+        <h2>delete ChatRoom</h2>
+    </div>
+    <input type="text" id="deleteRoom" placeholder="방 삭제">
+    <button id="deleteButton" onclick="alert('삭제 버튼 클릭: ' + document.getElementById('deleteRoom').value)">삭제</button> <!-- ID 추가 -->
+
+</div>
+<div>
+    <h2>update ChatRoom</h2>
+</div>
+<div>
+    <input type="text" id="updateText1" placeholder="원래 방이름 ">
+</div>
+<div>
+    <input type="text" id="updateText2" placeholder="수정할 방이름">
+</div>
+<div>
+    <button id="updateButton" onclick="alert('수정 버튼 클릭: ' + document.getElementById('updateText1').value + ', ' + document.getElementById('updateText2').value)">수정</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>
