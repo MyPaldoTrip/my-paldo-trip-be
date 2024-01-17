@@ -5,7 +5,6 @@ import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomSaveRes;
 import com.b6.mypaldotrip.domain.chat.service.ChatMessageService;
 import com.b6.mypaldotrip.domain.chat.store.entity.ChatMessage;
 import com.b6.mypaldotrip.domain.chat.store.entity.ChatRoomEntity;
-import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentListRes;
 import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.response.RestResponse;
@@ -34,7 +33,7 @@ public class ChatController {
     private final ChatMessageService chatMessageService;
     private final VersionConfig versionConfig;
 
-    @GetMapping("/messages/{chatRoomId}")
+    @GetMapping("/messages/{chatRoom¬Id}")
     public ResponseEntity<List<ChatMessage>> findAllMessages(@PathVariable String chatRoomId) {
         return chatMessageService.findAllMessagesByChatRoomId(chatRoomId);
     }
