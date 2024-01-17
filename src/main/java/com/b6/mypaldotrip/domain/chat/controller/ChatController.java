@@ -34,13 +34,6 @@ public class ChatController {
     private final ChatMessageService chatMessageService;
     private final VersionConfig versionConfig;
 
-    @GetMapping("/messages/{chatRoomId}/{senderId}")
-    public ResponseEntity<List<ChatMessage>> findChatMessagesByChatRoomIdAndSenderId(
-        @PathVariable String chatRoomId, @PathVariable String senderId) {
-
-        return chatMessageService.findChatMessagesByChatRoomIdAndSenderId(chatRoomId, senderId);
-    }
-
     @GetMapping("/messages/{chatRoomId}")
     public ResponseEntity<List<ChatMessage>> findAllMessages(@PathVariable String chatRoomId) {
         return chatMessageService.findAllMessagesByChatRoomId(chatRoomId);

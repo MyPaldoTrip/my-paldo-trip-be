@@ -6,10 +6,7 @@ import com.b6.mypaldotrip.domain.chat.store.entity.ChatMessage;
 import com.b6.mypaldotrip.domain.chat.store.entity.ChatRoomEntity;
 import com.b6.mypaldotrip.domain.chat.store.repository.ChatMessageRepository;
 import com.b6.mypaldotrip.domain.chat.store.repository.ChatRoomEntityRepository;
-import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentSaveRes;
-import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.exception.GlobalException;
-import com.b6.mypaldotrip.global.response.RestResponse;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +19,6 @@ public class ChatMessageService {
 
     private final ChatMessageRepository repository;
     private final ChatRoomEntityRepository chatRoomEntityRepository;
-
-    public ResponseEntity<List<ChatMessage>> findChatMessagesByChatRoomIdAndSenderId(String chatRoomId, String senderId) {
-
-        return ResponseEntity.ok(repository.findByChatRoomIdAndSenderId(chatRoomId, senderId));
-    }
-
 
     public ChatRoomSaveRes createARoom(String chatRoomName) {
         String chatRoomId = UUID.randomUUID().toString();
@@ -49,7 +40,7 @@ public class ChatMessageService {
     }
 
     public ChatMessage findByRoomIdAndSave(String chatRoomId, ChatMessage chatMessage) {
-        if(chatRoomEntityRepository.findByChatRoomId(chatRoomId).isPresent()) {
+        if (chatRoomEntityRepository.findByChatRoomId(chatRoomId).isPresent()) {
 
             repository.save(chatMessage);
         }
@@ -60,9 +51,9 @@ public class ChatMessageService {
         return ResponseEntity.ok(repository.findAllByChatRoomId(chatRoomId));
     }
 
-    public ChatRoomEntity updateChatRoom(String chatRoomName,String updateRoomName) {
+    public ChatRoomEntity updateChatRoom(String chatRoomName, String updateRoomName) {
         ChatRoomEntity chatRoomEntity = chatRoomEntityRepository.findByChatRoomName(chatRoomName)
-            .orElseThrow(()->new GlobalException(ChatErrorCode.CHATROOM_NOT_FOUND));
+            .orElseThrow(() -> new GlobalException(ChatErrorCode.CHATROOM_NOT_FOUND));
         chatRoomEntity.updateChatRoomName(updateRoomName);
         chatRoomEntityRepository.save(chatRoomEntity);
         return chatRoomEntity;
@@ -70,7 +61,7 @@ public class ChatMessageService {
 
     public ChatRoomEntity deleteChatRoom(String chatRoomName) {
         ChatRoomEntity chatRoomEntity = chatRoomEntityRepository.findByChatRoomName(chatRoomName)
-            .orElseThrow(()->new GlobalException(ChatErrorCode.CHATROOM_NOT_FOUND));
+            .orElseThrow(() -> new GlobalException(ChatErrorCode.CHATROOM_NOT_FOUND));
 
         chatRoomEntityRepository.delete(chatRoomEntity);
         return chatRoomEntity;
