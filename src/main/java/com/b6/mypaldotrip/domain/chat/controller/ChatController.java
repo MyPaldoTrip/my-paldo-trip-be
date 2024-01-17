@@ -5,6 +5,10 @@ import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomSaveRes;
 import com.b6.mypaldotrip.domain.chat.service.ChatMessageService;
 import com.b6.mypaldotrip.domain.chat.store.entity.ChatMessage;
 import com.b6.mypaldotrip.domain.chat.store.entity.ChatRoomEntity;
+import com.b6.mypaldotrip.domain.comment.controller.dto.response.CommentListRes;
+import com.b6.mypaldotrip.global.common.GlobalResultCode;
+import com.b6.mypaldotrip.global.config.VersionConfig;
+import com.b6.mypaldotrip.global.response.RestResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +32,7 @@ public class ChatController {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatMessageService chatMessageService;
+    private final VersionConfig versionConfig;
 
     @GetMapping("/messages/{chatRoomId}/{senderId}")
     public ResponseEntity<List<ChatMessage>> findChatMessagesByChatRoomIdAndSenderId(
@@ -63,24 +68,23 @@ public class ChatController {
     }
 
     @DeleteMapping("/chat/{chatRoomName}")
-    public ResponseEntity<?> deleteChatRoom(@PathVariable String chatRoomName) {
+    public ResponseEntity<RestResponse<ChatRoomEntity>> deleteChatRoom(@PathVariable String chatRoomName) {
 
         ChatRoomEntity chatRoomEntity = chatMessageService.deleteChatRoom(chatRoomName);
 
-        // 삭제 성공 메시지를 포함한 응답 반환
-        return ResponseEntity.ok().body(
-            "Chat room with ID " + chatRoomEntity.getChatRoomName() + " was deleted successfully.");
+        return RestResponse.success(chatRoomEntity, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+            .toResponseEntity();
     }
 
     @PutMapping("/chat/chatRoomName/{chatRoomName}/updateRoomName/{updateRoomName}")
-    public ResponseEntity<?> updateChatRoom(@PathVariable String chatRoomName,
+    public ResponseEntity<RestResponse<ChatRoomEntity>> updateChatRoom(@PathVariable String chatRoomName,
         @PathVariable String updateRoomName) {
 
         ChatRoomEntity chatRoomEntity = chatMessageService.updateChatRoom(chatRoomName,
             updateRoomName);
 
-        return ResponseEntity.ok().body(
-            "Chat room with ID " + chatRoomEntity.getChatRoomName() + " was updated successfully.");
+        return RestResponse.success(chatRoomEntity, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+            .toResponseEntity();
     }
 
 }
