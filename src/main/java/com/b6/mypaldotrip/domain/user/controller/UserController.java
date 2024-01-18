@@ -2,7 +2,6 @@ package com.b6.mypaldotrip.domain.user.controller;
 
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserListReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserSignUpReq;
-import com.b6.mypaldotrip.domain.user.controller.dto.request.UserUpdateReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserDeleteRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetProfileRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserListRes;
@@ -63,8 +62,8 @@ public class UserController {
 
     @PutMapping
     public ResponseEntity<RestResponse<UserUpdateRes>> updateProfile(
-            @RequestPart MultipartFile multipartFile,
-            @RequestPart UserUpdateReq req,
+            @RequestPart(value = "multipartFile") MultipartFile multipartFile,
+            @RequestPart(value = "req") String req,
             @AuthenticationPrincipal UserDetailsImpl userDetails)
             throws IOException {
         UserUpdateRes res =
@@ -74,7 +73,7 @@ public class UserController {
                 .toResponseEntity();
     }
 
-    @GetMapping
+    @PostMapping
     public ResponseEntity<RestResponse<List<UserListRes>>> getUserList(
             @RequestBody UserListReq req, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         List<UserListRes> res = userService.getUserList(req, userDetails);
