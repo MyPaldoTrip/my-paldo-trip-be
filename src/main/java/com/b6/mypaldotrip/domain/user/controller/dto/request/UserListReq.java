@@ -6,7 +6,7 @@ import com.b6.mypaldotrip.domain.user.store.entity.UserSort;
 public record UserListReq(
         int page,
         int size,
-        boolean asc,
+        Boolean asc,
         UserSort userSort,
         Long ageCondition,
         Long levelCondition,
