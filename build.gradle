@@ -68,11 +68,7 @@ spotless {
         trimTrailingWhitespace()
     }
 }
-
-tasks {
-    check.dependsOn spotlessCheck
-    assemble.dependsOn spotlessApply
-}
+spotlessJava.dependsOn compileJava
 
 // Querydsl 설정부
 def generated = 'src/main/generated'
