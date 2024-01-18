@@ -115,7 +115,7 @@ public class UserService {
     public List<UserListRes> getUserList(UserListReq req, UserDetailsImpl userDetails) {
 
         List<UserEntity> userEntityList = userRepository.findByDynamicConditions(req, userDetails);
-        userRepository.fetchFollowerList(req,userDetails);
+        userRepository.fetchFollowerList(req, userDetails);
 
         return userEntityList.stream()
                 .map(
@@ -126,7 +126,9 @@ public class UserService {
                                         .username(userEntity.getUsername())
                                         .age(userEntity.getAge())
                                         .level(userEntity.getLevel())
-                                        .modified(String.valueOf(userEntity.getModifiedAt()).substring(0,10))
+                                        .modified(
+                                                String.valueOf(userEntity.getModifiedAt())
+                                                        .substring(0, 10))
                                         .userRoleValue(userEntity.getUserRole().getValue())
                                         .writeReviewCnt(userEntity.getReviewList().size())
                                         .followerCnt(userEntity.getFollowerList().size())

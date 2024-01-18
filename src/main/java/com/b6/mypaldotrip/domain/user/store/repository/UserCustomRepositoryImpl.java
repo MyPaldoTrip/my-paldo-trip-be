@@ -50,16 +50,16 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
     public void fetchFollowerList(UserListReq req, UserDetailsImpl userDetails) {
 
         jpaQueryFactory
-            .selectFrom(userEntity)
-            .leftJoin(userEntity.followerList)
-            .fetchJoin()
-            .where(
-                ageEq(req.ageCondition()),
-                levelEq(req.levelCondition()),
-                userRoleEq(req.userRoleCondition()),
-                existFollowerCondition(req.followerCondition(), userDetails),
-                existFollowingCondition(req.followingCondition(), userDetails))
-            .fetch();
+                .selectFrom(userEntity)
+                .leftJoin(userEntity.followerList)
+                .fetchJoin()
+                .where(
+                        ageEq(req.ageCondition()),
+                        levelEq(req.levelCondition()),
+                        userRoleEq(req.userRoleCondition()),
+                        existFollowerCondition(req.followerCondition(), userDetails),
+                        existFollowingCondition(req.followingCondition(), userDetails))
+                .fetch();
     }
 
     private OrderSpecifier<?> sortCondition(UserSort userSort, Boolean isAsc) {
