@@ -10,5 +10,6 @@ public record UserListRes(
         Long age,
         Long level,
         String userRoleValue,
+        String modified,
         int writeReviewCnt,
         int followerCnt) {}

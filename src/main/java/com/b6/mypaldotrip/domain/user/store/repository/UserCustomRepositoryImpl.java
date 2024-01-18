@@ -34,8 +34,6 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                 .selectFrom(userEntity)
                 .leftJoin(userEntity.reviewList)
                 .fetchJoin()
-                .leftJoin(userEntity.followerList)
-                .fetchJoin()
                 .where(
                         ageEq(req.ageCondition()),
                         levelEq(req.levelCondition()),
@@ -48,9 +46,25 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                 .fetch();
     }
 
+    @Override
+    public void fetchFollowerList(UserListReq req, UserDetailsImpl userDetails) {
+
+        jpaQueryFactory
+                .selectFrom(userEntity)
+                .leftJoin(userEntity.followerList)
+                .fetchJoin()
+                .where(
+                        ageEq(req.ageCondition()),
+                        levelEq(req.levelCondition()),
+                        userRoleEq(req.userRoleCondition()),
+                        existFollowerCondition(req.followerCondition(), userDetails),
+                        existFollowingCondition(req.followingCondition(), userDetails))
+                .fetch();
+    }
+
     private OrderSpecifier<?> sortCondition(UserSort userSort, Boolean isAsc) {
         userSort = userSort != null ? userSort : UserSort.MODIFIED;
-        Order order = isAsc ? Order.ASC : Order.DESC;
+        Order order = isAsc != null ? Order.ASC : Order.DESC;
         switch (userSort) {
             case AGE -> {
                 return new OrderSpecifier<>(order, userEntity.age);

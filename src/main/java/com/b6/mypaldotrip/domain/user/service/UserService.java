@@ -14,6 +14,7 @@ import com.b6.mypaldotrip.domain.user.store.repository.UserRepository;
 import com.b6.mypaldotrip.global.common.S3Provider;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -77,9 +78,13 @@ public class UserService {
     }
 
     @Transactional
-    public UserUpdateRes updateProfile(MultipartFile multipartFile, UserUpdateReq req, Long userId)
+    public UserUpdateRes updateProfile(MultipartFile multipartFile, String reqJson, Long userId)
             throws IOException {
         UserEntity userEntity = findUser(userId);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        UserUpdateReq req = objectMapper.readValue(reqJson, UserUpdateReq.class);
+
         String password = passwordEncoder.encode(req.password());
         String fileUrl;
         try {
@@ -106,9 +111,12 @@ public class UserService {
                 .orElseThrow(() -> new GlobalException(UserErrorCode.NOT_FOUND_USER_BY_USERID));
     }
 
+    @Transactional
     public List<UserListRes> getUserList(UserListReq req, UserDetailsImpl userDetails) {
 
         List<UserEntity> userEntityList = userRepository.findByDynamicConditions(req, userDetails);
+        userRepository.fetchFollowerList(req, userDetails);
+
         return userEntityList.stream()
                 .map(
                         userEntity ->
@@ -118,6 +126,9 @@ public class UserService {
                                         .username(userEntity.getUsername())
                                         .age(userEntity.getAge())
                                         .level(userEntity.getLevel())
+                                        .modified(
+                                                String.valueOf(userEntity.getModifiedAt())
+                                                        .substring(0, 10))
                                         .userRoleValue(userEntity.getUserRole().getValue())
                                         .writeReviewCnt(userEntity.getReviewList().size())
                                         .followerCnt(userEntity.getFollowerList().size())

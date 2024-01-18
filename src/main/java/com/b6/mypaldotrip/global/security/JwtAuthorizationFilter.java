@@ -1,5 +1,7 @@
 package com.b6.mypaldotrip.global.security;
 
+import com.b6.mypaldotrip.global.common.GlobalResultCode;
+import com.b6.mypaldotrip.global.exception.GlobalException;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -42,7 +44,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.setContext(context);
             } catch (Exception e) {
                 log.error("Authentication error: {}", e.getMessage());
-                return;
+                throw new GlobalException(GlobalResultCode.NOT_FOUND_TOKEN);
             }
         }
 
