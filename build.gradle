@@ -66,6 +66,7 @@ spotless {
         removeUnusedImports()
         // 각 라인 끝에 있는 공백을 제거
         trimTrailingWhitespace()
+        targetExclude 'src/main/generated/**'
     }
 }
 spotlessJava.dependsOn compileJava
