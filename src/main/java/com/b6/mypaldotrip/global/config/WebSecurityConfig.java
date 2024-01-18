@@ -76,9 +76,7 @@ public class WebSecurityConfig {
                                 .permitAll()
                                 .requestMatchers("/kakao-login/**")
                                 .permitAll()
-                                .requestMatchers(
-                                        HttpMethod.GET,
-                                        "/api/" + versionConfig.getVersion() + "/users/**")
+                                .requestMatchers("/api/" + versionConfig.getVersion() + "/users/**")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated());
