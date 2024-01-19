@@ -1,8 +1,7 @@
 package com.b6.mypaldotrip.domain.course.service;
 
-import com.b6.mypaldotrip.domain.city.exception.CityErrorCode;
+import com.b6.mypaldotrip.domain.city.service.CityService;
 import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
-import com.b6.mypaldotrip.domain.city.store.repository.CityRepository;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSaveReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSearchReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseUpdateReq;
@@ -15,29 +14,36 @@ import com.b6.mypaldotrip.domain.course.exception.CourseErrorCode;
 import com.b6.mypaldotrip.domain.course.store.entity.CourseEntity;
 import com.b6.mypaldotrip.domain.course.store.entity.CourseSort;
 import com.b6.mypaldotrip.domain.course.store.repository.CourseRepository;
+import com.b6.mypaldotrip.domain.courseFile.store.entity.CourseFileEntity;
+import com.b6.mypaldotrip.domain.courseFile.store.repository.CourseFileRepository;
 import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.domain.user.store.entity.UserRole;
+import com.b6.mypaldotrip.global.common.S3Provider;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import jakarta.transaction.Transactional;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
 public class CourseService {
 
     private final CourseRepository courseRepository;
-    private final CityRepository cityRepository;
+    private final CityService cityService;
+    private final CourseFileRepository courseFileRepository;
+    private final S3Provider s3Provider;
 
-    public CourseSaveRes saveCourse(CourseSaveReq req, UserEntity user) {
-        CityEntity city =
-                cityRepository
-                        .findByCityName(req.cityName())
-                        .orElseThrow(() -> new GlobalException(CityErrorCode.CITY_NOT_FOUND));
+    @Transactional
+    public CourseSaveRes saveCourse(CourseSaveReq req, UserEntity user, MultipartFile multipartFile)
+            throws IOException {
+        CityEntity city = cityService.findByCityName(req.cityName());
 
         CourseEntity course =
                 CourseEntity.builder()
@@ -46,6 +52,14 @@ public class CourseService {
                         .userEntity(user)
                         .cityEntity(city)
                         .build();
+
+        String fileUrl;
+        fileUrl = s3Provider.saveFile(multipartFile, "course");
+
+        CourseFileEntity courseFileEntity =
+                CourseFileEntity.builder().courseEntity(course).fileURL(fileUrl).build();
+
+        courseFileRepository.save(courseFileEntity);
 
         courseRepository.save(course);
 
@@ -72,6 +86,7 @@ public class CourseService {
                         .map(
                                 c ->
                                         CourseListRes.builder()
+                                                .courseId(c.getCourseId())
                                                 .title(c.getTitle())
                                                 .content(c.getContent())
                                                 .build())
@@ -80,13 +95,22 @@ public class CourseService {
         return res;
     }
 
+    @Transactional
     public CourseGetRes getCourse(Long courseId) {
         CourseEntity course = findCourse(courseId);
 
+        List<String> UrlList = new ArrayList<>();
+
+        for (CourseFileEntity courseFileEntity : course.getFiles()) {
+            UrlList.add(courseFileEntity.getFileURL());
+        }
+
         CourseGetRes res =
                 CourseGetRes.builder()
+                        .courseId(courseId)
                         .title(course.getTitle())
                         .content(course.getContent())
+                        .fileURL(UrlList)
                         .build();
 
         return res;
@@ -109,6 +133,7 @@ public class CourseService {
         return res;
     }
 
+    @Transactional
     public CourseDeleteRes deleteCourse(Long courseId, UserEntity userEntity) {
         CourseEntity course = findCourse(courseId);
 
@@ -116,7 +141,15 @@ public class CourseService {
 
         courseRepository.delete(course);
 
-        CourseDeleteRes res = CourseDeleteRes.builder().msg(courseId + "번 코스 삭제").build();
+        for (CourseFileEntity courseFileEntity : course.getFiles()) {
+            try {
+                s3Provider.deleteFile(courseFileEntity);
+            } catch (GlobalException e) {
+                return CourseDeleteRes.builder().msg(courseId + "번 코스 삭제, 삭제할 파일 없음").build();
+            }
+        }
+
+        CourseDeleteRes res = CourseDeleteRes.builder().msg(courseId + "번 코스, 파일 삭제").build();
 
         return res;
     }
