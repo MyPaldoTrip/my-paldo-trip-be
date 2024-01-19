@@ -14,6 +14,5 @@ public enum CityErrorCode implements ResultCode {
     ALREADY_CITY_EXIST(HttpStatus.CONFLICT, "이미 존재하는 시 입니다."),
     WRONG_CITY_SORT(HttpStatus.BAD_REQUEST, "잘못된 후기 정렬 방식 입니다.");
     private final HttpStatus httpStatus;
-
     private final String message;
 }

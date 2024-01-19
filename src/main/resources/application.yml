@@ -67,3 +67,8 @@ kakao:
   redirect-uri : ${KAKAO_REDIRECT_URI}
   rest-api-key : ${KAKAO_REST_API_KEY}
   secret-key : ${KAKAO_SECRET_KEY}
+
+weather:
+  service-Key: ${WEATHER_SERVICE_KEY}
+
+
