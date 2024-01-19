@@ -17,11 +17,37 @@ let selectedRoomId = null;
 let chatRoomId = null;
 let senderId = null;
 let chatRoomName = null;
+document.getElementById('usernameForm').addEventListener('submit', function(event) {
+    event.preventDefault();
 
-function connect(event) {
-    nickname = document.querySelector('#nickname').value.trim();
-    fullname = document.querySelector('#fullname').value.trim();
+    var email = document.getElementById('nickname').value;
+    var password = document.getElementById('fullname').value;
 
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'http://localhost:8080/api/v1/users/login', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var token = xhr.getResponseHeader('Authorization');
+            console.log("토큰 : " + token);
+
+            // 'Bearer '를 제거하고 토큰만을 저장합니다.
+            localStorage.setItem('token', token.split(' ')[1]);
+
+            connect(event, email, password);
+        }
+    };
+    var data = JSON.stringify({"email": email, "password": password});
+    xhr.send(data);
+});
+
+
+
+function connect(event, email, password) {
+    event.preventDefault();
+
+    nickname = email.trim();
+    fullname = password.trim();
 
     if (nickname && fullname) {
         usernamePage.classList.add('hidden');
@@ -32,14 +58,33 @@ function connect(event) {
 
         stompClient.connect({}, onConnected, onError);
     }
-    event.preventDefault();
+
+
 }
+
+// function connect(event) {
+//     nickname = document.querySelector('#nickname').value.trim();
+//     fullname = document.querySelector('#fullname').value.trim();
+//
+//
+//     if (nickname && fullname) {
+//         usernamePage.classList.add('hidden');
+//         chatPage.classList.remove('hidden');
+//
+//         const socket = new SockJS('/ws');
+//         stompClient = Stomp.over(socket);
+//
+//         stompClient.connect({}, onConnected, onError);
+//     }
+//     event.preventDefault();
+// }
 
 function onConnected() {
 
     stompClient.subscribe(`/topic/public/`, onMessageReceived);
     stompClient.subscribe(`/user/public`, onMessageReceived);
     stompClient.subscribe(`/topic/public/${chatRoomId}`, onMessageReceived);
+
     // register the connected user
     stompClient.send("/app/user.addUser",
         {},
@@ -47,6 +92,24 @@ function onConnected() {
     );
     document.querySelector('#connected-user-fullname').textContent = nickname;
     findAndDisplayConnectedRooms().then();
+    console.log("토큰"+localStorage.getItem('token'));
+    fetch('http://localhost:8080/api/v1/users/getRole', {
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('token') // 토큰을 헤더에 포함
+        }
+    })
+    .then(response => response.json()) // response.json()을 호출하여 반환된 Promise를 다음 then으로 전달합니다.
+    .then(data => {
+        // 이 콜백은 response.json() Promise가 이행될 때 호출됩니다.
+        // 따라서 data는 response.json()의 결과입니다.
+        console.log("data: ", data);
+
+        if (data && data.role === 'ROLE_ADMIN') {
+            // 사용자의 역할이 ROLE_ADMIN이면, 'hidden' 클래스를 제거합니다.
+            document.getElementById('adminChatRoom').classList.remove('hidden');
+        }
+    })
+    .catch(error => console.error('Error:', error));
 
 
 }
@@ -56,7 +119,7 @@ async function findAndDisplayConnectedRooms() {
     console.log(connectedRoomResponse);
     let connectedRooms = await connectedRoomResponse.json();
     console.log(connectedRooms);
-    connectedRooms = connectedRooms.filter(room => room.nickName !== nickname);
+    //connectedRooms = connectedRooms.filter(room => room.nickName !== nickname);
     const connectedUsersList = document.getElementById('connectedUsers');
     connectedUsersList.innerHTML = '';
 
@@ -77,7 +140,7 @@ function appendUserElement(room, connectedUsersList) {
     console.log(listItem.id);
 
     const userImage = document.createElement('img');
-    userImage.src = '../img/user_icon.png';
+    userImage.src = '/js/user_icon.png';
     userImage.alt = room.chatRoomName;
 
     const usernameSpan = document.createElement('span');
@@ -106,7 +169,7 @@ async function userItemClick(event) {
     clickedUser.classList.add('active');
 
     selectedRoomId = clickedUser.getAttribute('id');
-    chatRoomName = await findRoomName(selectedRoomId); // 여기를 수정했습니다.
+    chatRoomName = await findRoomName(selectedRoomId);
     console.log(chatRoomName);
 
 
@@ -197,10 +260,14 @@ async function onMessageReceived(payload) {
     }
 
     if (selectedRoomId) {
-        document.querySelector(`#${selectedRoomId}`).classList.add('active');
+        document.querySelector(`#id-${selectedRoomId}`).classList.add('active');
+        //선택된 방이 highlight 됨
+        //현재 몽고DB에 roomId들이 숫자+문자로 저장이 되어있는데 CSS에서는 숫자로 시작하는 id값 할당이 되지 않음
+        //예시 - 871d5281-edc8-44cf-a85d-7c46db2c69bd
     } else {
         messageForm.classList.add('hidden');
     }
+
 
     const notifiedUser = document.querySelector(`#${message.senderId}`);
     if (notifiedUser && !notifiedUser.classList.contains('active')) {

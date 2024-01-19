@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
     <title>Chat Application</title>
 </head>
 <body>
@@ -13,11 +13,11 @@
 <div class="user-form" id="username-page">
     <h2>Enter Chatroom</h2>
     <form id="usernameForm">
-        <label for="nickname">Nickname:</label>
+        <label for="nickname">email :</label>
         <input type="text" id="nickname" name="nickname" required>
 
-        <label for="fullname">Real Name:</label>
-        <input type="text" id="fullname" name="realname" required>
+        <label for="fullname">password :</label>
+        <input type="text" id="fullname" name="fullname" required>
 
         <button type="submit">Enter Chatroom</button>
     </form>
@@ -48,7 +48,7 @@
         </form>
     </div>
 </div>
-
+<div id="adminChatRoom" name="adminChatRoom" class="hidden ChatRoomSetting">
 <div>
     <div>
         <h2>Create ChatRoom</h2>
@@ -77,9 +77,10 @@
 <div>
     <button id="updateButton" onclick="alert('수정 버튼 클릭: ' + document.getElementById('updateText1').value + ', ' + document.getElementById('updateText2').value)">수정</button>
 </div>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-<script src="/js/main.js"></script>
+<script th:src="@{/js/main.js}"></script>
 </body>
 </html>
