@@ -4,13 +4,11 @@ import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
 @Document
 public class ChatMessage {
@@ -22,4 +20,6 @@ public class ChatMessage {
     private String recipientId;
     private String content;
     private Date timestamp;
+
+    private ChatMessage(){}
 }
