@@ -15,13 +15,14 @@ import com.b6.mypaldotrip.domain.trip.service.TripService;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
-import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -63,6 +64,7 @@ public class ReviewService {
                 .map(
                         review ->
                                 ReviewListRes.builder()
+                                        .reviewId(review.getReviewId())
                                         .username(review.getUser().getUsername())
                                         .level(review.getUser().getLevel())
                                         .content(review.getContent())
@@ -98,6 +100,7 @@ public class ReviewService {
         matchReviewAndTrip(review, trip);
         checkAuthor(userDetails, review);
         reviewRepository.delete(review);
+        trip.getReviewList().remove(review);
         trip.calculateAverageRating();
         return ReviewDeleteRes.builder().message("리뷰가 삭제되었습니다.").build();
     }
