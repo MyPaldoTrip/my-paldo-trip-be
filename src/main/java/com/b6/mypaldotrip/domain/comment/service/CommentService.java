@@ -53,6 +53,9 @@ public class CommentService {
         CommentSort commentSort =
                 req.commentSort() != null ? req.commentSort() : CommentSort.MODIFIED;
         Boolean filterByFollowing = req.filterByFollowing();
+        int totalPages = commentRepository.getCommentListByDynamicConditions(courseId,
+            pageable, commentSort, userId, filterByFollowing).getTotalPages();
+
         List<CommentListRes> res =
                 commentRepository
                         .getCommentListByDynamicConditions(
@@ -61,9 +64,12 @@ public class CommentService {
                         .map(
                                 c ->
                                         CommentListRes.builder()
+                                                .commentId(c.getCommentId())
                                                 .username(c.getUserEntity().getUsername())
                                                 .content(c.getContent())
+                                                .totalPage(totalPages)
                                                 .build())
+
                         .toList();
 
         return res;
