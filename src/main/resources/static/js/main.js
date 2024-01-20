@@ -12,11 +12,30 @@ const createText = document.querySelector('#createText');
 
 let stompClient = null;
 let nickname = null;
-let fullname = null;
+let password = null;
 let selectedRoomId = null;
 let chatRoomId = null;
 let senderId = null;
 let chatRoomName = null;
+
+var colors = [
+    "#2196F3",
+    "#32c787",
+    "#00BCD4",
+    "#ff5652",
+    "#ffc107",
+    "#ff85af",
+    "#FF9800",
+    "#39bbb0",
+    "#fcba03",
+    "#fc0303",
+    "#de5454",
+    "#b9de54",
+    "#54ded7",
+    "#54ded7",
+    "#1358d6",
+    "#d611c6",
+];
 document.getElementById('usernameForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -24,7 +43,7 @@ document.getElementById('usernameForm').addEventListener('submit', function(even
     var password = document.getElementById('fullname').value;
 
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'http://localhost:8080/api/v1/users/login', true);
+    xhr.open('POST', '/api/v1/users/login', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
@@ -47,9 +66,9 @@ function connect(event, email, password) {
     event.preventDefault();
 
     nickname = email.trim();
-    fullname = password.trim();
+    password = password.trim();
 
-    if (nickname && fullname) {
+    if (nickname && password) {
         usernamePage.classList.add('hidden');
         chatPage.classList.remove('hidden');
 
@@ -80,7 +99,6 @@ function connect(event, email, password) {
 // }
 
 function onConnected() {
-
     stompClient.subscribe(`/topic/public/`, onMessageReceived);
     stompClient.subscribe(`/user/public`, onMessageReceived);
     stompClient.subscribe(`/topic/public/${chatRoomId}`, onMessageReceived);
@@ -88,12 +106,12 @@ function onConnected() {
     // register the connected user
     stompClient.send("/app/user.addUser",
         {},
-        JSON.stringify({nickName: nickname, fullName: fullname, status: 'ONLINE'})
+        JSON.stringify({nickName: nickname, password: password, status: 'ONLINE'})
     );
     document.querySelector('#connected-user-fullname').textContent = nickname;
     findAndDisplayConnectedRooms().then();
     console.log("토큰"+localStorage.getItem('token'));
-    fetch('http://localhost:8080/api/v1/users/getRole', {
+    fetch('/api/v1/chat-rooms/users/getRole', {
         headers: {
             'Authorization': 'Bearer ' + localStorage.getItem('token') // 토큰을 헤더에 포함
         }
@@ -104,20 +122,20 @@ function onConnected() {
         // 따라서 data는 response.json()의 결과입니다.
         console.log("data: ", data);
 
-        if (data && data.role === 'ROLE_ADMIN') {
+        if (data && data.data.role === 'ROLE_ADMIN') { // data.data.role을 사용하여 역할 확인
             // 사용자의 역할이 ROLE_ADMIN이면, 'hidden' 클래스를 제거합니다.
             document.getElementById('adminChatRoom').classList.remove('hidden');
         }
     })
     .catch(error => console.error('Error:', error));
-
-
 }
 
+
 async function findAndDisplayConnectedRooms() {
-    const connectedRoomResponse = await fetch('/api/v1/rooms');
+    const connectedRoomResponse = await fetch('/api/v1/chat-rooms/rooms');
     console.log(connectedRoomResponse);
     let connectedRooms = await connectedRoomResponse.json();
+    connectedRooms = connectedRooms.data; // data 필드를 추출하여 connectedRooms에 재할당
     console.log(connectedRooms);
     //connectedRooms = connectedRooms.filter(room => room.nickName !== nickname);
     const connectedUsersList = document.getElementById('connectedUsers');
@@ -132,6 +150,7 @@ async function findAndDisplayConnectedRooms() {
         }
     });
 }
+
 
 function appendUserElement(room, connectedUsersList) {
     const listItem = document.createElement('li');
@@ -181,8 +200,9 @@ async function userItemClick(event) {
 }
 
 async function findRoomName(selectedRoomId){
-    const connectedRoomResponse = await fetch('/api/v1/rooms');
+    const connectedRoomResponse = await fetch('/api/v1/chat-rooms/rooms');
     let connectedRooms = await connectedRoomResponse.json();
+    connectedRooms = connectedRooms.data; // data 필드를 추출하여 connectedRooms에 재할당
 
     for(let room of connectedRooms){
         if(room.chatRoomId === selectedRoomId){
@@ -192,6 +212,7 @@ async function findRoomName(selectedRoomId){
 
     return null; // 해당하는 방을 찾지 못한 경우, null 반환
 }
+
 function displayMessage(senderId, content) {
     const messageContainer = document.createElement('div');
     messageContainer.classList.add('message');
@@ -200,22 +221,27 @@ function displayMessage(senderId, content) {
     } else {
         messageContainer.classList.add('receiver');
     }
+    const username2 = document.createElement('p');
     const message = document.createElement('p');
+    username2.textContent = nickname;
     message.textContent = content;
+    messageContainer.appendChild(username2);
     messageContainer.appendChild(message);
     chatArea.appendChild(messageContainer);
 }
 
 async function fetchAndDisplayUserChat() {
     chatRoomId = selectedRoomId;
-    const userChatResponse = await fetch(`/api/v1/messages/${selectedRoomId}`);
+    const userChatResponse = await fetch(`/api/v1/chat-rooms/${selectedRoomId}`);
     const userChat = await userChatResponse.json();
+    const chatMessages = userChat.data;   // chatMessage 값을 추출
     chatArea.innerHTML = '';
-    userChat.forEach(chat => {
+    chatMessages.forEach(chat => {
         displayMessage(chat.senderId, chat.content);
     });
     chatArea.scrollTop = chatArea.scrollHeight;
 }
+
 
 
 function onError() {
@@ -260,7 +286,7 @@ async function onMessageReceived(payload) {
     }
 
     if (selectedRoomId) {
-        document.querySelector(`#id-${selectedRoomId}`).classList.add('active');
+        document.querySelector(`#${selectedRoomId}`).classList.add('active');
         //선택된 방이 highlight 됨
         //현재 몽고DB에 roomId들이 숫자+문자로 저장이 되어있는데 CSS에서는 숫자로 시작하는 id값 할당이 되지 않음
         //예시 - 871d5281-edc8-44cf-a85d-7c46db2c69bd
@@ -280,22 +306,51 @@ async function onMessageReceived(payload) {
 function onLogout() {
     stompClient.send("/app/user.disconnectUser",
         {},
-        JSON.stringify({nickName: nickname, fullName: fullname, status: 'OFFLINE'})
+        JSON.stringify({nickName: nickname, password: password, status: 'OFFLINE'})
     );
     window.location.reload();
 }
 
+// 방 이름을 입력하고 방을 생성하는 이벤트 핸들러
 document.getElementById('createRoomButton').addEventListener('click', function(event) {
+    // 방 이름 가져오기
     const createText = document.getElementById('createText').value;
-    stompClient.send("/app/chat/rooms", {}, JSON.stringify({chatRoomName: createText }));
-})
+    const roomData = { chatRoomName: createText };
+
+    // 로컬 스토리지에서 토큰 가져오기
+    const token = localStorage.getItem('token');
+
+    // 방 생성 요청 보내기
+    fetch('/api/v1/chat-rooms/rooms', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token // 로컬 스토리지의 토큰 사용
+        },
+        body: JSON.stringify(roomData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("HTTP error " + response.status);
+        }
+        return response.json();
+    })
+    .then(data => console.log(data)) // 채팅방 생성 결과를 콘솔에 출력
+    .catch((error) => console.error('Error:', error));
+});
+
+
 //stompClient.send("/app/chat/rooms", {}, JSON.stringify(createRoomRequest));
 //생성 버튼 누르면 작동함
 document.getElementById('deleteButton').addEventListener('click', function(event) { // 'deleteButton'으로 수정
     const chatRoomName = document.getElementById('deleteRoom').value;
 
-    fetch('/api/v1/chat/' + chatRoomName, {
-        method: 'DELETE'
+    fetch('/api/v1/chat-rooms/rooms/' + chatRoomName, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')// 인증 토큰 포함
+        }
     })
     .then(response => response.json())
     .then(data => console.log(data))
@@ -304,14 +359,21 @@ document.getElementById('deleteButton').addEventListener('click', function(event
 document.getElementById('updateButton').addEventListener('click', function(event) {
     const originalRoomName = document.getElementById('updateText1').value;
     const newRoomName = document.getElementById('updateText2').value;
+    const token = localStorage.getItem('token'); // 로컬 스토리지에서 토큰을 가져옵니다.
 
-    fetch(`/api/v1/chat/chatRoomName/${originalRoomName}/updateRoomName/${newRoomName}`, {
-        method: 'PUT'
+    fetch(`/api/v1/chat-rooms/chatRooms/${originalRoomName}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' +localStorage.getItem('token') // 인증 토큰 포함
+        },
+        body: JSON.stringify({ newChatRoomName: newRoomName }) // 변경할 채팅방 이름을 JSON 형식으로 전달합니다.
     })
     .then(response => response.json())
     .then(data => console.log(data))
     .catch(error => console.error('Error:', error));
 });
+
 
 
 

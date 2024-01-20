@@ -10,18 +10,17 @@ import com.b6.mypaldotrip.global.exception.GlobalException;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class ChatMessageService {
 
-    private final ChatMessageRepository repository;
+    private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomEntityRepository chatRoomEntityRepository;
 
     public ChatRoomSaveRes createARoom(String chatRoomName) {
-        String chatRoomId = UUID.randomUUID().toString();
+        String chatRoomId = "id"+ UUID.randomUUID();
         ChatRoomEntity chatMessageEntity =
                 ChatRoomEntity.builder().chatRoomId(chatRoomId).chatRoomName(chatRoomName).build();
 
@@ -31,21 +30,21 @@ public class ChatMessageService {
     }
 
     public List<ChatRoomEntity> getChatRoomList() {
-        List<ChatRoomEntity> chatMessageList = chatRoomEntityRepository.findAll();
+        List<ChatRoomEntity> chatRoomList = chatRoomEntityRepository.findAll();
 
-        return chatMessageList;
+        return chatRoomList;
     }
 
-    public ChatMessage findByRoomIdAndSave(String chatRoomId, ChatMessage chatMessage) {
+    public ChatMessage saveMessageIfRoomExists(String chatRoomId, ChatMessage chatMessage) {
         if (chatRoomEntityRepository.findByChatRoomId(chatRoomId).isPresent()) {
 
-            repository.save(chatMessage);
+            chatMessageRepository.save(chatMessage);
         }
         return chatMessage;
     }
 
-    public ResponseEntity<List<ChatMessage>> findAllMessagesByChatRoomId(String chatRoomId) {
-        return ResponseEntity.ok(repository.findAllByChatRoomId(chatRoomId));
+    public List<ChatMessage> findAllMessagesByChatRoomId(String chatRoomId) {
+        return chatMessageRepository.findAllByChatRoomId(chatRoomId);
     }
 
     public ChatRoomEntity updateChatRoom(String chatRoomName, String updateRoomName) {
