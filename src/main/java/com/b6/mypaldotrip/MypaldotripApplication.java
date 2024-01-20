@@ -9,5 +9,4 @@ public class MypaldotripApplication {
     public static void main(String[] args) {
         SpringApplication.run(MypaldotripApplication.class, args);
     }
-
 }

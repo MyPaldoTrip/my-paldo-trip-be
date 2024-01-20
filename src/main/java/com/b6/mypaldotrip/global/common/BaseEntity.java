@@ -25,4 +25,7 @@ public class BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime modifiedAt;
 
+    protected String getFileURL() {
+        return this.getFileURL();
+    }
 }

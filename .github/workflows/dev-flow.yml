@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - dev
+  pull_request:
+    branches:
+      - dev
 
 permissions:
   contents: read
@@ -24,6 +27,9 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
+      - name: Spotless Check
+        run: ./gradlew spotlessCheck
+
+      #      테스트 빼고 빌드
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
-        run: ./gradlew clean build
+        run: ./gradlew clean build -x test

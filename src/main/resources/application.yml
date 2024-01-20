@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:${DB_PORT}/${DB_DATABASE_NAME}
+    url: jdbc:mysql://${ENDPOINT}:${DB_PORT}/${DB_DATABASE_NAME}?serverTimezone=UTC&characterEncoding=UTF-8
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
@@ -22,5 +22,57 @@ spring:
       mode: always
       encoding: UTF-8
 
+  data:
+    mongodb:
+      username: ${MONGO_DB_USERNAME}
+      password: ${MONGO_DB_PASSWORD}
+      host: localhost
+      port: 27017
+      database: chat_app
+      authentication-database: admin
+    redis:
+      host: localhost
+      port: 6379
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      smtp:
+        auth: true
+        starttls:
+          enable: true
+        connection-timeout: 5000 #클라이언트가 SMTP서버와 연결을 설정하는데 대기해야하는 시간(ms)
+        timeout: 5000 #클라이언트가 SMTP서버로부터 응답을 대기해야하는 시간(ms)
+        write-timeout: 5000 #클라이언트가 작업을 완료하는데 대기해야 하는 시간(ms)
+
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
+
 mpt:
   version: v1
+
+cloud:
+  aws:
+    s3:
+      bucket:
+        name: ${BUCKET_NAME}
+        url: https://${BUCKET_NAME}.s3.ap-northeast-2.amazonaws.com/
+    credentials:
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+
+kakao:
+  redirect-uri : ${KAKAO_REDIRECT_URI}
+  rest-api-key : ${KAKAO_REST_API_KEY}
+  secret-key : ${KAKAO_SECRET_KEY}
+
+
