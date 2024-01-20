@@ -8,10 +8,13 @@ import com.b6.mypaldotrip.domain.comment.store.entity.CommentSort;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -20,22 +23,31 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<CommentEntity> getCommentListByDynamicConditions(
+    public Page<CommentEntity> getCommentListByDynamicConditions(
             Long courseId,
             Pageable pageable,
             CommentSort commentSort,
             Long userId,
             Boolean filterByFollowing) {
 
-        return jpaQueryFactory
-                .selectFrom(commentEntity)
-                .leftJoin(commentEntity.userEntity)
-                .fetchJoin()
-                .where(courseIdEq(courseId), isFollowing(userId, filterByFollowing))
-                .orderBy(commentSort(commentSort))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+        List<CommentEntity> content =
+                jpaQueryFactory
+                        .selectFrom(commentEntity)
+                        .leftJoin(commentEntity.userEntity)
+                        .fetchJoin()
+                        .where(courseIdEq(courseId), isFollowing(userId, filterByFollowing))
+                        .orderBy(commentSort(commentSort))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .fetch();
+
+        JPAQuery<Long> countQuery =
+                jpaQueryFactory
+                        .select(commentEntity.count())
+                        .from(commentEntity)
+                        .where(courseIdEq(courseId), isFollowing(userId, filterByFollowing));
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
     private BooleanExpression courseIdEq(Long courseId) {
@@ -43,7 +55,7 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
     }
 
     private BooleanExpression isFollowing(Long userId, Boolean filterByFollowing) {
-        return (userId != null && filterByFollowing)
+        return (userId != -1 && filterByFollowing)
                 ? commentEntity.userEntity.followerList.any().followedUser.userId.eq(userId)
                 : null;
     }

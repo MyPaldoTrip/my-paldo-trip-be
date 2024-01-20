@@ -1,6 +1,5 @@
 package com.b6.mypaldotrip.domain.course.controller;
 
-import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSaveReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSearchReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseUpdateReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseDeleteRes;
@@ -41,8 +40,8 @@ public class CourseController {
 
     @PostMapping
     public ResponseEntity<RestResponse<CourseSaveRes>> saveCourse(
-            @Valid @RequestPart CourseSaveReq req,
-            @RequestPart MultipartFile multipartFile,
+            @Valid @RequestPart String req,
+            @RequestPart(required = false) MultipartFile multipartFile,
             @AuthenticationPrincipal UserDetailsImpl userDetails)
             throws IOException {
         CourseSaveRes res =
@@ -52,13 +51,13 @@ public class CourseController {
                 .toResponseEntity();
     }
 
-    @GetMapping
+    @PostMapping("/list")
     public ResponseEntity<RestResponse<List<CourseListRes>>> getCourseListByDynamicConditions(
             @RequestParam int page,
             @RequestParam int size,
             @RequestBody CourseSearchReq req,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Long userId = userDetails != null ? userDetails.getUserEntity().getUserId() : null;
+        Long userId = userDetails != null ? userDetails.getUserEntity().getUserId() : -1;
 
         List<CourseListRes> res =
                 courseService.getCourseListByDynamicConditions(page, size, req, userId);
