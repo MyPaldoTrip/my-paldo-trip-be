@@ -58,7 +58,5 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/mpt:$TIMESTAMP
             sudo docker stop $(sudo docker ps -q)
             sudo docker rm $(sudo docker ps -aq)
-#            쉘에 환경 변수 설정
             export TIMESTAMP=${{ steps.timestamp.outputs.timestamp }};
-#            쉘에 담긴 환경 변수 전달
             sudo -E docker-compose up -d
