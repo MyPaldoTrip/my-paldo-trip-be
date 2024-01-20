@@ -20,15 +20,17 @@ import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.domain.user.store.entity.UserRole;
 import com.b6.mypaldotrip.global.common.S3Provider;
 import com.b6.mypaldotrip.global.exception.GlobalException;
-import jakarta.transaction.Transactional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -40,57 +42,65 @@ public class CourseService {
     private final CourseFileRepository courseFileRepository;
     private final S3Provider s3Provider;
 
+
     @Transactional
-    public CourseSaveRes saveCourse(CourseSaveReq req, UserEntity user, MultipartFile multipartFile)
-            throws IOException {
+    public CourseSaveRes saveCourse(String reqStr, UserEntity user, MultipartFile multipartFile)
+        throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        CourseSaveReq req = objectMapper.readValue(reqStr, CourseSaveReq.class);
+
         CityEntity city = cityService.findByCityName(req.cityName());
 
         CourseEntity course =
-                CourseEntity.builder()
-                        .title(req.title())
-                        .content(req.content())
-                        .userEntity(user)
-                        .cityEntity(city)
-                        .build();
+            CourseEntity.builder()
+                .title(req.title())
+                .content(req.content())
+                .userEntity(user)
+                .cityEntity(city)
+                .build();
 
-        String fileUrl;
-        fileUrl = s3Provider.saveFile(multipartFile, "course");
-
-        CourseFileEntity courseFileEntity =
+        if (multipartFile != null) {
+            String fileUrl = s3Provider.saveFile(multipartFile, "course");
+            CourseFileEntity courseFileEntity =
                 CourseFileEntity.builder().courseEntity(course).fileURL(fileUrl).build();
-
-        courseFileRepository.save(courseFileEntity);
+            courseFileRepository.save(courseFileEntity);
+        }
 
         courseRepository.save(course);
 
         CourseSaveRes res =
-                CourseSaveRes.builder()
-                        .title(course.getTitle())
-                        .content(course.getContent())
-                        .build();
+            CourseSaveRes.builder()
+                .courseId(course.getCourseId())
+                .title(course.getTitle())
+                .content(course.getContent())
+                .build();
 
         return res;
     }
-
+    @Transactional
     public List<CourseListRes> getCourseListByDynamicConditions(
-            int page, int size, CourseSearchReq req, Long userId) {
+        int page, int size, CourseSearchReq req, Long userId) {
         Pageable pageable = PageRequest.of(page, size);
         CourseSort courseSort = req.courseSort() != null ? req.courseSort() : CourseSort.MODIFIED;
         Boolean filterByFollowing = req.filterByFollowing();
 
-        List<CourseListRes> res =
-                courseRepository
-                        .getCourseListByDynamicConditions(
-                                pageable, courseSort, req, userId, filterByFollowing)
-                        .stream()
-                        .map(
-                                c ->
-                                        CourseListRes.builder()
-                                                .courseId(c.getCourseId())
-                                                .title(c.getTitle())
-                                                .content(c.getContent())
-                                                .build())
-                        .toList();
+        Page<CourseEntity> val = courseRepository.getCourseListByDynamicConditions(pageable,
+            courseSort, req, userId, filterByFollowing);
+        courseRepository.fetchComments(userId, req, filterByFollowing);
+        courseRepository.fetchLikes(userId, req, filterByFollowing);
+        List<CourseListRes> res = val.stream().map(
+            courseEntity -> CourseListRes.builder()
+                .courseId(courseEntity.getCourseId())
+                .username(courseEntity.getUserEntity().getUsername())
+                .title(courseEntity.getTitle())
+                .content(courseEntity.getContent())
+                .totalPage(val.getTotalPages())
+                .level(courseEntity.getUserEntity().getLevel())
+                .createdAt(courseEntity.getCreatedAt())
+                .commentCount(courseEntity.getComments().size())
+                .likeCount(courseEntity.getLikes().size())
+                .build()
+        ).toList();
 
         return res;
     }
@@ -106,12 +116,14 @@ public class CourseService {
         }
 
         CourseGetRes res =
-                CourseGetRes.builder()
-                        .courseId(courseId)
-                        .title(course.getTitle())
-                        .content(course.getContent())
-                        .fileURL(UrlList)
-                        .build();
+            CourseGetRes.builder()
+                .courseId(courseId)
+                .username(course.getUserEntity().getUsername())
+                .title(course.getTitle())
+                .content(course.getContent())
+                .fileURL(UrlList)
+                .createdAt(course.getCreatedAt())
+                .build();
 
         return res;
     }
@@ -125,10 +137,10 @@ public class CourseService {
         course.updateCourse(req.title(), req.content());
 
         CourseUpdateRes res =
-                CourseUpdateRes.builder()
-                        .title(course.getTitle())
-                        .content(course.getContent())
-                        .build();
+            CourseUpdateRes.builder()
+                .title(course.getTitle())
+                .content(course.getContent())
+                .build();
 
         return res;
     }
@@ -156,13 +168,13 @@ public class CourseService {
 
     public CourseEntity findCourse(Long courseId) {
         return courseRepository
-                .findById(courseId)
-                .orElseThrow(() -> new GlobalException(CourseErrorCode.COURSE_NOT_FOUND));
+            .findById(courseId)
+            .orElseThrow(() -> new GlobalException(CourseErrorCode.COURSE_NOT_FOUND));
     }
 
     private static void validateAuth(UserEntity userEntity, CourseEntity course) {
         if (userEntity.getUserRole() == UserRole.ROLE_USER
-                && !Objects.equals(course.getUserEntity().getUserId(), userEntity.getUserId())) {
+            && !Objects.equals(course.getUserEntity().getUserId(), userEntity.getUserId())) {
             throw new GlobalException(CourseErrorCode.USER_NOT_AUTHORIZED);
         }
     }
