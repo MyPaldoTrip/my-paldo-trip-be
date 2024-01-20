@@ -9,11 +9,12 @@ import com.b6.mypaldotrip.global.exception.GlobalException;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -39,7 +40,7 @@ public class TripRepositoryImpl implements TripCustomRepository {
     }
 
     private BooleanExpression getEqCityName(QTripEntity trip, String cityName) {
-        return StringUtils.hasText(cityName) ? trip.city.cityName.eq(cityName) : null;
+        return StringUtils.hasText(cityName) ? trip.city.cityName.contains(cityName) : null;
     }
 
     private BooleanExpression getEqCategory(QTripEntity trip, Category category) {
