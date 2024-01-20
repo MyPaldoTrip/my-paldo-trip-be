@@ -5,4 +5,9 @@ import lombok.Builder;
 
 @Builder
 public record TripListRes(
-        Long tripId, String city, Category category, String name, double averageRating, int reviews) {}
+        Long tripId,
+        String city,
+        Category category,
+        String name,
+        double averageRating,
+        int reviews) {}
