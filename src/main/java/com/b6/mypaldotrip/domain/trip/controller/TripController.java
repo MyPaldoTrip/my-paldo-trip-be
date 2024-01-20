@@ -49,7 +49,7 @@ public class TripController {
                 .toResponseEntity();
     }
 
-    @GetMapping
+    @PostMapping("/lists")
     public ResponseEntity<RestResponse<List<TripListRes>>> getTripList(
             @RequestBody TripListReq req) {
         List<TripListRes> res = tripService.getTripList(req);

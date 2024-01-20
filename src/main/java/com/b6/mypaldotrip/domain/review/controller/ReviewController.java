@@ -13,11 +13,12 @@ import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.response.RestResponse;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/${mpt.version}/trips/{tripId}/reviews")
@@ -37,7 +38,7 @@ public class ReviewController {
                 .toResponseEntity();
     }
 
-    @GetMapping
+    @PostMapping("/lists")
     public ResponseEntity<RestResponse<List<ReviewListRes>>> getReviewList(
             @PathVariable Long tripId,
             @RequestBody ReviewListReq req,
