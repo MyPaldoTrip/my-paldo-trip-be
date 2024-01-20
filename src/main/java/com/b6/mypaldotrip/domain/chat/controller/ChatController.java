@@ -118,9 +118,7 @@ public class ChatController {
                         .build();
         System.out.println("res.role() = " + res.role());
 
-
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
-                    .toResponseEntity();
-
+                .toResponseEntity();
     }
 }
