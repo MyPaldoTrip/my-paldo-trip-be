@@ -1,9 +1,10 @@
 package com.b6.mypaldotrip.domain.trip.controller.dto.response;
 
 import com.b6.mypaldotrip.domain.trip.store.entity.Category;
-import java.util.List;
 import lombok.Builder;
+
+import java.util.List;
 
 @Builder
 public record TripGetRes(
-        String city, Category category, String name, String description, List<String> urlList) {}
+        Long tripId, String city, Category category, String name, String description, List<String> urlList) {}

@@ -1,8 +1,9 @@
 package com.b6.mypaldotrip.domain.review.controller.dto.response;
 
-import java.time.LocalDateTime;
 import lombok.Builder;
+
+import java.time.LocalDateTime;
 
 @Builder
 public record ReviewListRes(
-        String username, Long level, String content, Integer score, LocalDateTime modifiedAt) {}
+        Long reviewId, String username, Long level, String content, Integer score, LocalDateTime modifiedAt) {}
