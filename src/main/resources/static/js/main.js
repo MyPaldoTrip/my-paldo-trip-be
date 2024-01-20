@@ -77,26 +77,8 @@ function connect(event, email, password) {
 
         stompClient.connect({}, onConnected, onError);
     }
-
-
 }
 
-// function connect(event) {
-//     nickname = document.querySelector('#nickname').value.trim();
-//     fullname = document.querySelector('#fullname').value.trim();
-//
-//
-//     if (nickname && fullname) {
-//         usernamePage.classList.add('hidden');
-//         chatPage.classList.remove('hidden');
-//
-//         const socket = new SockJS('/ws');
-//         stompClient = Stomp.over(socket);
-//
-//         stompClient.connect({}, onConnected, onError);
-//     }
-//     event.preventDefault();
-// }
 
 function onConnected() {
     stompClient.subscribe(`/topic/public/`, onMessageReceived);
@@ -113,6 +95,7 @@ function onConnected() {
     console.log("토큰"+localStorage.getItem('token'));
     fetch('/api/v1/chat-rooms/users/getRole', {
         headers: {
+            'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + localStorage.getItem('token') // 토큰을 헤더에 포함
         }
     })
@@ -132,7 +115,12 @@ function onConnected() {
 
 
 async function findAndDisplayConnectedRooms() {
-    const connectedRoomResponse = await fetch('/api/v1/chat-rooms/rooms');
+    const connectedRoomResponse = await fetch('/api/v1/chat-rooms/rooms', {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token') // 토큰을 헤더에 포함
+        }
+    });
     console.log(connectedRoomResponse);
     let connectedRooms = await connectedRoomResponse.json();
     connectedRooms = connectedRooms.data; // data 필드를 추출하여 connectedRooms에 재할당
@@ -200,7 +188,12 @@ async function userItemClick(event) {
 }
 
 async function findRoomName(selectedRoomId){
-    const connectedRoomResponse = await fetch('/api/v1/chat-rooms/rooms');
+    const connectedRoomResponse = await fetch('/api/v1/chat-rooms/rooms', {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token') // 토큰을 헤더에 포함
+        }
+    });
     let connectedRooms = await connectedRoomResponse.json();
     connectedRooms = connectedRooms.data; // data 필드를 추출하여 connectedRooms에 재할당
 
@@ -232,7 +225,13 @@ function displayMessage(senderId, content) {
 
 async function fetchAndDisplayUserChat() {
     chatRoomId = selectedRoomId;
-    const userChatResponse = await fetch(`/api/v1/chat-rooms/${chatRoomId}`);
+    const userChatResponse = await fetch(`/api/v1/chat-rooms/${chatRoomId}`, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token') // 토큰을 헤더에 포함
+        }
+    });
+
     const userChat = await userChatResponse.json();
     //const chatMessageSenders = userChat.data.chatMessageSenders;   // chatMessageSenders 값을 추출
     const chatMessages = userChat.data.chatMessages;   // chatMessages 값을 추출
