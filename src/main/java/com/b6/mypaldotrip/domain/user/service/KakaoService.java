@@ -69,7 +69,7 @@ public class KakaoService {
                                         + "&client_id="
                                         + CLIENT_ID
                                         + "&redirect_uri="
-                                        + "http://localhost:8080"
+                                        + "http://43.200.254.60:8080"
                                         + REDIRECT_URI
                                         + "&code="
                                         + code
