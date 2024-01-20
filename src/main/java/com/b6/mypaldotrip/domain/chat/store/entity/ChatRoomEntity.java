@@ -16,7 +16,8 @@ public class ChatRoomEntity {
 
     private String chatRoomName;
 
-    private ChatRoomEntity(){}
+    private ChatRoomEntity() {}
+
     public void updateChatRoomName(String updateRoomName) {
         chatRoomName = updateRoomName;
     }

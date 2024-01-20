@@ -42,25 +42,31 @@ public class ChatController {
     private final VersionConfig versionConfig;
 
     @GetMapping("/{chatRoomId}")
-    public ResponseEntity<RestResponse<ChatRoomInfoRes>> findAllMessages(@PathVariable String chatRoomId) {
-        ChatRoomInfoRes chatRoomInfoRes =  chatMessageService.findAllMessagesByChatRoomId(chatRoomId);
-        return RestResponse.success(chatRoomInfoRes, GlobalResultCode.SUCCESS, versionConfig.getVersion())
-            .toResponseEntity();
+    public ResponseEntity<RestResponse<ChatRoomInfoRes>> findAllMessages(
+            @PathVariable String chatRoomId) {
+        ChatRoomInfoRes chatRoomInfoRes =
+                chatMessageService.findAllMessagesByChatRoomId(chatRoomId);
+        return RestResponse.success(
+                        chatRoomInfoRes, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                .toResponseEntity();
     }
 
     @PostMapping("/rooms")
-    public ResponseEntity<RestResponse<ChatRoomSaveRes>> createChatRoom(@RequestBody CreateRoomReq req) {
+    public ResponseEntity<RestResponse<ChatRoomSaveRes>> createChatRoom(
+            @RequestBody CreateRoomReq req) {
         ChatRoomSaveRes chatRoomSaveRes = chatMessageService.createARoom(req.chatRoomName());
-        return RestResponse.success(chatRoomSaveRes, GlobalResultCode.SUCCESS, versionConfig.getVersion())
-            .toResponseEntity();
+        return RestResponse.success(
+                        chatRoomSaveRes, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                .toResponseEntity();
     }
 
     @GetMapping("/rooms")
     public ResponseEntity<RestResponse<List<ChatRoomEntity>>> getChatRooms() {
 
         List<ChatRoomEntity> chatRoomList = chatMessageService.getChatRoomList();
-        return RestResponse.success(chatRoomList, GlobalResultCode.SUCCESS, versionConfig.getVersion())
-            .toResponseEntity();
+        return RestResponse.success(
+                        chatRoomList, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                .toResponseEntity();
     }
 
     @MessageMapping("/chatting/{chatRoomId}")
@@ -85,19 +91,18 @@ public class ChatController {
 
     @PutMapping("/chatRooms/{chatRoomName}")
     public ResponseEntity<RestResponse<ChatRoomEntity>> updateChatRoom(
-        @PathVariable String chatRoomName, @RequestBody Map<String, String> updateData) {
+            @PathVariable String chatRoomName, @RequestBody Map<String, String> updateData) {
 
         String newChatRoomName = updateData.get("newChatRoomName");
         System.out.println("newChatRoomName = " + newChatRoomName);
         System.out.println("chatRoomName = " + chatRoomName);
         ChatRoomEntity chatRoomEntity =
-            chatMessageService.updateChatRoom(chatRoomName, newChatRoomName);
+                chatMessageService.updateChatRoom(chatRoomName, newChatRoomName);
 
         return RestResponse.success(
-                chatRoomEntity, GlobalResultCode.SUCCESS, versionConfig.getVersion())
-            .toResponseEntity();
+                        chatRoomEntity, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                .toResponseEntity();
     }
-
 
     @GetMapping("/chat-page")
     public String chatPage() {
@@ -106,20 +111,21 @@ public class ChatController {
 
     @GetMapping("/users/getRole")
     public ResponseEntity<RestResponse<ChatRoleRes>> getRoleForChatRoomCRUD(
-        @AuthenticationPrincipal UserDetailsImpl currentUser) {
-        //닉네임도 받을것
+            @AuthenticationPrincipal UserDetailsImpl currentUser) {
+        // 닉네임도 받을것
         // UserRole 확인
-        ChatRoleRes res = ChatRoleRes.builder()
-            .role(currentUser.getUserEntity().getUserRole().name())
-            .name(currentUser.getUserEntity().getUsername())
-            .build();
+        ChatRoleRes res =
+                ChatRoleRes.builder()
+                        .role(currentUser.getUserEntity().getUserRole().name())
+                        .name(currentUser.getUserEntity().getUsername())
+                        .build();
         System.out.println("res.role() = " + res.role());
 
         // ROLE_ADMIN인지 확인
         if (currentUser.getUserEntity().getUserRole() == UserRole.ROLE_ADMIN) {
             // ROLE_ADMIN이면, "ROLE_ADMIN"을 반환
-            return RestResponse.success(res,GlobalResultCode.SUCCESS, versionConfig.getVersion())
-                .toResponseEntity();
+            return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                    .toResponseEntity();
         } else {
             // ROLE_ADMIN이 아니면, "Not ROLE_ADMIN"을 반환
             throw new GlobalException(CommentErrorCode.USER_NOT_AUTHORIZED);

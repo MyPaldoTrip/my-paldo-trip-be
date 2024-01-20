@@ -21,7 +21,7 @@ public class ChatMessageService {
     private final ChatRoomEntityRepository chatRoomEntityRepository;
 
     public ChatRoomSaveRes createARoom(String chatRoomName) {
-        String chatRoomId = "id"+ UUID.randomUUID();
+        String chatRoomId = "id" + UUID.randomUUID();
         ChatRoomEntity chatMessageEntity =
                 ChatRoomEntity.builder().chatRoomId(chatRoomId).chatRoomName(chatRoomName).build();
 
@@ -49,9 +49,9 @@ public class ChatMessageService {
         List<ChatMessage> chatMessages = chatMessageRepository.findAllByChatRoomId(chatRoomId);
 
         return ChatRoomInfoRes.builder()
-            .chatMessages(chatMessages)
-            .chatMessageSenders(chatMessageSenders)
-            .build();
+                .chatMessages(chatMessages)
+                .chatMessageSenders(chatMessageSenders)
+                .build();
     }
 
     public ChatRoomEntity updateChatRoom(String chatRoomName, String updateRoomName) {

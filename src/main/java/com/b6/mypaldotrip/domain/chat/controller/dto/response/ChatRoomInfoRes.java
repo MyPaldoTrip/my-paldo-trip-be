@@ -6,8 +6,4 @@ import lombok.Builder;
 
 @Builder
 public record ChatRoomInfoRes(
-    List<ChatMessage> chatMessageSenders,
-    List<ChatMessage> chatMessages
-) {
-
-}
+        List<ChatMessage> chatMessageSenders, List<ChatMessage> chatMessages) {}
