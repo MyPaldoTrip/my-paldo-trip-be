@@ -30,22 +30,22 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
             Long userId,
             Boolean filterByFollowing) {
 
-        List<CommentEntity> content = jpaQueryFactory
-                .selectFrom(commentEntity)
-                .leftJoin(commentEntity.userEntity)
-                .fetchJoin()
-                .where(courseIdEq(courseId), isFollowing(userId, filterByFollowing))
-                .orderBy(commentSort(commentSort))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+        List<CommentEntity> content =
+                jpaQueryFactory
+                        .selectFrom(commentEntity)
+                        .leftJoin(commentEntity.userEntity)
+                        .fetchJoin()
+                        .where(courseIdEq(courseId), isFollowing(userId, filterByFollowing))
+                        .orderBy(commentSort(commentSort))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .fetch();
 
-        JPAQuery<Long> countQuery = jpaQueryFactory
-            .select(commentEntity.count())
-            .from(commentEntity)
-            .where(
-                courseIdEq(courseId), isFollowing(userId, filterByFollowing)
-            );
+        JPAQuery<Long> countQuery =
+                jpaQueryFactory
+                        .select(commentEntity.count())
+                        .from(commentEntity)
+                        .where(courseIdEq(courseId), isFollowing(userId, filterByFollowing));
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }

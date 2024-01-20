@@ -20,5 +20,3 @@ public interface CustomCourseRepository {
 
     void fetchLikes(Long userId, CourseSearchReq req, Boolean filterByFollowing);
 }
-
-

@@ -30,9 +30,7 @@ public class LikeController {
 
     @GetMapping
     public ResponseEntity<RestResponse<LikeCheckRes>> isLiked(
-        @PathVariable Long courseId, @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) {
+            @PathVariable Long courseId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return likeService.likeCheck(courseId, userDetails.getUserEntity());
-
     }
 }

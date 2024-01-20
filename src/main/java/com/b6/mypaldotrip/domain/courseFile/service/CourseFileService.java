@@ -28,8 +28,8 @@ public class CourseFileService {
     private final CourseFileRepository courseFileRepository;
 
     @Transactional
-    public CourseFileAddRes addFiles(Long courseId, MultipartFile multipartFile, UserEntity userEntity)
-            throws IOException {
+    public CourseFileAddRes addFiles(
+            Long courseId, MultipartFile multipartFile, UserEntity userEntity) throws IOException {
         CourseEntity courseEntity = findCourse(courseId);
         validateAuth(userEntity, courseEntity);
 
@@ -53,11 +53,9 @@ public class CourseFileService {
         return CourseFileAddRes.builder().msg("파일이 성공적으로 업로드되었습니다.").build();
     }
 
-
-
     public List<CourseFileListRes> getFileList(Long courseId, UserEntity userEntity) {
         CourseEntity courseEntity = findCourse(courseId);
-        validateAuth(userEntity,courseEntity);
+        validateAuth(userEntity, courseEntity);
 
         List<CourseFileListRes> res =
                 courseFileRepository.findAllByCourseEntity(courseEntity).stream()

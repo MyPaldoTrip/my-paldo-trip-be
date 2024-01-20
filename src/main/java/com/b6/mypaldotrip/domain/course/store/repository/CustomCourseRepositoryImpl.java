@@ -25,7 +25,6 @@ public class CustomCourseRepositoryImpl implements CustomCourseRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-
     public Page<CourseEntity> getCourseListByDynamicConditions(
             Pageable pageable,
             CourseSort courseSort,
@@ -33,47 +32,50 @@ public class CustomCourseRepositoryImpl implements CustomCourseRepository {
             Long userId,
             Boolean filterByFollowing) {
 
-        List<CourseEntity> content =  jpaQueryFactory
-                .selectFrom(courseEntity)
-                .where(cityNameEq(req.filterByCityName()), isFollowing(userId, filterByFollowing))
-                .leftJoin(courseEntity.userEntity)
-                .fetchJoin()
-                .orderBy(courseSort(courseSort))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+        List<CourseEntity> content =
+                jpaQueryFactory
+                        .selectFrom(courseEntity)
+                        .where(
+                                cityNameEq(req.filterByCityName()),
+                                isFollowing(userId, filterByFollowing))
+                        .leftJoin(courseEntity.userEntity)
+                        .fetchJoin()
+                        .orderBy(courseSort(courseSort))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .fetch();
 
-        JPAQuery<Long> countQuery = jpaQueryFactory
-            .select(courseEntity.count())
-            .from(courseEntity)
-            .where(
-                cityNameEq(req.filterByCityName()),
-                isFollowing(userId, filterByFollowing)
-            );
+        JPAQuery<Long> countQuery =
+                jpaQueryFactory
+                        .select(courseEntity.count())
+                        .from(courseEntity)
+                        .where(
+                                cityNameEq(req.filterByCityName()),
+                                isFollowing(userId, filterByFollowing));
 
-        return PageableExecutionUtils.getPage(content,pageable, countQuery::fetchOne);
-
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
+
     @Override
     public void fetchComments(Long userId, CourseSearchReq req, Boolean filterByFollowing) {
 
         jpaQueryFactory
-            .selectFrom(courseEntity)
-            .leftJoin(courseEntity.comments)
-            .fetchJoin()
-            .where(
-                cityNameEq(req.filterByCityName()), isFollowing(userId, filterByFollowing))
-            .fetch();
-    }@Override
+                .selectFrom(courseEntity)
+                .leftJoin(courseEntity.comments)
+                .fetchJoin()
+                .where(cityNameEq(req.filterByCityName()), isFollowing(userId, filterByFollowing))
+                .fetch();
+    }
+
+    @Override
     public void fetchLikes(Long userId, CourseSearchReq req, Boolean filterByFollowing) {
 
         jpaQueryFactory
-            .selectFrom(courseEntity)
-            .leftJoin(courseEntity.likes)
-            .fetchJoin()
-            .where(
-                cityNameEq(req.filterByCityName()), isFollowing(userId, filterByFollowing))
-            .fetch();
+                .selectFrom(courseEntity)
+                .leftJoin(courseEntity.likes)
+                .fetchJoin()
+                .where(cityNameEq(req.filterByCityName()), isFollowing(userId, filterByFollowing))
+                .fetch();
     }
 
     private BooleanExpression cityNameEq(String cityName) {

@@ -4,4 +4,13 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 
 @Builder
-public record CourseListRes(Long courseId, String username, String title, String content, int totalPage, LocalDateTime createdAt, Long level, int commentCount, int likeCount) {}
+public record CourseListRes(
+        Long courseId,
+        String username,
+        String title,
+        String content,
+        int totalPage,
+        LocalDateTime createdAt,
+        Long level,
+        int commentCount,
+        int likeCount) {}

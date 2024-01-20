@@ -5,4 +5,10 @@ import java.util.List;
 import lombok.Builder;
 
 @Builder
-public record CourseGetRes(Long courseId, String username, String title, String content, List<String> fileURL, LocalDateTime createdAt) {}
+public record CourseGetRes(
+        Long courseId,
+        String username,
+        String title,
+        String content,
+        List<String> fileURL,
+        LocalDateTime createdAt) {}

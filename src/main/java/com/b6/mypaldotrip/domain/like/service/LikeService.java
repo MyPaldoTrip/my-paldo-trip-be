@@ -43,19 +43,18 @@ public class LikeService {
         }
     }
 
-    public ResponseEntity<RestResponse<LikeCheckRes>> likeCheck(Long courseId,
-        UserEntity user) {
+    public ResponseEntity<RestResponse<LikeCheckRes>> likeCheck(Long courseId, UserEntity user) {
         CourseEntity course = courseService.findCourse(courseId);
         Optional<LikeEntity> like = likeRepository.findByUserEntityAndCourseEntity(user, course);
 
         if (like.isPresent()) {
             LikeCheckRes res = LikeCheckRes.builder().isLiked(true).build();
             return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
-                .toResponseEntity();
+                    .toResponseEntity();
         } else {
             LikeCheckRes res = LikeCheckRes.builder().isLiked(false).build();
             return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
-                .toResponseEntity();
+                    .toResponseEntity();
         }
     }
 }

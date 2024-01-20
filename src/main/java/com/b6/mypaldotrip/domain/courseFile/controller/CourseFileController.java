@@ -32,10 +32,12 @@ public class CourseFileController {
 
     @PostMapping
     public ResponseEntity<RestResponse<CourseFileAddRes>> addFiles(
-            @PathVariable Long courseId, @RequestPart MultipartFile multipartFile,
-        @AuthenticationPrincipal UserDetailsImpl userDetails)
+            @PathVariable Long courseId,
+            @RequestPart MultipartFile multipartFile,
+            @AuthenticationPrincipal UserDetailsImpl userDetails)
             throws IOException {
-        CourseFileAddRes res = courseFileService.addFiles(courseId, multipartFile, userDetails.getUserEntity());
+        CourseFileAddRes res =
+                courseFileService.addFiles(courseId, multipartFile, userDetails.getUserEntity());
 
         return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
                 .toResponseEntity();
@@ -44,7 +46,8 @@ public class CourseFileController {
     @GetMapping
     public ResponseEntity<RestResponse<List<CourseFileListRes>>> getFileList(
             @PathVariable Long courseId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        List<CourseFileListRes> res = courseFileService.getFileList(courseId, userDetails.getUserEntity());
+        List<CourseFileListRes> res =
+                courseFileService.getFileList(courseId, userDetails.getUserEntity());
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
@@ -52,8 +55,11 @@ public class CourseFileController {
 
     @DeleteMapping("/{fileId}")
     public ResponseEntity<RestResponse<CourseFileDeleteRes>> deleteFile(
-            @PathVariable Long courseId, @PathVariable Long fileId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        CourseFileDeleteRes res = courseFileService.deleteFile(courseId, fileId, userDetails.getUserEntity());
+            @PathVariable Long courseId,
+            @PathVariable Long fileId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        CourseFileDeleteRes res =
+                courseFileService.deleteFile(courseId, fileId, userDetails.getUserEntity());
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
