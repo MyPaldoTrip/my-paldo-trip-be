@@ -39,7 +39,7 @@ public class TripRepositoryImpl implements TripCustomRepository {
     }
 
     private BooleanExpression getEqCityName(QTripEntity trip, String cityName) {
-        return StringUtils.hasText(cityName) ? trip.city.cityName.eq(cityName) : null;
+        return StringUtils.hasText(cityName) ? trip.city.cityName.contains(cityName) : null;
     }
 
     private BooleanExpression getEqCategory(QTripEntity trip, Category category) {

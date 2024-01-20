@@ -7,8 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 public enum ReviewSort {
     MODIFIED,
     RATING,
-    LEVEL,
-    FOLLOW;
+    LEVEL;
 
     @JsonCreator
     public static ReviewSort forValue(String value) {

@@ -15,6 +15,7 @@ import com.b6.mypaldotrip.domain.user.store.entity.UserRole;
 import com.b6.mypaldotrip.global.common.S3Provider;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +37,12 @@ public class TripService {
 
     @Transactional
     public TripCreateRes createTrip(
-            TripCreateReq req, MultipartFile multipartFile, UserDetailsImpl userDetails)
+            String reqJson, MultipartFile multipartFile, UserDetailsImpl userDetails)
             throws IOException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        TripCreateReq req = objectMapper.readValue(reqJson, TripCreateReq.class);
+
         String name = req.name();
         checkAuthorization(userDetails);
         if (tripRepository.findByName(name).isPresent()) {
@@ -77,6 +82,7 @@ public class TripService {
                 .map(
                         trip ->
                                 TripListRes.builder()
+                                        .tripId(trip.getTripId())
                                         .city(trip.getCity().getCityName())
                                         .category(trip.getCategory())
                                         .name(trip.getName())
@@ -96,6 +102,7 @@ public class TripService {
         }
 
         return TripGetRes.builder()
+                .tripId(trip.getTripId())
                 .city(trip.getCity().getCityName())
                 .category(trip.getCategory())
                 .name(trip.getName())
