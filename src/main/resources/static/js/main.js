@@ -17,66 +17,35 @@ let selectedRoomId = null;
 let chatRoomId = null;
 let senderId = null;
 let chatRoomName = null;
+let userRole = null;
+let username = null;
 
-var colors = [
-    "#2196F3",
-    "#32c787",
-    "#00BCD4",
-    "#ff5652",
-    "#ffc107",
-    "#ff85af",
-    "#FF9800",
-    "#39bbb0",
-    "#fcba03",
-    "#fc0303",
-    "#de5454",
-    "#b9de54",
-    "#54ded7",
-    "#54ded7",
-    "#1358d6",
-    "#d611c6",
-];
-document.getElementById('usernameForm').addEventListener('submit', function(event) {
-    event.preventDefault();
 
-    var email = document.getElementById('nickname').value;
-    var password = document.getElementById('fullname').value;
 
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/api/v1/users/login', true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            var token = xhr.getResponseHeader('Authorization');
-            console.log("토큰 : " + token);
 
-            // 'Bearer '를 제거하고 토큰만을 저장합니다.
-            localStorage.setItem('token', token.split(' ')[1]);
 
-            connect(event, email, password);
+
+function connect() {
+    fetch('/api/v1/chat-rooms/users/getRole', {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token') // 토큰을 헤더에 포함
         }
-    };
-    var data = JSON.stringify({"email": email, "password": password});
-    xhr.send(data);
-});
+    })
+    .then(response => response.json()) // response.json()을 호출하여 반환된 Promise를 다음 then으로 전달합니다.
+    .then(data => {
+        userRole = data.data.role;
+        nickname = data.data.name;
+        console.log("유저 data: ", data);
 
-
-
-function connect(event, email, password) {
-    event.preventDefault();
-
-    nickname = email.trim();
-    password = password.trim();
-
-    if (nickname && password) {
-        usernamePage.classList.add('hidden');
-        chatPage.classList.remove('hidden');
+    })
+    .catch(error => console.error('Error:', error));
 
         const socket = new SockJS('/ws');
         stompClient = Stomp.over(socket);
 
         stompClient.connect({}, onConnected, onError);
-    }
+
 }
 
 
@@ -381,10 +350,11 @@ document.getElementById('updateButton').addEventListener('click', function(event
 
 
 
-usernameForm.addEventListener('submit', connect, true); // step 1
+// usernameForm.addEventListener('submit', connect, true); // step 1
 messageForm.addEventListener('submit', sendMessage, true);
 logout.addEventListener('click', onLogout, true);
 window.onbeforeunload = () => onLogout();
+connect();
 
 
 
