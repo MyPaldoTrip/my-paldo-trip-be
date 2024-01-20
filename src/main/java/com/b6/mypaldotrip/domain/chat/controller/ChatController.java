@@ -7,11 +7,8 @@ import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomSaveRes;
 import com.b6.mypaldotrip.domain.chat.service.ChatMessageService;
 import com.b6.mypaldotrip.domain.chat.store.entity.ChatMessage;
 import com.b6.mypaldotrip.domain.chat.store.entity.ChatRoomEntity;
-import com.b6.mypaldotrip.domain.comment.exception.CommentErrorCode;
-import com.b6.mypaldotrip.domain.user.store.entity.UserRole;
 import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.config.VersionConfig;
-import com.b6.mypaldotrip.global.exception.GlobalException;
 import com.b6.mypaldotrip.global.response.RestResponse;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import java.util.List;
@@ -121,14 +118,9 @@ public class ChatController {
                         .build();
         System.out.println("res.role() = " + res.role());
 
-        // ROLE_ADMIN인지 확인
-        if (currentUser.getUserEntity().getUserRole() == UserRole.ROLE_ADMIN) {
-            // ROLE_ADMIN이면, "ROLE_ADMIN"을 반환
-            return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                     .toResponseEntity();
-        } else {
-            // ROLE_ADMIN이 아니면, "Not ROLE_ADMIN"을 반환
-            throw new GlobalException(CommentErrorCode.USER_NOT_AUTHORIZED);
-        }
+
     }
 }
