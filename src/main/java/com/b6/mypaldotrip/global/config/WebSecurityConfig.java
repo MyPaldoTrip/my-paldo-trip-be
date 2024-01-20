@@ -80,6 +80,8 @@ public class WebSecurityConfig {
                                         HttpMethod.GET,
                                         "/api/" + versionConfig.getVersion() + "/users/**")
                                 .permitAll()
+                                .requestMatchers("/ws/**")
+                                .permitAll()
                                 .anyRequest()
                                 .authenticated());
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
