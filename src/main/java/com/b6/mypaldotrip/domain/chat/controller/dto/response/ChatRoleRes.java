@@ -4,7 +4,8 @@ import lombok.Builder;
 
 @Builder
 public record ChatRoleRes(
-    String role
+    String role,
+    String name
 ) {
 
 }

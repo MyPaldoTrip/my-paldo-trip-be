@@ -1,5 +1,6 @@
 package com.b6.mypaldotrip.domain.chat.service;
 
+import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomInfoRes;
 import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomSaveRes;
 import com.b6.mypaldotrip.domain.chat.exception.ChatErrorCode;
 import com.b6.mypaldotrip.domain.chat.store.entity.ChatMessage;
@@ -43,8 +44,14 @@ public class ChatMessageService {
         return chatMessage;
     }
 
-    public List<ChatMessage> findAllMessagesByChatRoomId(String chatRoomId) {
-        return chatMessageRepository.findAllByChatRoomId(chatRoomId);
+    public ChatRoomInfoRes findAllMessagesByChatRoomId(String chatRoomId) {
+        List<ChatMessage> chatMessageSenders = chatMessageRepository.findAllBySenderId(chatRoomId);
+        List<ChatMessage> chatMessages = chatMessageRepository.findAllByChatRoomId(chatRoomId);
+
+        return ChatRoomInfoRes.builder()
+            .chatMessages(chatMessages)
+            .chatMessageSenders(chatMessageSenders)
+            .build();
     }
 
     public ChatRoomEntity updateChatRoom(String chatRoomName, String updateRoomName) {

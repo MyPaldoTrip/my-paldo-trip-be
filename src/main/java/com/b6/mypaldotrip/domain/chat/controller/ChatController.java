@@ -2,6 +2,7 @@ package com.b6.mypaldotrip.domain.chat.controller;
 
 import com.b6.mypaldotrip.domain.chat.controller.dto.request.CreateRoomReq;
 import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoleRes;
+import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomInfoRes;
 import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomSaveRes;
 import com.b6.mypaldotrip.domain.chat.service.ChatMessageService;
 import com.b6.mypaldotrip.domain.chat.store.entity.ChatMessage;
@@ -41,9 +42,9 @@ public class ChatController {
     private final VersionConfig versionConfig;
 
     @GetMapping("/{chatRoomId}")
-    public ResponseEntity<RestResponse<List<ChatMessage>>> findAllMessages(@PathVariable String chatRoomId) {
-        List<ChatMessage> chatMessage =  chatMessageService.findAllMessagesByChatRoomId(chatRoomId);
-        return RestResponse.success(chatMessage, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+    public ResponseEntity<RestResponse<ChatRoomInfoRes>> findAllMessages(@PathVariable String chatRoomId) {
+        ChatRoomInfoRes chatRoomInfoRes =  chatMessageService.findAllMessagesByChatRoomId(chatRoomId);
+        return RestResponse.success(chatRoomInfoRes, GlobalResultCode.SUCCESS, versionConfig.getVersion())
             .toResponseEntity();
     }
 
@@ -110,6 +111,7 @@ public class ChatController {
         // UserRole 확인
         ChatRoleRes res = ChatRoleRes.builder()
             .role(currentUser.getUserEntity().getUserRole().name())
+            .name(currentUser.getUserEntity().getUsername())
             .build();
         System.out.println("res.role() = " + res.role());
 

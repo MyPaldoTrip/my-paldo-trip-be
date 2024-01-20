@@ -223,7 +223,7 @@ function displayMessage(senderId, content) {
     }
     const username2 = document.createElement('p');
     const message = document.createElement('p');
-    username2.textContent = nickname;
+    username2.textContent = senderId;
     message.textContent = content;
     messageContainer.appendChild(username2);
     messageContainer.appendChild(message);
@@ -232,15 +232,20 @@ function displayMessage(senderId, content) {
 
 async function fetchAndDisplayUserChat() {
     chatRoomId = selectedRoomId;
-    const userChatResponse = await fetch(`/api/v1/chat-rooms/${selectedRoomId}`);
+    const userChatResponse = await fetch(`/api/v1/chat-rooms/${chatRoomId}`);
     const userChat = await userChatResponse.json();
-    const chatMessages = userChat.data;   // chatMessage 값을 추출
+    //const chatMessageSenders = userChat.data.chatMessageSenders;   // chatMessageSenders 값을 추출
+    const chatMessages = userChat.data.chatMessages;   // chatMessages 값을 추출
     chatArea.innerHTML = '';
+    // chatMessageSenders.forEach(chat => {
+    //     displayMessage(chat.senderId, chat.content);
+    // });
     chatMessages.forEach(chat => {
         displayMessage(chat.senderId, chat.content);
     });
     chatArea.scrollTop = chatArea.scrollHeight;
 }
+
 
 
 
@@ -266,7 +271,7 @@ function sendMessage(event) {
 
         stompClient.send(`/app/chatting/${chatRoomId}`, {}, JSON.stringify(chatMessageEntity));
         //stompClient.send("/app/chat", {}, JSON.stringify(chatMessageEntity));
-        displayMessage(nickname, messageInput.value.trim());
+        displayMessage(senderId, messageInput.value.trim());
         messageInput.value = '';
     }
     chatArea.scrollTop = chatArea.scrollHeight;
