@@ -64,11 +64,10 @@ public class WebSecurityConfig {
                                         "/api/" + versionConfig.getVersion() + "/users/signup/**")
                                 .permitAll()
                                 .requestMatchers(
-                                        HttpMethod.GET,
+
                                         "/api/" + versionConfig.getVersion() + "/trips/**")
                                 .permitAll()
                                 .requestMatchers(
-                                        HttpMethod.GET,
                                         "/api/" + versionConfig.getVersion() + "/courses/**")
                                 .permitAll()
                                 .requestMatchers(
