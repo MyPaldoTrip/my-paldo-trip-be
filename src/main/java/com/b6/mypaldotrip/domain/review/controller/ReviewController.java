@@ -37,7 +37,7 @@ public class ReviewController {
                 .toResponseEntity();
     }
 
-    @GetMapping
+    @PostMapping("/lists")
     public ResponseEntity<RestResponse<List<ReviewListRes>>> getReviewList(
             @PathVariable Long tripId,
             @RequestBody ReviewListReq req,

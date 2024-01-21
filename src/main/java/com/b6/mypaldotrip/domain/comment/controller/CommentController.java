@@ -46,14 +46,14 @@ public class CommentController {
                 .toResponseEntity();
     }
 
-    @GetMapping
+    @PostMapping("/list")
     public ResponseEntity<RestResponse<List<CommentListRes>>> getCommentListByDynamicConditions(
             @PathVariable Long courseId,
             @RequestParam("page") int page,
             @RequestParam("size") int size,
             @RequestBody CommentSearchReq req,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Long userId = userDetails != null ? userDetails.getUserEntity().getUserId() : null;
+        Long userId = userDetails != null ? userDetails.getUserEntity().getUserId() : -1;
         List<CommentListRes> res =
                 commentService.getCommentListByDynamicConditions(courseId, page, size, req, userId);
 

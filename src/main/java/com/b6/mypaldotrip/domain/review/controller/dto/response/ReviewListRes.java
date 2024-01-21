@@ -5,4 +5,9 @@ import lombok.Builder;
 
 @Builder
 public record ReviewListRes(
-        String username, Long level, String content, Integer score, LocalDateTime modifiedAt) {}
+        Long reviewId,
+        String username,
+        Long level,
+        String content,
+        Integer score,
+        LocalDateTime modifiedAt) {}

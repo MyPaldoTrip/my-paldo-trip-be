@@ -1,6 +1,5 @@
 package com.b6.mypaldotrip.domain.trip.controller;
 
-import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripListReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripUpdateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.*;
@@ -28,7 +27,7 @@ public class TripController {
 
     @PostMapping
     public ResponseEntity<RestResponse<TripCreateRes>> createTrip(
-            @Valid @RequestPart TripCreateReq req,
+            @Valid @RequestPart String req,
             @RequestPart MultipartFile multipartFile,
             @AuthenticationPrincipal UserDetailsImpl userDetails)
             throws IOException {
@@ -37,7 +36,7 @@ public class TripController {
                 .toResponseEntity();
     }
 
-    @GetMapping
+    @PostMapping("/lists")
     public ResponseEntity<RestResponse<List<TripListRes>>> getTripList(
             @RequestBody TripListReq req) {
         List<TripListRes> res = tripService.getTripList(req);

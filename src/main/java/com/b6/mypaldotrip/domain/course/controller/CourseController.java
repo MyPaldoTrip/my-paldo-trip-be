@@ -1,6 +1,5 @@
 package com.b6.mypaldotrip.domain.course.controller;
 
-import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSaveReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSearchReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseUpdateReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseDeleteRes;
@@ -14,6 +13,7 @@ import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.response.RestResponse;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/${mpt.version}/courses")
@@ -38,21 +40,24 @@ public class CourseController {
 
     @PostMapping
     public ResponseEntity<RestResponse<CourseSaveRes>> saveCourse(
-            @Valid @RequestBody CourseSaveReq req,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        CourseSaveRes res = courseService.saveCourse(req, userDetails.getUserEntity());
+            @Valid @RequestPart String req,
+            @RequestPart(required = false) MultipartFile multipartFile,
+            @AuthenticationPrincipal UserDetailsImpl userDetails)
+            throws IOException {
+        CourseSaveRes res =
+                courseService.saveCourse(req, userDetails.getUserEntity(), multipartFile);
 
         return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
                 .toResponseEntity();
     }
 
-    @GetMapping
+    @PostMapping("/list")
     public ResponseEntity<RestResponse<List<CourseListRes>>> getCourseListByDynamicConditions(
-            @RequestParam("page") int page,
-            @RequestParam("size") int size,
+            @RequestParam int page,
+            @RequestParam int size,
             @RequestBody CourseSearchReq req,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Long userId = userDetails != null ? userDetails.getUserEntity().getUserId() : null;
+        Long userId = userDetails != null ? userDetails.getUserEntity().getUserId() : -1;
 
         List<CourseListRes> res =
                 courseService.getCourseListByDynamicConditions(page, size, req, userId);

@@ -23,6 +23,6 @@ public class KakaoController {
     public String kakaoLogin(@RequestParam String code, HttpServletResponse response)
             throws JsonProcessingException {
         kakaoService.kakaoLogin(code, response);
-        return "redirect:/kakao-login";
+        return "redirect:http://43.200.254.60";
     }
 }

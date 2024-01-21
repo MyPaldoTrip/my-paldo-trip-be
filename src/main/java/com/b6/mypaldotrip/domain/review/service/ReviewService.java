@@ -63,6 +63,7 @@ public class ReviewService {
                 .map(
                         review ->
                                 ReviewListRes.builder()
+                                        .reviewId(review.getReviewId())
                                         .username(review.getUser().getUsername())
                                         .level(review.getUser().getLevel())
                                         .content(review.getContent())
@@ -98,6 +99,7 @@ public class ReviewService {
         matchReviewAndTrip(review, trip);
         checkAuthor(userDetails, review);
         reviewRepository.delete(review);
+        trip.getReviewList().remove(review);
         trip.calculateAverageRating();
         return ReviewDeleteRes.builder().message("리뷰가 삭제되었습니다.").build();
     }

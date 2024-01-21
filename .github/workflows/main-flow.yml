@@ -1,0 +1,60 @@
+name: Java CI CD
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  issues: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+
+#      테스트 빼고 빌드
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
+
+      - name: Get the timestamp
+        id: timestamp
+        run: echo "::set-output name=timestamp::$(date +'%Y%m%d%H%M%S')"
+
+#      도커 이미지 만들고 푸시
+      - name: Build and Push Docker Image
+        env:
+          TIMESTAMP: ${{ steps.timestamp.outputs.timestamp }}
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/mpt:$TIMESTAMP .
+          docker push ${{ secrets.DOCKER_USERNAME }}/mpt:$TIMESTAMP
+
+#      도커 이미지 풀 받고 실행
+      - name: Pull Docker Image and Compose up
+        env:
+          TIMESTAMP: ${{ steps.timestamp.outputs.timestamp }}
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.MPT_HOST }}
+          username: ${{ secrets.MPT_USERNAME }}
+          key: ${{ secrets.MPT_PRIVATE_KEY }}
+          script: |
+            sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/mpt:$TIMESTAMP
+            sudo docker stop $(sudo docker ps -q)
+            sudo docker rm $(sudo docker ps -aq)
+            export TIMESTAMP=${{ steps.timestamp.outputs.timestamp }};
+            sudo -E docker-compose up -d
+            sudo docker run -d --name redis redis

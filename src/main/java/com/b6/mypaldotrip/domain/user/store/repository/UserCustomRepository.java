@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface UserCustomRepository {
 
     List<UserEntity> findByDynamicConditions(UserListReq req, UserDetailsImpl userDetails);
+
+    void fetchFollowerList(UserListReq req, UserDetailsImpl userDetails);
 }

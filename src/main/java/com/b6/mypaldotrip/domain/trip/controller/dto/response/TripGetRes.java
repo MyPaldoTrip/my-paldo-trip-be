@@ -6,4 +6,9 @@ import lombok.Builder;
 
 @Builder
 public record TripGetRes(
-        String city, Category category, String name, String description, List<String> urlList) {}
+        Long tripId,
+        String city,
+        Category category,
+        String name,
+        String description,
+        List<String> urlList) {}
