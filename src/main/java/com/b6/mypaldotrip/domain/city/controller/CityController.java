@@ -1,6 +1,5 @@
 package com.b6.mypaldotrip.domain.city.controller;
 
-import com.b6.mypaldotrip.domain.city.controller.dto.request.CityCreateReq;
 import com.b6.mypaldotrip.domain.city.controller.dto.request.CityUpdateReq;
 import com.b6.mypaldotrip.domain.city.controller.dto.request.ProvinceListReq;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityCreateRes;
@@ -15,10 +14,13 @@ import com.b6.mypaldotrip.domain.city.service.CityService;
 import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.response.RestResponse;
+import com.b6.mypaldotrip.global.security.UserDetailsImpl;
+import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,11 +43,11 @@ public class CityController {
 
     @PostMapping // 생성
     public ResponseEntity<RestResponse<CityCreateRes>> createCity(
-            @RequestBody CityCreateReq cityCreateReq
-            // @AuthenticationPrincipal UserDetailsImpl userDetails
-            ) {
-        CityCreateRes res = cityService.createCity(cityCreateReq);
-        // userDetails.getUser());
+            @Valid @RequestPart(value = "req") String req,
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestPart(value = "multipartFile") MultipartFile multipartFile)
+            throws IOException {
+        CityCreateRes res = cityService.createCity(req, userDetails.getUserEntity(), multipartFile);
         return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
                 .toResponseEntity();
     }
@@ -70,7 +72,7 @@ public class CityController {
                 .toResponseEntity();
     }
 
-    @GetMapping("/provinces") // 중복을 제거한 도 전체 조회
+    @PostMapping("/provinces") // 중복을 제거한 도 전체 조회
     public ResponseEntity<RestResponse<List<ProvinceListRes>>> getProvinceList() {
         List<ProvinceListRes> res = cityService.getProvinceList();
 
@@ -78,7 +80,7 @@ public class CityController {
                 .toResponseEntity();
     }
 
-    @GetMapping("/provinces/{provincesName}") // 시 전체 조회
+    @GetMapping("/provinces/{provincesName}") // 구/동 전체 조회
     public ResponseEntity<RestResponse<List<CityListRes>>> getCityList(
             @PathVariable String provincesName) {
         List<CityListRes> res = cityService.getCityList(provincesName);
@@ -87,7 +89,7 @@ public class CityController {
                 .toResponseEntity();
     }
 
-    @GetMapping("/provinces/infoSort")
+    @PostMapping("/provinces/infoSort")
     public ResponseEntity<RestResponse<List<ProvinceListRes>>> getProvinceListInfoSort(
             @RequestBody ProvinceListReq req) {
         List<ProvinceListRes> res = cityService.getProvinceListInfoSort(req);
@@ -98,18 +100,19 @@ public class CityController {
 
     @PostMapping("/{cityId}/files") // 파일 생성
     public ResponseEntity<RestResponse<S3Res>> saveFile(
-            @PathVariable Long cityId, @RequestPart(value = "file") MultipartFile multipartFile)
+            @PathVariable Long cityId,
+            @RequestPart(value = "multipartFile") MultipartFile multipartFile)
             throws IOException {
         S3Res res = s3Service.saveFile(cityId, multipartFile);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
 
-    @PutMapping("/files/{fileId}") // 파일 수정
+    @PutMapping("/files/{cityId}") // 파일 수정
     public ResponseEntity<RestResponse<S3Res>> updateFile(
-            @PathVariable Long fileId, @RequestPart(value = "file") MultipartFile multipartFile)
+            @PathVariable Long cityId, @RequestPart(value = "file") MultipartFile multipartFile)
             throws IOException {
-        S3Res res = s3Service.updateFile(fileId, multipartFile);
+        S3Res res = s3Service.updateFile(cityId, multipartFile);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
@@ -121,7 +124,7 @@ public class CityController {
                 .toResponseEntity();
     }
 
-    @GetMapping("/files/{cityId}") // 파일 조회
+    @GetMapping("/files/{cityId}/list") // 파일 조회
     public ResponseEntity<RestResponse<List<S3ListRes>>> getFileList(@PathVariable Long cityId) {
         List<S3ListRes> res = s3Service.getFileList(cityId);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())

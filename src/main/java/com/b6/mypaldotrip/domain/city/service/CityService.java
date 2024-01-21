@@ -9,36 +9,50 @@ import com.b6.mypaldotrip.domain.city.controller.dto.response.CityListRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityUpdateRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.ProvinceListRes;
 import com.b6.mypaldotrip.domain.city.exception.CityErrorCode;
+import com.b6.mypaldotrip.domain.city.s3.entity.S3Entity;
+import com.b6.mypaldotrip.domain.city.s3.repository.S3Repository;
 import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
 import com.b6.mypaldotrip.domain.city.store.entity.CitySort;
 import com.b6.mypaldotrip.domain.city.store.repository.CityRepository;
+import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
+import com.b6.mypaldotrip.global.common.S3Provider;
 import com.b6.mypaldotrip.global.exception.GlobalException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Service
 public class CityService {
 
     private final CityRepository cityRepository;
+    private final S3Repository s3Repository;
+    private final S3Provider s3Provider;
 
-    public CityCreateRes createCity(CityCreateReq req) {
-
+    public CityCreateRes createCity(String req, UserEntity user, MultipartFile multipartFile)
+            throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        CityCreateReq cityCreateReq = objectMapper.readValue(req, CityCreateReq.class);
         // 유저의 권한이 관리자인지 확인(securityconfig에서 관리자만 할수 있게 하는지)
 
         // 같은 시 명이 중복되는지 확인
-        cityDuplicationCheck(req.cityName());
+        cityDuplicationCheck(cityCreateReq.cityName());
 
         CityEntity cityEntity =
                 CityEntity.builder()
-                        .provinceName(req.provinceName())
-                        .cityName(req.cityName())
-                        .cityInfo(req.cityInfo())
+                        .provinceName(cityCreateReq.provinceName())
+                        .cityName(cityCreateReq.cityName())
+                        .cityInfo(cityCreateReq.cityInfo())
                         .build();
 
         cityRepository.save(cityEntity);
+
+        String fileURL = s3Provider.saveFile(multipartFile, "city");
+        s3Repository.save(S3Entity.builder().fileUrl(fileURL).cityEntity(cityEntity).build());
 
         return CityCreateRes.builder()
                 .provinceName(cityEntity.getProvinceName())
@@ -51,7 +65,6 @@ public class CityService {
     public CityUpdateRes updateCity(Long cityId, CityUpdateReq req) {
         // 수정하려는 시가 존재하는지 확인
         CityEntity cityEntity = findCity(cityId);
-
         cityEntity.update(req.provinceName(), req.cityName(), req.cityInfo());
 
         return CityUpdateRes.builder()
