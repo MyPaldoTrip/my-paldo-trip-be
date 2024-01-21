@@ -57,3 +57,4 @@ jobs:
             sudo docker rm $(sudo docker ps -aq)
             export TIMESTAMP=${{ steps.timestamp.outputs.timestamp }};
             sudo -E docker-compose up -d
+            sudo docker run -d --name redis redis
