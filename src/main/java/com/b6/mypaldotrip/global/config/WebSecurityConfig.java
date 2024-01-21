@@ -76,6 +76,11 @@ public class WebSecurityConfig {
                                 .permitAll()
                                 .requestMatchers("/ws/**")
                                 .permitAll()
+                                .requestMatchers(
+                                        "/api/"
+                                                + versionConfig.getVersion()
+                                                + "/chat-rooms/chat-page")
+                                .permitAll()
                                 .anyRequest()
                                 .authenticated());
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
