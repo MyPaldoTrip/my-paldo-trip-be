@@ -303,8 +303,7 @@
     function connect() {
         fetch('/api/v1/chat-rooms/users/getRole', {
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token') // 토큰을 헤더에 포함
+                'Authorization': localStorage.getItem('Authorization')// 토큰을 헤더에 포함
             }
         })
         .then(response => response.json()) // response.json()을 호출하여 반환된 Promise를 다음 then으로 전달합니다.
@@ -339,8 +338,7 @@
         console.log("토큰"+localStorage.getItem('token'));
         fetch('/api/v1/chat-rooms/users/getRole', {
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token') // 토큰을 헤더에 포함
+                'Authorization': localStorage.getItem('Authorization') // 토큰을 헤더에 포함
             }
         })
         .then(response => response.json()) // response.json()을 호출하여 반환된 Promise를 다음 then으로 전달합니다.
@@ -361,8 +359,7 @@
     async function findAndDisplayConnectedRooms() {
         const connectedRoomResponse = await fetch('/api/v1/chat-rooms/rooms', {
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token') // 토큰을 헤더에 포함
+                'Authorization': localStorage.getItem('Authorization') // 토큰을 헤더에 포함
             }
         });
         console.log(connectedRoomResponse);
@@ -434,8 +431,7 @@
     async function findRoomName(selectedRoomId){
         const connectedRoomResponse = await fetch('/api/v1/chat-rooms/rooms', {
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token') // 토큰을 헤더에 포함
+                'Authorization': localStorage.getItem('Authorization') // 토큰을 헤더에 포함
             }
         });
         let connectedRooms = await connectedRoomResponse.json();
@@ -471,8 +467,7 @@
         chatRoomId = selectedRoomId;
         const userChatResponse = await fetch(`/api/v1/chat-rooms/${chatRoomId}`, {
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token') // 토큰을 헤더에 포함
+                'Authorization': localStorage.getItem('Authorization')// 토큰을 헤더에 포함
             }
         });
 
@@ -572,8 +567,7 @@
         fetch('/api/v1/chat-rooms/rooms', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token // 로컬 스토리지의 토큰 사용
+                'Authorization': localStorage.getItem('Authorization') // 로컬 스토리지의 토큰 사용
             },
             body: JSON.stringify(roomData)
         })
@@ -596,8 +590,7 @@
         fetch('/api/v1/chat-rooms/rooms/' + chatRoomName, {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token')// 인증 토큰 포함
+                'Authorization': localStorage.getItem('Authorization')// 인증 토큰 포함
             }
         })
         .then(response => response.json())
@@ -612,8 +605,7 @@
         fetch(`/api/v1/chat-rooms/chatRooms/${originalRoomName}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' +localStorage.getItem('token') // 인증 토큰 포함
+                'Authorization': localStorage.getItem('Authorization') // 인증 토큰 포함
             },
             body: JSON.stringify({ newChatRoomName: newRoomName }) // 변경할 채팅방 이름을 JSON 형식으로 전달합니다.
         })
