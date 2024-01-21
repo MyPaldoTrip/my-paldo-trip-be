@@ -7,9 +7,9 @@ import com.b6.mypaldotrip.domain.city.controller.dto.response.CityDeleteRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityListRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityUpdateRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.ProvinceListRes;
-import com.b6.mypaldotrip.domain.city.s3.dto.S3ListRes;
-import com.b6.mypaldotrip.domain.city.s3.dto.S3Res;
-import com.b6.mypaldotrip.domain.city.s3.service.S3Service;
+import com.b6.mypaldotrip.domain.city.s3.dto.CItyFileListRes;
+import com.b6.mypaldotrip.domain.city.s3.dto.CityFileRes;
+import com.b6.mypaldotrip.domain.city.s3.service.CityFileService;
 import com.b6.mypaldotrip.domain.city.service.CityService;
 import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.config.VersionConfig;
@@ -39,7 +39,7 @@ public class CityController {
 
     private final CityService cityService;
     private final VersionConfig versionConfig;
-    private final S3Service s3Service;
+    private final CityFileService cityFileService;
 
     @PostMapping // 생성
     public ResponseEntity<RestResponse<CityCreateRes>> createCity(
@@ -72,7 +72,7 @@ public class CityController {
                 .toResponseEntity();
     }
 
-    @PostMapping("/provinces") // 중복을 제거한 도 전체 조회
+    @GetMapping("/provinces") // 중복을 제거한 도 전체 조회
     public ResponseEntity<RestResponse<List<ProvinceListRes>>> getProvinceList() {
         List<ProvinceListRes> res = cityService.getProvinceList();
 
@@ -99,34 +99,35 @@ public class CityController {
     }
 
     @PostMapping("/{cityId}/files") // 파일 생성
-    public ResponseEntity<RestResponse<S3Res>> saveFile(
+    public ResponseEntity<RestResponse<CityFileRes>> saveFile(
             @PathVariable Long cityId,
             @RequestPart(value = "multipartFile") MultipartFile multipartFile)
             throws IOException {
-        S3Res res = s3Service.saveFile(cityId, multipartFile);
+        CityFileRes res = cityFileService.saveFile(cityId, multipartFile);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
 
     @PutMapping("/files/{cityId}") // 파일 수정
-    public ResponseEntity<RestResponse<S3Res>> updateFile(
+    public ResponseEntity<RestResponse<CityFileRes>> updateFile(
             @PathVariable Long cityId, @RequestPart(value = "file") MultipartFile multipartFile)
             throws IOException {
-        S3Res res = s3Service.updateFile(cityId, multipartFile);
+        CityFileRes res = cityFileService.updateFile(cityId, multipartFile);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
 
     @DeleteMapping("/files/{fileId}") // 파일 삭제
-    public ResponseEntity<RestResponse<S3Res>> deleteFile(@PathVariable Long fileId) {
-        S3Res res = s3Service.deleteFile(fileId);
+    public ResponseEntity<RestResponse<CityFileRes>> deleteFile(@PathVariable Long fileId) {
+        CityFileRes res = cityFileService.deleteFile(fileId);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
 
     @GetMapping("/files/{cityId}/list") // 파일 조회
-    public ResponseEntity<RestResponse<List<S3ListRes>>> getFileList(@PathVariable Long cityId) {
-        List<S3ListRes> res = s3Service.getFileList(cityId);
+    public ResponseEntity<RestResponse<List<CItyFileListRes>>> getFileList(
+            @PathVariable Long cityId) {
+        List<CItyFileListRes> res = cityFileService.getFileList(cityId);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }

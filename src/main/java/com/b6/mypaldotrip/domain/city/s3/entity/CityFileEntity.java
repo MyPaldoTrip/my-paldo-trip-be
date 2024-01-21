@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "tb_city_file")
-public class S3Entity extends BaseEntity {
+public class CityFileEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +28,7 @@ public class S3Entity extends BaseEntity {
     private String fileURL;
 
     @Builder
-    private S3Entity(String fileUrl, CityEntity cityEntity) {
+    private CityFileEntity(String fileUrl, CityEntity cityEntity) {
         this.fileURL = fileUrl;
         this.cityEntity = cityEntity;
     }

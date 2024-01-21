@@ -1,6 +1,6 @@
 package com.b6.mypaldotrip.domain.city.store.entity;
 
-import com.b6.mypaldotrip.domain.city.s3.entity.S3Entity;
+import com.b6.mypaldotrip.domain.city.s3.entity.CityFileEntity;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -39,7 +39,7 @@ public class CityEntity {
     private List<TripEntity> tripEntityList = new ArrayList<>();
 
     @OneToMany(mappedBy = "cityEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<S3Entity> files = new ArrayList<>();
+    private List<CityFileEntity> files = new ArrayList<>();
 
     @Builder
     public CityEntity(final String provinceName, final String cityName, final String cityInfo) {

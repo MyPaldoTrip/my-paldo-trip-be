@@ -9,8 +9,8 @@ import com.b6.mypaldotrip.domain.city.controller.dto.response.CityListRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityUpdateRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.ProvinceListRes;
 import com.b6.mypaldotrip.domain.city.exception.CityErrorCode;
-import com.b6.mypaldotrip.domain.city.s3.entity.S3Entity;
-import com.b6.mypaldotrip.domain.city.s3.repository.S3Repository;
+import com.b6.mypaldotrip.domain.city.s3.entity.CityFileEntity;
+import com.b6.mypaldotrip.domain.city.s3.repository.CityFileRepository;
 import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
 import com.b6.mypaldotrip.domain.city.store.entity.CitySort;
 import com.b6.mypaldotrip.domain.city.store.repository.CityRepository;
@@ -30,7 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class CityService {
 
     private final CityRepository cityRepository;
-    private final S3Repository s3Repository;
+    private final CityFileRepository cityFileRepository;
     private final S3Provider s3Provider;
 
     public CityCreateRes createCity(String req, UserEntity user, MultipartFile multipartFile)
@@ -52,7 +52,8 @@ public class CityService {
         cityRepository.save(cityEntity);
 
         String fileURL = s3Provider.saveFile(multipartFile, "city");
-        s3Repository.save(S3Entity.builder().fileUrl(fileURL).cityEntity(cityEntity).build());
+        cityFileRepository.save(
+                CityFileEntity.builder().fileUrl(fileURL).cityEntity(cityEntity).build());
 
         return CityCreateRes.builder()
                 .provinceName(cityEntity.getProvinceName())
