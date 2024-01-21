@@ -72,6 +72,9 @@ public class WebSecurityConfig {
                                         "/api/" + versionConfig.getVersion() + "/courses/**")
                                 .permitAll()
                                 .requestMatchers(
+                                        "/api/" + versionConfig.getVersion() + "/courses/**")
+                                .permitAll()
+                                .requestMatchers(
                                         "/api/" + versionConfig.getVersion() + "/users/email/**")
                                 .permitAll()
                                 .requestMatchers("/kakao-login/**")
