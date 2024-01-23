@@ -49,11 +49,10 @@ public class KakaoService {
                         .build();
         if (userRepository.findByEmail(req.email()).isEmpty()) {
             userRepository.save(userEntity);
-        } else {
-            String token = jwtUtil.createToken(userEntity.getEmail());
-            log.info(token);
-            response.addHeader(TOKEN_HEADER, token);
         }
+        String token = jwtUtil.createToken(userEntity.getEmail());
+        log.info(token);
+        response.addHeader(TOKEN_HEADER, token);
     }
 
     // 토큰 받기 api
