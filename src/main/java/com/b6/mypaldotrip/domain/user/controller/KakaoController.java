@@ -23,10 +23,9 @@ public class KakaoController {
         return new RedirectView(url);
     }
 
-    @GetMapping("${kakao.redirect-uri}")
-    public String kakaoLogin(@RequestParam String code, HttpServletResponse response)
+    @GetMapping("/api/${mpt.version}/users/kakao-login")
+    public void kakaoLogin(@RequestParam String code, HttpServletResponse response)
             throws JsonProcessingException {
         kakaoService.kakaoLogin(code, response);
-        return "redirect:http://43.200.254.60";
     }
 }
