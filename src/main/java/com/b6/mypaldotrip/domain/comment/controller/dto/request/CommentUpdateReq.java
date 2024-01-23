@@ -1,3 +1,5 @@
 package com.b6.mypaldotrip.domain.comment.controller.dto.request;
 
-public record CommentUpdateReq(String content) {}
+import jakarta.validation.constraints.NotNull;
+
+public record CommentUpdateReq(@NotNull(message = "content가 비었습니다.") String content) {}
