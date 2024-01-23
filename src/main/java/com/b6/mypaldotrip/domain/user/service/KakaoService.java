@@ -34,6 +34,9 @@ public class KakaoService {
     @Value("${kakao.secret-key}")
     private String SECRET_KEY;
 
+    @Value("${kakao.target-ip}")
+    private String TARGET_IP;
+
     public void kakaoLogin(String code, HttpServletResponse response)
             throws JsonProcessingException {
         String accessToken = getToken(code);
@@ -107,5 +110,13 @@ public class KakaoService {
                 .password(UUID.randomUUID().toString())
                 .username(nickname)
                 .build();
+    }
+
+    public String redirect() {
+        return "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="
+                + CLIENT_ID
+                + "&redirect_uri="
+                + TARGET_IP
+                + REDIRECT_URI;
     }
 }
