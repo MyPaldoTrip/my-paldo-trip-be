@@ -26,12 +26,12 @@ spring:
     mongodb:
       username: ${MONGO_DB_USERNAME}
       password: ${MONGO_DB_PASSWORD}
-      host: localhost
+      host: ${PUBLIC_IP}
       port: 27017
       database: chat_app
       authentication-database: admin
     redis:
-      host: 43.201.57.160
+      host: ${PUBLIC_IP}
       port: 6379
 
   mail:
@@ -74,5 +74,6 @@ kakao:
   redirect-uri : ${KAKAO_REDIRECT_URI}
   rest-api-key : ${KAKAO_REST_API_KEY}
   secret-key : ${KAKAO_SECRET_KEY}
+  target-ip : ${KAKAO_TARGET_IP}
 
 
