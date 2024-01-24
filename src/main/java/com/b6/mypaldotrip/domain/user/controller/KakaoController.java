@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 @RequiredArgsConstructor
@@ -14,15 +16,16 @@ public class KakaoController {
 
     private final KakaoService kakaoService;
 
-    @GetMapping("/kakao-login")
-    public String homepage() {
-        return "kakao";
+    @ResponseBody
+    @GetMapping("/api/${mpt.version}/users/kakao-code")
+    public RedirectView redirectView() {
+        String url = kakaoService.redirect();
+        return new RedirectView(url);
     }
 
-    @GetMapping("${kakao.redirect-uri}")
-    public String kakaoLogin(@RequestParam String code, HttpServletResponse response)
+    @GetMapping("/api/${mpt.version}/users/kakao-login")
+    public void kakaoLogin(@RequestParam String code, HttpServletResponse response)
             throws JsonProcessingException {
         kakaoService.kakaoLogin(code, response);
-        return "redirect:http://43.200.254.60";
     }
 }

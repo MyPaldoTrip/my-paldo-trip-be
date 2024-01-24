@@ -34,6 +34,9 @@ public class KakaoService {
     @Value("${kakao.secret-key}")
     private String SECRET_KEY;
 
+    @Value("${kakao.target-ip}")
+    private String TARGET_IP;
+
     public void kakaoLogin(String code, HttpServletResponse response)
             throws JsonProcessingException {
         String accessToken = getToken(code);
@@ -46,11 +49,10 @@ public class KakaoService {
                         .build();
         if (userRepository.findByEmail(req.email()).isEmpty()) {
             userRepository.save(userEntity);
-        } else {
-            String token = jwtUtil.createToken(userEntity.getEmail());
-            log.info(token);
-            response.addHeader(TOKEN_HEADER, token);
         }
+        String token = jwtUtil.createToken(userEntity.getEmail());
+        log.info(token);
+        response.addHeader(TOKEN_HEADER, token);
     }
 
     // 토큰 받기 api
@@ -69,7 +71,7 @@ public class KakaoService {
                                         + "&client_id="
                                         + CLIENT_ID
                                         + "&redirect_uri="
-                                        + "http://43.200.254.60:8080"
+                                        + TARGET_IP
                                         + REDIRECT_URI
                                         + "&code="
                                         + code
@@ -107,5 +109,13 @@ public class KakaoService {
                 .password(UUID.randomUUID().toString())
                 .username(nickname)
                 .build();
+    }
+
+    public String redirect() {
+        return "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="
+                + CLIENT_ID
+                + "&redirect_uri="
+                + TARGET_IP
+                + REDIRECT_URI;
     }
 }
