@@ -337,7 +337,7 @@
         );
         document.querySelector('#connected-user-fullname').textContent = nickname;
         findAndDisplayConnectedRooms().then();
-        console.log("토큰"+localStorage.getItem('token'));
+        console.log("토큰"+localStorage.getItem('Authorization'));
         fetch('/api/v1/chat-rooms/users/getRole', {
             headers: {
                 'Authorization': localStorage.getItem('Authorization') // 토큰을 헤더에 포함
@@ -569,6 +569,7 @@
         fetch('/api/v1/chat-rooms/rooms', {
             method: 'POST',
             headers: {
+                'Content-Type': 'application/json',
                 'Authorization': localStorage.getItem('Authorization') // 로컬 스토리지의 토큰 사용
             },
             body: JSON.stringify(roomData)
@@ -592,6 +593,7 @@
         fetch('/api/v1/chat-rooms/rooms/' + chatRoomName, {
             method: 'DELETE',
             headers: {
+                'Content-Type': 'application/json',
                 'Authorization': localStorage.getItem('Authorization')// 인증 토큰 포함
             }
         })
@@ -607,6 +609,7 @@
         fetch(`/api/v1/chat-rooms/chatRooms/${originalRoomName}`, {
             method: 'PUT',
             headers: {
+                'Content-Type': 'application/json',
                 'Authorization': localStorage.getItem('Authorization') // 인증 토큰 포함
             },
             body: JSON.stringify({ newChatRoomName: newRoomName }) // 변경할 채팅방 이름을 JSON 형식으로 전달합니다.
