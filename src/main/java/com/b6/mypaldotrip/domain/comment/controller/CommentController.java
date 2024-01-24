@@ -13,6 +13,7 @@ import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.response.RestResponse;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class CommentController {
     @PostMapping
     public ResponseEntity<RestResponse<CommentSaveRes>> saveComment(
             @PathVariable Long courseId,
-            @RequestBody CommentSaveReq req,
+            @Valid @RequestBody CommentSaveReq req,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         CommentSaveRes res = commentService.saveComment(courseId, req, userDetails.getUserEntity());
 
@@ -74,7 +75,7 @@ public class CommentController {
     public ResponseEntity<RestResponse<CommentUpdateRes>> updateComment(
             @PathVariable Long courseId,
             @PathVariable Long commentId,
-            @RequestBody CommentUpdateReq req,
+            @Valid @RequestBody CommentUpdateReq req,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         CommentUpdateRes res =
                 commentService.updateComment(courseId, commentId, req, userDetails.getUserEntity());

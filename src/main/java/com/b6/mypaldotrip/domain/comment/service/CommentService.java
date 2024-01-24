@@ -70,6 +70,8 @@ public class CommentService {
                                                 .commentId(c.getCommentId())
                                                 .username(c.getUserEntity().getUsername())
                                                 .content(c.getContent())
+                                                .level(c.getUserEntity().getLevel())
+                                                .modifiedAt(c.getModifiedAt())
                                                 .totalPage(totalPages)
                                                 .build())
                         .toList();
