@@ -6,4 +6,4 @@ public record UserUpdateReq(
         @NotBlank(message = "username이 빈 값입니다") String username,
         String introduction,
         Long age,
-        @NotBlank(message = "password가 빈 값입니다")String password) {}
+        @NotBlank(message = "password가 빈 값입니다") String password) {}
