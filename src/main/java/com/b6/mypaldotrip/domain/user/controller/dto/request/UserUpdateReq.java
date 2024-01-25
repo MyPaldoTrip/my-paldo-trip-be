@@ -1,3 +1,9 @@
 package com.b6.mypaldotrip.domain.user.controller.dto.request;
 
-public record UserUpdateReq(String username, String introduction, Long age, String password) {}
+import jakarta.validation.constraints.NotBlank;
+
+public record UserUpdateReq(
+        @NotBlank(message = "username이 빈 값입니다") String username,
+        String introduction,
+        Long age,
+        @NotBlank(message = "password가 빈 값입니다") String password) {}
