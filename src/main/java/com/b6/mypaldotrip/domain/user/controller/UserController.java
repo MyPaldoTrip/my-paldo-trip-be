@@ -62,8 +62,8 @@ public class UserController {
 
     @PutMapping
     public ResponseEntity<RestResponse<UserUpdateRes>> updateProfile(
-            @RequestPart(value = "multipartFile") MultipartFile multipartFile,
-            @RequestPart(value = "req") String req,
+            @RequestPart(required = false) MultipartFile multipartFile,
+            @RequestPart String req,
             @AuthenticationPrincipal UserDetailsImpl userDetails)
             throws IOException {
         UserUpdateRes res =
