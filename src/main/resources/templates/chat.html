@@ -303,9 +303,18 @@
 
 
     function connect() {
+        // URL에서 토큰을 추출합니다.
+        const url = window.location.href;
+        const token = url.split('/').pop();
+
+        // 'Bearer '를 포함하고 있다면 토큰으로 간주하고 localStorage에 저장합니다.
+        if (token.startsWith('Bearer%20')) {
+            localStorage.setItem('Authorization', decodeURIComponent(token));
+        }
+
         fetch('/api/v1/chat-rooms/users/getRole', {
             headers: {
-                'Authorization': localStorage.getItem('Authorization')// 토큰을 헤더에 포함
+                'Authorization': localStorage.getItem('Authorization') // 토큰을 헤더에 포함
             }
         })
         .then(response => response.json()) // response.json()을 호출하여 반환된 Promise를 다음 then으로 전달합니다.
@@ -314,6 +323,10 @@
             nickname = data.data.name;
             console.log("유저 data: ", data);
 
+            // 현재 페이지가 /api/v1/chat-rooms/chat-page/{토큰} 형태라면 /api/v1/chat-rooms/chat-page/로 리다이렉트합니다.
+            if (token.startsWith('Bearer%20')) {
+                window.location.href = '/api/v1/chat-rooms/chat-page';
+            }
         })
         .catch(error => console.error('Error:', error));
 
@@ -321,8 +334,9 @@
         stompClient = Stomp.over(socket);
 
         stompClient.connect({}, onConnected, onError);
-
     }
+
+
 
 
     function onConnected() {
