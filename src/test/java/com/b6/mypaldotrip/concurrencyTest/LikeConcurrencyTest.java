@@ -16,7 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-public class ConcurrencyTest {
+public class LikeConcurrencyTest {
 
     @Autowired private LikeService likeService;
     @Autowired private LikeRepository likeRepository;
