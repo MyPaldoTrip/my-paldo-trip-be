@@ -16,6 +16,10 @@ import com.b6.mypaldotrip.domain.course.store.entity.CourseSort;
 import com.b6.mypaldotrip.domain.course.store.repository.CourseRepository;
 import com.b6.mypaldotrip.domain.courseFile.store.entity.CourseFileEntity;
 import com.b6.mypaldotrip.domain.courseFile.store.repository.CourseFileRepository;
+import com.b6.mypaldotrip.domain.trip.service.TripService;
+import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
+import com.b6.mypaldotrip.domain.tripCourse.store.entity.TripCourseEntity;
+import com.b6.mypaldotrip.domain.tripCourse.store.repository.TripCourseRepository;
 import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.domain.user.store.entity.UserRole;
 import com.b6.mypaldotrip.global.common.S3Provider;
@@ -39,7 +43,9 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
     private final CityService cityService;
+    private final TripService tripService;
     private final CourseFileRepository courseFileRepository;
+    private final TripCourseRepository tripCourseRepository;
     private final S3Provider s3Provider;
 
     @Transactional
@@ -47,6 +53,8 @@ public class CourseService {
             throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         CourseSaveReq req = objectMapper.readValue(reqStr, CourseSaveReq.class);
+
+        List<Long> tripIds = req.tripIds();
 
         CityEntity city = cityService.findByCityName(req.cityName());
 
@@ -57,6 +65,13 @@ public class CourseService {
                         .userEntity(user)
                         .cityEntity(city)
                         .build();
+
+        for (Long tripId : tripIds) {
+            TripEntity trip = tripService.findTrip(tripId);
+            TripCourseEntity tripCourse =
+                    TripCourseEntity.builder().trip(trip).course(course).build();
+            tripCourseRepository.save(tripCourse);
+        }
 
         if (multipartFile != null) {
             String fileUrl = s3Provider.saveFile(multipartFile, "course");
@@ -114,10 +129,14 @@ public class CourseService {
     public CourseGetRes getCourse(Long courseId) {
         CourseEntity course = findCourse(courseId);
 
-        List<String> UrlList = new ArrayList<>();
+        List<String> urlList = new ArrayList<>();
+        List<Long> tripIds = new ArrayList<>();
 
         for (CourseFileEntity courseFileEntity : course.getFiles()) {
-            UrlList.add(courseFileEntity.getFileURL());
+            urlList.add(courseFileEntity.getFileURL());
+        }
+        for (TripCourseEntity tripCourse : course.getTripCourses()) {
+            tripIds.add(tripCourse.getTrip().getTripId());
         }
 
         CourseGetRes res =
@@ -126,7 +145,8 @@ public class CourseService {
                         .username(course.getUserEntity().getUsername())
                         .title(course.getTitle())
                         .content(course.getContent())
-                        .fileURL(UrlList)
+                        .fileURL(urlList)
+                        .relatedTripId(tripIds)
                         .createdAt(course.getCreatedAt())
                         .build();
 
