@@ -101,6 +101,12 @@ public class ChatController {
                 .toResponseEntity();
     }
 
+    @GetMapping("/chat-page/{chatToken}")
+    public String chatPageRedirect() {
+
+        return "chat";
+    }
+
     @GetMapping("/chat-page")
     public String chatPage() {
         return "chat";
