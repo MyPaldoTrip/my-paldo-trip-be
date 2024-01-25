@@ -1,6 +1,5 @@
 package com.b6.mypaldotrip.concurrencyTest;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.b6.mypaldotrip.domain.like.service.LikeService;
@@ -19,12 +18,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 public class ConcurrencyTest {
 
-    @Autowired
-    private LikeService likeService;
-    @Autowired
-    private LikeRepository likeRepository;
-    @Autowired
-    private UserService userService;
+    @Autowired private LikeService likeService;
+    @Autowired private LikeRepository likeRepository;
+    @Autowired private UserService userService;
+
     @Test
     public void testLikeInMultiThread() throws InterruptedException {
         // given
@@ -35,17 +32,15 @@ public class ConcurrencyTest {
         // when
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
         for (long i = 0L; i < threadCount; i++) {
-            UserEntity user = userService.findUser(i+9);
+            UserEntity user = userService.findUser(i + 9);
             executor.execute(() -> likeService.toggleLike(courseId, user));
         }
 
         // 모든 작업이 끝날 때까지 대기
         executor.shutdown();
-        while (!executor.isTerminated()) {
-        }
+        while (!executor.isTerminated()) {}
 
         // then
         assertEquals(threadCount, likeRepository.findAll().size() - amount);
-
     }
 }
