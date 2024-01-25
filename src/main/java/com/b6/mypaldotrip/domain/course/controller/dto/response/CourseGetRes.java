@@ -11,4 +11,5 @@ public record CourseGetRes(
         String title,
         String content,
         List<String> fileURL,
+        List<Long> relatedTripId,
         LocalDateTime createdAt) {}
