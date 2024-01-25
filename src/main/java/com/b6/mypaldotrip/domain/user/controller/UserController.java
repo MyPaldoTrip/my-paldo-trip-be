@@ -3,6 +3,7 @@ package com.b6.mypaldotrip.domain.user.controller;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserListReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserSignUpReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserDeleteRes;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetMyProfileRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetProfileRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserListRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserSignUpRes;
@@ -56,6 +57,15 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<RestResponse<UserGetProfileRes>> viewProfile(@PathVariable Long userId) {
         UserGetProfileRes res = userService.viewProfile(userId);
+        return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                .toResponseEntity();
+    }
+
+    @GetMapping
+    public ResponseEntity<RestResponse<UserGetMyProfileRes>> viewMyProfile(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        UserGetMyProfileRes res =
+                userService.viewMyProfile(userDetails.getUserEntity().getUserId());
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
