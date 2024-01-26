@@ -118,7 +118,6 @@ public class ChatController {
         }
     }
 
-
     @GetMapping("/chat-page")
     public String chatPage() {
         if(jwtUtil.validateToken(token)) {

@@ -11,7 +11,10 @@ import com.b6.mypaldotrip.global.exception.GlobalException;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.data.mongodb.core.query.Query;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +22,7 @@ public class ChatMessageService {
 
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomEntityRepository chatRoomEntityRepository;
+    private final MongoTemplate mongoTemplate;
 
     public ChatRoomSaveRes createARoom(String chatRoomName) {
         String chatRoomId = "id" + UUID.randomUUID();
@@ -31,10 +35,13 @@ public class ChatMessageService {
     }
 
     public List<ChatRoomEntity> getChatRoomList() {
-        List<ChatRoomEntity> chatRoomList = chatRoomEntityRepository.findAll();
+        Query query = new Query();
+        query.with(Sort.by(Sort.Direction.ASC, "chatRoomName"));
+        List<ChatRoomEntity> chatRoomList = mongoTemplate.find(query, ChatRoomEntity.class);
 
         return chatRoomList;
     }
+
 
     public ChatMessage saveMessageIfRoomExists(String chatRoomId, ChatMessage chatMessage) {
         if (chatRoomEntityRepository.findByChatRoomId(chatRoomId).isPresent()) {
