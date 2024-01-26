@@ -80,7 +80,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/ws/**")
                                 .permitAll()
                                 .requestMatchers(
-                                        "/api/" + versionConfig.getVersion() + "/chat-rooms/**")
+                                        "/api/" + versionConfig.getVersion() + "/chat-rooms/chat-page/**")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated());
