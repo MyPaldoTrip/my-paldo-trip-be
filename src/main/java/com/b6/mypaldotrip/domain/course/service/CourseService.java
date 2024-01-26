@@ -145,6 +145,7 @@ public class CourseService {
                         .username(course.getUserEntity().getUsername())
                         .title(course.getTitle())
                         .content(course.getContent())
+                        .cityName(course.getCityEntity().getCityName())
                         .fileURL(urlList)
                         .relatedTripId(tripIds)
                         .createdAt(course.getCreatedAt())
