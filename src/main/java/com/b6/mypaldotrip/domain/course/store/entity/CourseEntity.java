@@ -74,8 +74,17 @@ public class CourseEntity extends BaseEntity {
     @OneToMany(mappedBy = "courseEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TripCourseEntity> tripCourses = new ArrayList<>();
 
-    public void updateCourse(String title, String content) {
+    public void updateCourse(String title, String content, CityEntity cityEntity) {
         this.title = title;
         this.content = content;
+        this.cityEntity = cityEntity;
+    }
+
+    public void cleatTripCourses() {
+        this.tripCourses.clear();
+    }
+
+    public void updateTripCourses(TripCourseEntity tripCourseEntity) {
+        this.tripCourses.add(tripCourseEntity);
     }
 }

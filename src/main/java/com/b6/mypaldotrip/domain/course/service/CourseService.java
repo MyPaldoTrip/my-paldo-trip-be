@@ -157,10 +157,19 @@ public class CourseService {
     @Transactional
     public CourseUpdateRes updateCourse(Long courseId, CourseUpdateReq req, UserEntity userEntity) {
         CourseEntity course = findCourse(courseId);
-
         validateAuth(userEntity, course);
+        CityEntity cityEntity = cityService.findByCityName(req.cityName());
+        if (req.tripIds() != null) {
+            course.cleatTripCourses();
+            for (Long tripId : req.tripIds()) {
+                TripEntity trip = tripService.findTrip(tripId);
+                TripCourseEntity tripCourseEntity =
+                        TripCourseEntity.builder().course(course).trip(trip).build();
+                course.updateTripCourses(tripCourseEntity);
+            }
+        }
 
-        course.updateCourse(req.title(), req.content());
+        course.updateCourse(req.title(), req.content(), cityEntity);
 
         CourseUpdateRes res =
                 CourseUpdateRes.builder()
