@@ -38,13 +38,20 @@ public class CourseEntity extends BaseEntity {
 
     private String content;
 
+    private String thumbnailUrl;
+
     @Builder
     private CourseEntity(
-            String title, String content, UserEntity userEntity, CityEntity cityEntity) {
+            String title,
+            String content,
+            UserEntity userEntity,
+            CityEntity cityEntity,
+            String thumbnailUrl) {
         this.userEntity = userEntity;
         this.cityEntity = cityEntity;
         this.title = title;
         this.content = content;
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     @OneToMany(mappedBy = "courseEntity", cascade = CascadeType.ALL, orphanRemoval = true)

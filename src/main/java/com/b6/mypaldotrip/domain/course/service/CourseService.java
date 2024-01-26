@@ -65,6 +65,7 @@ public class CourseService {
                         .content(req.content())
                         .userEntity(user)
                         .cityEntity(city)
+                        .thumbnailUrl(fileUrl)
                         .build();
 
         for (Long tripId : tripIds) {
@@ -117,6 +118,7 @@ public class CourseService {
                                                 .createdAt(courseEntity.getCreatedAt())
                                                 .commentCount(courseEntity.getComments().size())
                                                 .likeCount(courseEntity.getLikes().size())
+                                                .thumbnailUrl(courseEntity.getThumbnailUrl())
                                                 .build())
                         .toList();
 
