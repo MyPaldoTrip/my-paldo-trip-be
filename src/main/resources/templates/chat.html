@@ -37,7 +37,7 @@
             border-right: 1px solid #ccc;
             padding: 20px;
             box-sizing: border-box;
-            background-color: #3498db;
+            background-color: #FDAF00;
             color: #fff;
             border-top-left-radius: 8px;
             border-bottom-left-radius: 8px;
@@ -131,7 +131,7 @@
         }
 
         .sender {
-            background-color: #3498db;
+            background-color: #0B2554;
             color: #fff;
             align-self: flex-end;
         }
@@ -158,7 +158,7 @@
         .message-input button {
             padding: 10px;
             border: none;
-            background-color: #3498db;
+            background-color: #FE7500;
             color: #fff;
             border-radius: 5px;
             cursor: pointer;
@@ -195,7 +195,7 @@
         .user-form button {
             padding: 12px;
             border: none;
-            background-color: #3498db;
+            background-color: #FE7500;
             color: #fff;
             border-radius: 5px;
             cursor: pointer;
@@ -220,13 +220,17 @@
 <div class="chat-container" id="chat-page">
     <div class="users-list">
         <div class="users-list-container">
-            <h2>Online Users</h2>
+            <h2>지역 이름</h2>
             <ul id="connectedUsers">
             </ul>
         </div>
         <div>
             <p id="connected-user-fullname"></p>
-            <a class="logout" href="javascript:void(0)" id="logout">Logout</a>
+        <form id="searchForm" name="searchForm" class="active">
+            <label for="searchText">도시 검색</label>
+            <input autocomplete="off" type="text" id="searchText" placeholder="도시 검색">
+            <button>검색</button>
+        </form>
         </div>
     </div>
 
@@ -236,7 +240,7 @@
 
         <form id="messageForm" name="messageForm" class="hidden">
             <div class="message-input">
-                <input autocomplete="off" type="text" id="message" placeholder="Type your message...">
+                <input autocomplete="off" type="text" id="message" placeholder="메세지를 입력해 주세요">
                 <button>Send</button>
             </div>
         </form>
@@ -284,7 +288,6 @@
     const messageInput = document.querySelector('#message');
     const connectingElement = document.querySelector('.connecting');
     const chatArea = document.querySelector('#chat-messages');
-    const logout = document.querySelector('#logout');
     const createText = document.querySelector('#createText');
 
     let stompClient = null;
@@ -341,8 +344,8 @@
 
     function onConnected() {
         stompClient.subscribe(`/topic/public/`, onMessageReceived);
-        stompClient.subscribe(`/user/public`, onMessageReceived);
-        stompClient.subscribe(`/topic/public/${chatRoomId}`, onMessageReceived);
+        //stompClient.subscribe(`/user/public`, onMessageReceived);
+        //stompClient.subscribe(`/topic/public/${chatRoomId}`, onMessageReceived);
 
         // register the connected user
         stompClient.send("/app/user.addUser",
@@ -525,7 +528,7 @@
 
             stompClient.send(`/app/chatting/${chatRoomId}`, {}, JSON.stringify(chatMessageEntity));
             //stompClient.send("/app/chat", {}, JSON.stringify(chatMessageEntity));
-            displayMessage(senderId, messageInput.value.trim());
+            //displayMessage(senderId, messageInput.value.trim());
             messageInput.value = '';
         }
         chatArea.scrollTop = chatArea.scrollHeight;
@@ -541,7 +544,7 @@
         if (selectedRoomId && selectedRoomId === message.chatRoomId) {
             displayMessage(message.senderId, message.content);
             chatArea.scrollTop = chatArea.scrollHeight;
-            await fetchAndDisplayUserChat(); // 채팅 메시지를 가져와서 화면을 갱신
+            //await fetchAndDisplayUserChat(); // 채팅 메시지를 가져와서 화면을 갱신
         }
 
         if (selectedRoomId) {
@@ -638,7 +641,6 @@
 
     // usernameForm.addEventListener('submit', connect, true); // step 1
     messageForm.addEventListener('submit', sendMessage, true);
-    logout.addEventListener('click', onLogout, true);
     window.onbeforeunload = () => onLogout();
     connect();
 
