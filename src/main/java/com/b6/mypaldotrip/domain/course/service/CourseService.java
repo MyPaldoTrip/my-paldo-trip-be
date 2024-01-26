@@ -53,6 +53,7 @@ public class CourseService {
             throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         CourseSaveReq req = objectMapper.readValue(reqStr, CourseSaveReq.class);
+        String fileUrl = s3Provider.saveFile(multipartFile, "course");
 
         List<Long> tripIds = req.tripIds();
 
@@ -73,12 +74,9 @@ public class CourseService {
             tripCourseRepository.save(tripCourse);
         }
 
-        if (multipartFile != null) {
-            String fileUrl = s3Provider.saveFile(multipartFile, "course");
-            CourseFileEntity courseFileEntity =
-                    CourseFileEntity.builder().courseEntity(course).fileURL(fileUrl).build();
-            courseFileRepository.save(courseFileEntity);
-        }
+        CourseFileEntity courseFileEntity =
+                CourseFileEntity.builder().courseEntity(course).fileURL(fileUrl).build();
+        courseFileRepository.save(courseFileEntity);
 
         courseRepository.save(course);
 
