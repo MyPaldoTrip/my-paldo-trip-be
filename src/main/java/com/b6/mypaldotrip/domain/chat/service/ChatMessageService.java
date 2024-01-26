@@ -73,4 +73,11 @@ public class ChatMessageService {
         chatRoomEntityRepository.delete(chatRoomEntity);
         return chatRoomEntity;
     }
+
+    public String validateChatRoomName(String checkRoomNameSame) {
+        if(chatRoomEntityRepository.findByChatRoomName(checkRoomNameSame).isPresent()){
+            throw new GlobalException(ChatErrorCode.CHATROOM_ALREADY_EXISTS);
+        }
+        return checkRoomNameSame;
+    }
 }

@@ -55,7 +55,8 @@ public class ChatController {
     @PostMapping("/rooms")
     public ResponseEntity<RestResponse<ChatRoomSaveRes>> createChatRoom(
             @RequestBody CreateRoomReq req) {
-        ChatRoomSaveRes chatRoomSaveRes = chatMessageService.createARoom(req.chatRoomName());
+        String validatedChatRoomName = chatMessageService.validateChatRoomName(req.chatRoomName());
+        ChatRoomSaveRes chatRoomSaveRes = chatMessageService.createARoom(validatedChatRoomName);
         return RestResponse.success(
                         chatRoomSaveRes, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
@@ -116,7 +117,6 @@ public class ChatController {
             return "error";
         }
     }
-
 
 
     @GetMapping("/chat-page")
