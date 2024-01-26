@@ -73,6 +73,7 @@ public class TripService {
                 .build();
     }
 
+    @Transactional
     public List<TripListRes> getTripList(TripListReq req) {
         Pageable pageable = PageRequest.of(req.page(), 20);
         TripSort sort = (req.tripSort() != null) ? req.tripSort() : TripSort.CREATED;
@@ -88,6 +89,10 @@ public class TripService {
                                         .name(trip.getName())
                                         .averageRating(trip.getAverageRating())
                                         .reviews(trip.getReviewList().size())
+                                        .fileUrlList(
+                                                trip.getTripFileList().stream()
+                                                        .map(TripFileEntity::getFileUrl)
+                                                        .toList())
                                         .build())
                 .toList();
     }
