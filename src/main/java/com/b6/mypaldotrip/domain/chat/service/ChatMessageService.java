@@ -1,5 +1,6 @@
 package com.b6.mypaldotrip.domain.chat.service;
 
+import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomIdRes;
 import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomInfoRes;
 import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomSaveRes;
 import com.b6.mypaldotrip.domain.chat.exception.ChatErrorCode;
@@ -13,8 +14,8 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.stereotype.Service;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +42,6 @@ public class ChatMessageService {
 
         return chatRoomList;
     }
-
 
     public ChatMessage saveMessageIfRoomExists(String chatRoomId, ChatMessage chatMessage) {
         if (chatRoomEntityRepository.findByChatRoomId(chatRoomId).isPresent()) {
@@ -82,9 +82,18 @@ public class ChatMessageService {
     }
 
     public String validateChatRoomName(String checkRoomNameSame) {
-        if(chatRoomEntityRepository.findByChatRoomName(checkRoomNameSame).isPresent()){
+        if (chatRoomEntityRepository.findByChatRoomName(checkRoomNameSame).isPresent()) {
             throw new GlobalException(ChatErrorCode.CHATROOM_ALREADY_EXISTS);
         }
         return checkRoomNameSame;
+    }
+
+    public ChatRoomIdRes getChatRoomIdByChatRoomName(String chatRoomName) {
+        ChatRoomEntity chatRoomEntity =
+                chatRoomEntityRepository
+                        .findByChatRoomName(chatRoomName)
+                        .orElseThrow(() -> new GlobalException(ChatErrorCode.CHATROOM_NOT_FOUND));
+        System.out.println("chatRoomEntity.getChatRoomId() = " + chatRoomEntity.getChatRoomId());
+        return ChatRoomIdRes.builder().chatRoomId(chatRoomEntity.getChatRoomId()).build();
     }
 }

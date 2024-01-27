@@ -2,6 +2,7 @@ package com.b6.mypaldotrip.domain.chat.controller;
 
 import com.b6.mypaldotrip.domain.chat.controller.dto.request.CreateRoomReq;
 import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoleRes;
+import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomIdRes;
 import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomInfoRes;
 import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomSaveRes;
 import com.b6.mypaldotrip.domain.chat.service.ChatMessageService;
@@ -49,6 +50,16 @@ public class ChatController {
                 chatMessageService.findAllMessagesByChatRoomId(chatRoomId);
         return RestResponse.success(
                         chatRoomInfoRes, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                .toResponseEntity();
+    }
+
+    @GetMapping("/search/{chatRoomName}")
+    public ResponseEntity<RestResponse<ChatRoomIdRes>> findAChatRoomId(
+            @PathVariable String chatRoomName) {
+        ChatRoomIdRes chatRoomIdRes = chatMessageService.getChatRoomIdByChatRoomName(chatRoomName);
+
+        return RestResponse.success(
+                        chatRoomIdRes, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
 
@@ -108,22 +119,20 @@ public class ChatController {
 
     @GetMapping("/chat-page/{chatToken}")
     public String chatPageRedirect(@PathVariable String chatToken)
-        throws UnsupportedEncodingException {
+            throws UnsupportedEncodingException {
         token = java.net.URLDecoder.decode(chatToken, "UTF-8").replace("Bearer ", "");
-        if(jwtUtil.validateToken(token)) {
+        if (jwtUtil.validateToken(token)) {
             return "chat";
-        }
-        else{
+        } else {
             return "error";
         }
     }
 
     @GetMapping("/chat-page")
     public String chatPage() {
-        if(jwtUtil.validateToken(token)) {
+        if (jwtUtil.validateToken(token)) {
             return "chat";
-        }
-        else{
+        } else {
             return "error";
         }
     }

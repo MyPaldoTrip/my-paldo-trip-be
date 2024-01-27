@@ -348,10 +348,10 @@
         //stompClient.subscribe(`/topic/public/${chatRoomId}`, onMessageReceived);
 
         // register the connected user
-        stompClient.send("/app/user.addUser",
-            {},
-            JSON.stringify({nickName: nickname, password: password, status: 'ONLINE'})
-        );
+        // stompClient.send("/app/user.addUser",
+        //     {},
+        //     JSON.stringify({nickName: nickname, password: password, status: 'ONLINE'})
+        // );
         document.querySelector('#connected-user-fullname').textContent = nickname;
         findAndDisplayConnectedRooms().then();
         console.log("토큰"+localStorage.getItem('Authorization'));
@@ -442,9 +442,9 @@
 
         fetchAndDisplayUserChat().then();
 
-        const nbrMsg = clickedUser.querySelector('.nbr-msg');
-        nbrMsg.classList.add('hidden');
-        nbrMsg.textContent = '0';
+        // const nbrMsg = clickedUser.querySelector('.nbr-msg');// 알림 관련
+        // nbrMsg.classList.add('hidden');
+        // nbrMsg.textContent = '0';
     }
 
     async function findRoomName(selectedRoomId){
@@ -538,7 +538,7 @@
 
 
     async function onMessageReceived(payload) {
-        await findAndDisplayConnectedRooms();
+        await findAndDisplayConnectedRooms();//지워보기
         console.log('Message received', payload);
         const message = JSON.parse(payload.body);
         if (selectedRoomId && selectedRoomId === message.chatRoomId) {
@@ -565,13 +565,13 @@
         }
     }
 
-    function onLogout() {
-        stompClient.send("/app/user.disconnectUser",
-            {},
-            JSON.stringify({nickName: nickname, password: password, status: 'OFFLINE'})
-        );
-        window.location.reload();
-    }
+    // function onLogout() {
+    //     stompClient.send("/app/user.disconnectUser",
+    //         {},
+    //         JSON.stringify({nickName: nickname, password: password, status: 'OFFLINE'})
+    //     );
+    //     window.location.reload();
+    // }
 
     // 방 이름을 입력하고 방을 생성하는 이벤트 핸들러
     document.getElementById('createRoomButton').addEventListener('click', function(event) {
@@ -635,6 +635,53 @@
         .then(data => console.log(data))
         .catch(error => console.error('Error:', error));
     });
+
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        let searchText = document.getElementById('searchText').value;
+
+        fetch('/api/v1/chat-rooms/search/' + encodeURIComponent(searchText), {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': localStorage.getItem('Authorization')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === '정상 처리 되었습니다') {
+                console.log('채팅방 ID: ' + data.data.chatRoomId);
+                chatRoomId = data.data.chatRoomId;
+                selectedRoomId = chatRoomId;
+                document.querySelectorAll('.user-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                messageForm.classList.remove('hidden');
+
+                const clickedUser = document.querySelector(`#${chatRoomId}`);
+                clickedUser.classList.add('active');
+
+                // 스크롤 이동
+                clickedUser.scrollIntoView({ behavior: "smooth" });
+
+                fetchAndDisplayUserChat();
+            } else {
+                console.log('채팅방 ID: ' + data.data.chatRoomId);
+                console.log('채팅방을 찾을 수 없습니다.');
+                alert('채팅방을 찾을 수 없습니다.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('오류가 발생했습니다.');
+        });
+    });
+
+
+
+
+
+
 
 
 
