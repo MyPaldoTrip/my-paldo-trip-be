@@ -16,6 +16,9 @@
             justify-content: center;
             height: 100vh;
             flex-direction: column;
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/js/korea_autumn.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
         }
 
         .chat-container {
@@ -407,7 +410,7 @@
         console.log(listItem.id);
 
         const userImage = document.createElement('img');
-        userImage.src = '/js/user_icon.png';
+        userImage.src = '/js/hanok.png';
         userImage.alt = room.chatRoomName;
 
         const usernameSpan = document.createElement('span');
