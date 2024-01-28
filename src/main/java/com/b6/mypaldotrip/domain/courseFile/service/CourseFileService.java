@@ -11,7 +11,6 @@ import com.b6.mypaldotrip.domain.courseFile.store.repository.CourseFileRepositor
 import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.global.common.S3Provider;
 import com.b6.mypaldotrip.global.exception.GlobalException;
-import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -27,25 +26,13 @@ public class CourseFileService {
     private final S3Provider s3Provider;
     private final CourseFileRepository courseFileRepository;
 
-    @Transactional
     public CourseFileAddRes addFiles(
             Long courseId, MultipartFile multipartFile, UserEntity userEntity) throws IOException {
         CourseEntity courseEntity = findCourse(courseId);
         validateAuth(userEntity, courseEntity);
 
+        String fileUrl = s3Provider.saveFile(multipartFile, "course");
         CourseFileEntity courseFileEntity =
-                CourseFileEntity.builder().courseEntity(courseEntity).build();
-
-        String fileUrl;
-        try {
-            fileUrl = s3Provider.updateFile(courseFileEntity, multipartFile);
-        } catch (GlobalException e) {
-            fileUrl = s3Provider.saveFile(multipartFile, "course");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        courseFileEntity =
                 CourseFileEntity.builder().courseEntity(courseEntity).fileURL(fileUrl).build();
 
         courseFileRepository.save(courseFileEntity);

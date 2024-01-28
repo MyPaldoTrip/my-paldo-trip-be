@@ -4,6 +4,7 @@ import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
 import com.b6.mypaldotrip.domain.comment.store.entity.CommentEntity;
 import com.b6.mypaldotrip.domain.courseFile.store.entity.CourseFileEntity;
 import com.b6.mypaldotrip.domain.like.store.entity.LikeEntity;
+import com.b6.mypaldotrip.domain.tripCourse.store.entity.TripCourseEntity;
 import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.global.common.BaseEntity;
 import jakarta.persistence.CascadeType;
@@ -37,13 +38,20 @@ public class CourseEntity extends BaseEntity {
 
     private String content;
 
+    private String thumbnailUrl;
+
     @Builder
     private CourseEntity(
-            String title, String content, UserEntity userEntity, CityEntity cityEntity) {
+            String title,
+            String content,
+            UserEntity userEntity,
+            CityEntity cityEntity,
+            String thumbnailUrl) {
         this.userEntity = userEntity;
         this.cityEntity = cityEntity;
         this.title = title;
         this.content = content;
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     @OneToMany(mappedBy = "courseEntity", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -63,8 +71,20 @@ public class CourseEntity extends BaseEntity {
     @OneToMany(mappedBy = "courseEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CourseFileEntity> files = new ArrayList<>();
 
-    public void updateCourse(String title, String content) {
+    @OneToMany(mappedBy = "courseEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TripCourseEntity> tripCourses = new ArrayList<>();
+
+    public void updateCourse(String title, String content, CityEntity cityEntity) {
         this.title = title;
         this.content = content;
+        this.cityEntity = cityEntity;
+    }
+
+    public void cleatTripCourses() {
+        this.tripCourses.clear();
+    }
+
+    public void updateTripCourses(TripCourseEntity tripCourseEntity) {
+        this.tripCourses.add(tripCourseEntity);
     }
 }

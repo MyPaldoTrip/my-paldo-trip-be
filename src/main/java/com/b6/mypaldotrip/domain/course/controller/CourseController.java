@@ -77,7 +77,7 @@ public class CourseController {
     @PutMapping("{courseId}")
     public ResponseEntity<RestResponse<CourseUpdateRes>> updateCourse(
             @PathVariable Long courseId,
-            @RequestBody CourseUpdateReq req,
+            @Valid @RequestBody CourseUpdateReq req,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         CourseUpdateRes res =
                 courseService.updateCourse(courseId, req, userDetails.getUserEntity());
