@@ -229,11 +229,11 @@
         </div>
         <div>
             <p id="connected-user-fullname"></p>
-        <form id="searchForm" name="searchForm" class="active">
-            <label for="searchText">도시 검색</label>
-            <input autocomplete="off" type="text" id="searchText" placeholder="도시 검색">
-            <button>검색</button>
-        </form>
+            <form id="searchForm" name="searchForm" class="active">
+                <label for="searchText">도시 검색</label>
+                <input autocomplete="off" type="text" id="searchText" placeholder="도시 검색">
+                <button>검색</button>
+            </form>
         </div>
     </div>
 
@@ -250,34 +250,34 @@
     </div>
 </div>
 <div id="adminChatRoom" name="adminChatRoom" class="hidden ChatRoomSetting">
-<div>
     <div>
-        <h2>Create ChatRoom</h2>
-    </div>
-    <input type="text" id="createText" placeholder="방 생성">
-    <button id="createRoomButton">생성</button>
+        <div>
+            <h2>Create ChatRoom</h2>
+        </div>
+        <input type="text" id="createText" placeholder="방 생성">
+        <button id="createRoomButton">생성</button>
 
-</div>
-<div>
+    </div>
     <div>
-        <h2>delete ChatRoom</h2>
-    </div>
-    <input type="text" id="deleteRoom" placeholder="방 삭제">
-    <button id="deleteButton" onclick="alert('삭제 버튼 클릭: ' + document.getElementById('deleteRoom').value)">삭제</button> <!-- ID 추가 -->
+        <div>
+            <h2>delete ChatRoom</h2>
+        </div>
+        <input type="text" id="deleteRoom" placeholder="방 삭제">
+        <button id="deleteButton" onclick="alert('삭제 버튼 클릭: ' + document.getElementById('deleteRoom').value)">삭제</button> <!-- ID 추가 -->
 
-</div>
-<div>
-    <h2>update ChatRoom</h2>
-</div>
-<div>
-    <input type="text" id="updateText1" placeholder="원래 방이름 ">
-</div>
-<div>
-    <input type="text" id="updateText2" placeholder="수정할 방이름">
-</div>
-<div>
-    <button id="updateButton" onclick="alert('수정 버튼 클릭: ' + document.getElementById('updateText1').value + ', ' + document.getElementById('updateText2').value)">수정</button>
-</div>
+    </div>
+    <div>
+        <h2>update ChatRoom</h2>
+    </div>
+    <div>
+        <input type="text" id="updateText1" placeholder="원래 방이름 ">
+    </div>
+    <div>
+        <input type="text" id="updateText2" placeholder="수정할 방이름">
+    </div>
+    <div>
+        <button id="updateButton" onclick="alert('수정 버튼 클릭: ' + document.getElementById('updateText1').value + ', ' + document.getElementById('updateText2').value)">수정</button>
+    </div>
 </div>
 <script src="/js/http_cdn.jsdelivr.net_sockjs_1_sockjs.js"></script>
 <script src="/js/http_cdnjs.cloudflare.com_ajax_libs_stomp.js_2.3.3_stomp.js"></script>
@@ -347,14 +347,7 @@
 
     function onConnected() {
         stompClient.subscribe(`/topic/public/`, onMessageReceived);
-        //stompClient.subscribe(`/user/public`, onMessageReceived);
-        //stompClient.subscribe(`/topic/public/${chatRoomId}`, onMessageReceived);
 
-        // register the connected user
-        // stompClient.send("/app/user.addUser",
-        //     {},
-        //     JSON.stringify({nickName: nickname, password: password, status: 'ONLINE'})
-        // );
         document.querySelector('#connected-user-fullname').textContent = nickname;
         findAndDisplayConnectedRooms().then();
         console.log("토큰"+localStorage.getItem('Authorization'));
@@ -506,14 +499,10 @@
         chatArea.scrollTop = chatArea.scrollHeight;
     }
 
-
-
-
     function onError() {
         connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
         connectingElement.style.color = 'red';
     }
-
 
     function sendMessage(event) {
         const messageContent = messageInput.value.trim();
@@ -538,10 +527,8 @@
         event.preventDefault();
     }
 
-
-
     async function onMessageReceived(payload) {
-        await findAndDisplayConnectedRooms();//지워보기
+        //await findAndDisplayConnectedRooms();//지워보기
         console.log('Message received', payload);
         const message = JSON.parse(payload.body);
         if (selectedRoomId && selectedRoomId === message.chatRoomId) {
@@ -567,14 +554,6 @@
             nbrMsg.textContent = '';
         }
     }
-
-    // function onLogout() {
-    //     stompClient.send("/app/user.disconnectUser",
-    //         {},
-    //         JSON.stringify({nickName: nickname, password: password, status: 'OFFLINE'})
-    //     );
-    //     window.location.reload();
-    // }
 
     // 방 이름을 입력하고 방을 생성하는 이벤트 핸들러
     document.getElementById('createRoomButton').addEventListener('click', function(event) {
@@ -604,8 +583,6 @@
         .catch((error) => console.error('Error:', error));
     });
 
-
-    //stompClient.send("/app/chat/rooms", {}, JSON.stringify(createRoomRequest));
     //생성 버튼 누르면 작동함
     document.getElementById('deleteButton').addEventListener('click', function(event) { // 'deleteButton'으로 수정
         const chatRoomName = document.getElementById('deleteRoom').value;
@@ -621,6 +598,7 @@
         .then(data => console.log(data))
         .catch(error => console.error('Error:', error));
     });
+
     document.getElementById('updateButton').addEventListener('click', function(event) {
         const originalRoomName = document.getElementById('updateText1').value;
         const newRoomName = document.getElementById('updateText2').value;
@@ -680,23 +658,9 @@
         });
     });
 
-
-
-
-
-
-
-
-
-
-    // usernameForm.addEventListener('submit', connect, true); // step 1
     messageForm.addEventListener('submit', sendMessage, true);
     window.onbeforeunload = () => onLogout();
     connect();
-
-
-
-
 
 </script>
 
