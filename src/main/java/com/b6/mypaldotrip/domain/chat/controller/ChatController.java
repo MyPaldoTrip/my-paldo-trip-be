@@ -2,6 +2,7 @@ package com.b6.mypaldotrip.domain.chat.controller;
 
 import com.b6.mypaldotrip.domain.chat.controller.dto.request.CreateRoomReq;
 import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoleRes;
+import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomIdRes;
 import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomInfoRes;
 import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomSaveRes;
 import com.b6.mypaldotrip.domain.chat.service.ChatMessageService;
@@ -10,7 +11,9 @@ import com.b6.mypaldotrip.domain.chat.store.entity.ChatRoomEntity;
 import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.response.RestResponse;
+import com.b6.mypaldotrip.global.security.JwtUtil;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +40,8 @@ public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatMessageService chatMessageService;
     private final VersionConfig versionConfig;
+    private final JwtUtil jwtUtil;
+    private String token;
 
     @GetMapping("/{chatRoomId}")
     public ResponseEntity<RestResponse<ChatRoomInfoRes>> findAllMessages(
@@ -48,10 +53,21 @@ public class ChatController {
                 .toResponseEntity();
     }
 
+    @GetMapping("/search/{chatRoomName}")
+    public ResponseEntity<RestResponse<ChatRoomIdRes>> findAChatRoomId(
+            @PathVariable String chatRoomName) {
+        ChatRoomIdRes chatRoomIdRes = chatMessageService.getChatRoomIdByChatRoomName(chatRoomName);
+
+        return RestResponse.success(
+                        chatRoomIdRes, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                .toResponseEntity();
+    }
+
     @PostMapping("/rooms")
     public ResponseEntity<RestResponse<ChatRoomSaveRes>> createChatRoom(
             @RequestBody CreateRoomReq req) {
-        ChatRoomSaveRes chatRoomSaveRes = chatMessageService.createARoom(req.chatRoomName());
+        String validatedChatRoomName = chatMessageService.validateChatRoomName(req.chatRoomName());
+        ChatRoomSaveRes chatRoomSaveRes = chatMessageService.createARoom(validatedChatRoomName);
         return RestResponse.success(
                         chatRoomSaveRes, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
@@ -102,14 +118,23 @@ public class ChatController {
     }
 
     @GetMapping("/chat-page/{chatToken}")
-    public String chatPageRedirect() {
-
-        return "chat";
+    public String chatPageRedirect(@PathVariable String chatToken)
+            throws UnsupportedEncodingException {
+        token = java.net.URLDecoder.decode(chatToken, "UTF-8").replace("Bearer ", "");
+        if (jwtUtil.validateToken(token)) {
+            return "chat";
+        } else {
+            return "error";
+        }
     }
 
     @GetMapping("/chat-page")
     public String chatPage() {
-        return "chat";
+        if (jwtUtil.validateToken(token)) {
+            return "chat";
+        } else {
+            return "error";
+        }
     }
 
     @GetMapping("/users/getRole")
