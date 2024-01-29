@@ -67,7 +67,7 @@ public class UserService {
         return UserDeleteRes.builder().message("유저, 유저파일 삭제").build();
     }
 
-    //지금 레코드 써서 좀 많이 지저분한데 레코드 쓰면서도 해결 할 방법이 있을까요?
+    // 지금 레코드 써서 좀 많이 지저분한데 레코드 쓰면서도 해결 할 방법이 있을까요?
     @Transactional
     public UserGetProfileRes viewProfile(Long userId) {
         UserEntity userEntity = findUser(userId);
@@ -202,7 +202,8 @@ public class UserService {
 
     public UserGetProfileRes viewMyProfile(Long userId) {
         return UserGetProfileRes.builder()
-            .userId(userId)
-            .username(userRepository.findUsernameByUserId(userId)).build();
+                .userId(userId)
+                .username(userRepository.findUsernameByUserId(userId))
+                .build();
     }
 }
