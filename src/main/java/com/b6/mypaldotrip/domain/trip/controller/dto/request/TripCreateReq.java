@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record TripCreateReq(
-        @NotNull(message = "cityId가 비었습니다.") Long cityId,
+        @NotNull(message = "cityName이 비었습니다.") String cityName,
         @NotNull(message = "category가 비었습니다.") Category category,
         @NotBlank(message = "name이 비었습니다.") String name,
         @NotBlank(message = "description이 비었습니다.") String description) {}

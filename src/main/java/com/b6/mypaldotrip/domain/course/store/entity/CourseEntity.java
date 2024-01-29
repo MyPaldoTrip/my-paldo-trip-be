@@ -80,7 +80,7 @@ public class CourseEntity extends BaseEntity {
         this.cityEntity = cityEntity;
     }
 
-    public void cleatTripCourses() {
+    public void clearTripCourses() {
         this.tripCourses.clear();
     }
 

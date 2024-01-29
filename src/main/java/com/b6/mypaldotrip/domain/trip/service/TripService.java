@@ -50,7 +50,7 @@ public class TripService {
         }
         TripEntity trip =
                 TripEntity.builder()
-                        .city(cityService.findCity(req.cityId()))
+                        .city(cityService.findByCityName(req.cityName()))
                         .category(req.category())
                         .name(req.name())
                         .description(req.description())
@@ -121,7 +121,10 @@ public class TripService {
         checkAuthorization(userDetails);
         TripEntity trip = findTrip(tripId);
         trip.updateTrip(
-                cityService.findCity(req.cityId()), req.category(), req.name(), req.description());
+                cityService.findByCityName(req.cityName()),
+                req.category(),
+                req.name(),
+                req.description());
         return TripUpdateRes.builder()
                 .city(trip.getCity().getCityName())
                 .category(trip.getCategory())
@@ -148,6 +151,12 @@ public class TripService {
     public TripEntity findTrip(Long tripId) {
         return tripRepository
                 .findById(tripId)
+                .orElseThrow(() -> new GlobalException(TripErrorCode.NON_EXIST_TRIP));
+    }
+
+    public TripEntity findTripByName(String tripName) {
+        return tripRepository
+                .findByName(tripName)
                 .orElseThrow(() -> new GlobalException(TripErrorCode.NON_EXIST_TRIP));
     }
 }
