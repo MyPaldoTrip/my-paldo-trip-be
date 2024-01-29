@@ -79,7 +79,6 @@ public class CourseService {
                 CourseFileEntity.builder().courseEntity(savedCourse).fileURL(fileUrl).build();
         courseFileRepository.save(courseFileEntity);
 
-
         CourseSaveRes res =
                 CourseSaveRes.builder()
                         .courseId(savedCourse.getCourseId())
