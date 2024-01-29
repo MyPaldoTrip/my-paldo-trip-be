@@ -1,6 +1,7 @@
 package com.b6.mypaldotrip.domain.trip.controller.dto.response;
 
 import com.b6.mypaldotrip.domain.trip.store.entity.Category;
+import java.util.List;
 import lombok.Builder;
 
 @Builder
@@ -10,4 +11,5 @@ public record TripListRes(
         Category category,
         String name,
         double averageRating,
-        int reviews) {}
+        int reviews,
+        List<String> fileUrlList) {}

@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ChatErrorCode implements ResultCode {
     USER_NOT_AUTHORIZED(HttpStatus.UNAUTHORIZED, "권한이 없습니다"),
-    CHATROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "채팅방이 존재하지 않습니다");
+    CHATROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "채팅방이 존재하지 않습니다"),
+    CHATROOM_ALREADY_EXISTS(HttpStatus.CONFLICT, "채팅방이 이미 존재합니다");
 
     private final HttpStatus httpStatus;
     private final String message;

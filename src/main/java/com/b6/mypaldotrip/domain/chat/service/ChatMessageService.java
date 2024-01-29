@@ -1,5 +1,6 @@
 package com.b6.mypaldotrip.domain.chat.service;
 
+import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomIdRes;
 import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomInfoRes;
 import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomSaveRes;
 import com.b6.mypaldotrip.domain.chat.exception.ChatErrorCode;
@@ -11,6 +12,9 @@ import com.b6.mypaldotrip.global.exception.GlobalException;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +23,7 @@ public class ChatMessageService {
 
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomEntityRepository chatRoomEntityRepository;
+    private final MongoTemplate mongoTemplate;
 
     public ChatRoomSaveRes createARoom(String chatRoomName) {
         String chatRoomId = "id" + UUID.randomUUID();
@@ -31,7 +36,9 @@ public class ChatMessageService {
     }
 
     public List<ChatRoomEntity> getChatRoomList() {
-        List<ChatRoomEntity> chatRoomList = chatRoomEntityRepository.findAll();
+        Query query = new Query();
+        query.with(Sort.by(Sort.Direction.ASC, "chatRoomName"));
+        List<ChatRoomEntity> chatRoomList = mongoTemplate.find(query, ChatRoomEntity.class);
 
         return chatRoomList;
     }
@@ -72,5 +79,21 @@ public class ChatMessageService {
 
         chatRoomEntityRepository.delete(chatRoomEntity);
         return chatRoomEntity;
+    }
+
+    public String validateChatRoomName(String checkRoomNameSame) {
+        if (chatRoomEntityRepository.findByChatRoomName(checkRoomNameSame).isPresent()) {
+            throw new GlobalException(ChatErrorCode.CHATROOM_ALREADY_EXISTS);
+        }
+        return checkRoomNameSame;
+    }
+
+    public ChatRoomIdRes getChatRoomIdByChatRoomName(String chatRoomName) {
+        ChatRoomEntity chatRoomEntity =
+                chatRoomEntityRepository
+                        .findByChatRoomName(chatRoomName)
+                        .orElseThrow(() -> new GlobalException(ChatErrorCode.CHATROOM_NOT_FOUND));
+        System.out.println("chatRoomEntity.getChatRoomId() = " + chatRoomEntity.getChatRoomId());
+        return ChatRoomIdRes.builder().chatRoomId(chatRoomEntity.getChatRoomId()).build();
     }
 }

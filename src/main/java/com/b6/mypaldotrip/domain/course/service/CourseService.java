@@ -53,6 +53,7 @@ public class CourseService {
             throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         CourseSaveReq req = objectMapper.readValue(reqStr, CourseSaveReq.class);
+        String fileUrl = s3Provider.saveFile(multipartFile, "course");
 
         List<Long> tripIds = req.tripIds();
 
@@ -64,6 +65,7 @@ public class CourseService {
                         .content(req.content())
                         .userEntity(user)
                         .cityEntity(city)
+                        .thumbnailUrl(fileUrl)
                         .build();
 
         for (Long tripId : tripIds) {
@@ -73,12 +75,9 @@ public class CourseService {
             tripCourseRepository.save(tripCourse);
         }
 
-        if (multipartFile != null) {
-            String fileUrl = s3Provider.saveFile(multipartFile, "course");
-            CourseFileEntity courseFileEntity =
-                    CourseFileEntity.builder().courseEntity(course).fileURL(fileUrl).build();
-            courseFileRepository.save(courseFileEntity);
-        }
+        CourseFileEntity courseFileEntity =
+                CourseFileEntity.builder().courseEntity(course).fileURL(fileUrl).build();
+        courseFileRepository.save(courseFileEntity);
 
         courseRepository.save(course);
 
@@ -119,6 +118,7 @@ public class CourseService {
                                                 .createdAt(courseEntity.getCreatedAt())
                                                 .commentCount(courseEntity.getComments().size())
                                                 .likeCount(courseEntity.getLikes().size())
+                                                .thumbnailUrl(courseEntity.getThumbnailUrl())
                                                 .build())
                         .toList();
 
@@ -145,6 +145,7 @@ public class CourseService {
                         .username(course.getUserEntity().getUsername())
                         .title(course.getTitle())
                         .content(course.getContent())
+                        .cityName(course.getCityEntity().getCityName())
                         .fileURL(urlList)
                         .relatedTripId(tripIds)
                         .createdAt(course.getCreatedAt())
@@ -156,10 +157,19 @@ public class CourseService {
     @Transactional
     public CourseUpdateRes updateCourse(Long courseId, CourseUpdateReq req, UserEntity userEntity) {
         CourseEntity course = findCourse(courseId);
-
         validateAuth(userEntity, course);
+        CityEntity cityEntity = cityService.findByCityName(req.cityName());
+        if (req.tripIds() != null) {
+            course.cleatTripCourses();
+            for (Long tripId : req.tripIds()) {
+                TripEntity trip = tripService.findTrip(tripId);
+                TripCourseEntity tripCourseEntity =
+                        TripCourseEntity.builder().course(course).trip(trip).build();
+                course.updateTripCourses(tripCourseEntity);
+            }
+        }
 
-        course.updateCourse(req.title(), req.content());
+        course.updateCourse(req.title(), req.content(), cityEntity);
 
         CourseUpdateRes res =
                 CourseUpdateRes.builder()

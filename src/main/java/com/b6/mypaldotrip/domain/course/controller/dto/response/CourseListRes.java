@@ -13,4 +13,5 @@ public record CourseListRes(
         LocalDateTime createdAt,
         Long level,
         int commentCount,
-        int likeCount) {}
+        int likeCount,
+        String thumbnailUrl) {}

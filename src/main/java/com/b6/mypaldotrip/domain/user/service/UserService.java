@@ -1,10 +1,11 @@
 package com.b6.mypaldotrip.domain.user.service;
 
+import com.b6.mypaldotrip.domain.follow.controller.dto.response.FollowRes;
+import com.b6.mypaldotrip.domain.review.controller.dto.response.ReviewListRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserListReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserSignUpReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserUpdateReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserDeleteRes;
-import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetMyProfileRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetProfileRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserListRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserSignUpRes;
@@ -66,8 +67,13 @@ public class UserService {
         return UserDeleteRes.builder().message("유저, 유저파일 삭제").build();
     }
 
+    // 지금 레코드 써서 좀 많이 지저분한데 레코드 쓰면서도 해결 할 방법이 있을까요?
+    @Transactional
     public UserGetProfileRes viewProfile(Long userId) {
         UserEntity userEntity = findUser(userId);
+        userRepository.findByIdFetchFollower(userId);
+        userRepository.findByIdFetchFollowing(userId);
+        userRepository.findByIdFetchReview(userId);
         return UserGetProfileRes.builder()
                 .email(userEntity.getEmail())
                 .username(userEntity.getUsername())
@@ -75,6 +81,55 @@ public class UserService {
                 .profileURL(userEntity.getFileURL())
                 .age(userEntity.getAge())
                 .level(userEntity.getLevel())
+                .reviewListResList(
+                        userEntity.getReviewList().stream()
+                                .map(
+                                        reviewEntity ->
+                                                ReviewListRes.builder()
+                                                        .reviewId(reviewEntity.getReviewId())
+                                                        .content(reviewEntity.getContent())
+                                                        .score(reviewEntity.getScore())
+                                                        .modifiedAt(reviewEntity.getModifiedAt())
+                                                        .build())
+                                .toList())
+                .followingEntityList(
+                        userEntity.getFollowingList().stream()
+                                .map(
+                                        followingEntity ->
+                                                FollowRes.builder()
+                                                        .userId(
+                                                                followingEntity
+                                                                        .getFollowingUser()
+                                                                        .getUserId())
+                                                        .username(
+                                                                followingEntity
+                                                                        .getFollowingUser()
+                                                                        .getUsername())
+                                                        .email(
+                                                                followingEntity
+                                                                        .getFollowingUser()
+                                                                        .getEmail())
+                                                        .build())
+                                .toList())
+                .followerEntityList(
+                        userEntity.getFollowerList().stream()
+                                .map(
+                                        followerEntity ->
+                                                FollowRes.builder()
+                                                        .userId(
+                                                                followerEntity
+                                                                        .getFollowedUser()
+                                                                        .getUserId())
+                                                        .username(
+                                                                followerEntity
+                                                                        .getFollowedUser()
+                                                                        .getUsername())
+                                                        .email(
+                                                                followerEntity
+                                                                        .getFollowedUser()
+                                                                        .getEmail())
+                                                        .build())
+                                .toList())
                 .build();
     }
 
@@ -145,15 +200,10 @@ public class UserService {
         userEntity.reject();
     }
 
-    public UserGetMyProfileRes viewMyProfile(Long userId) {
-        UserEntity userEntity = findUser(userId);
-        return UserGetMyProfileRes.builder()
-                .email(userEntity.getEmail())
-                .username(userEntity.getUsername())
-                .introduction(userEntity.getIntroduction())
-                .age(userEntity.getAge())
-                .level(userEntity.getLevel())
-                .profileURL(userEntity.getFileURL())
+    public UserGetProfileRes viewMyProfile(Long userId) {
+        return UserGetProfileRes.builder()
+                .userId(userId)
+                .username(userRepository.findUsernameByUserId(userId))
                 .build();
     }
 }

@@ -10,6 +10,7 @@ public record CourseGetRes(
         String username,
         String title,
         String content,
+        String cityName,
         List<String> fileURL,
         List<Long> relatedTripId,
         LocalDateTime createdAt) {}

@@ -72,7 +72,7 @@ public class UserEntity extends BaseEntity {
         this.introduction = introduction;
         this.fileURL = fileURL;
         this.age = age;
-        this.level = level;
+        this.level = 1L;
         this.userRole = UserRole.ROLE_USER;
     }
 
