@@ -163,6 +163,7 @@ public class CourseService {
             course.cleatTripCourses();
             for (Long tripId : req.tripIds()) {
                 TripEntity trip = tripService.findTrip(tripId);
+            course.clearTripCourses();
                 TripCourseEntity tripCourseEntity =
                         TripCourseEntity.builder().course(course).trip(trip).build();
                 course.updateTripCourses(tripCourseEntity);
