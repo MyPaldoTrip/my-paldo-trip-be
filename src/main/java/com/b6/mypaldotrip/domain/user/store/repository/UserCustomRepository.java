@@ -12,4 +12,10 @@ public interface UserCustomRepository {
     List<UserEntity> findByDynamicConditions(UserListReq req, UserDetailsImpl userDetails);
 
     void fetchFollowerList(UserListReq req, UserDetailsImpl userDetails);
+
+    void findByIdFetchFollower(Long userId);
+
+    void findByIdFetchFollowing(Long userId);
+
+    void findByIdFetchReview(Long userId);
 }

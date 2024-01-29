@@ -62,6 +62,36 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                 .fetch();
     }
 
+    @Override
+    public void findByIdFetchFollower(Long userId) {
+        jpaQueryFactory
+                .selectFrom(userEntity)
+                .leftJoin(userEntity.followerList)
+                .fetchJoin()
+                .where(userEntity.userId.eq(userId))
+                .fetch();
+    }
+
+    @Override
+    public void findByIdFetchFollowing(Long userId) {
+        jpaQueryFactory
+                .selectFrom(userEntity)
+                .leftJoin(userEntity.followingList)
+                .fetchJoin()
+                .where(userEntity.userId.eq(userId))
+                .fetch();
+    }
+
+    @Override
+    public void findByIdFetchReview(Long userId) {
+        jpaQueryFactory
+                .selectFrom(userEntity)
+                .leftJoin(userEntity.reviewList)
+                .fetchJoin()
+                .where(userEntity.userId.eq(userId))
+                .fetch();
+    }
+
     private OrderSpecifier<?> sortCondition(UserSort userSort, Boolean isAsc) {
         userSort = userSort != null ? userSort : UserSort.MODIFIED;
         Order order = isAsc != null ? Order.ASC : Order.DESC;
