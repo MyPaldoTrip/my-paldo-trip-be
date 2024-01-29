@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.2.1'
     id 'io.spring.dependency-management' version '1.1.4'
     id("com.diffplug.spotless") version("6.11.0")
+    id "org.asciidoctor.jvm.convert" version "3.3.2"
 }
 
 group = 'com.b6'
@@ -16,6 +17,7 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    asciidoctorExt
 }
 
 repositories {
@@ -55,6 +57,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     // websocket
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    // restDocs
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 }
 
 tasks.named('test') {
@@ -95,4 +100,28 @@ clean {
 
 jar {
     enabled = false
+}
+
+//restDocs 설정
+ext {
+    snippetsDir = file('build/generated-snippets')
+}
+test {
+    outputs.dir snippetsDir
+}
+asciidoctor {
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
+
+    sources {
+        include("**/index.adoc")
+    }
+    baseDirFollowsSourceFile()
+    dependsOn test
+}
+bootJar {
+    dependsOn asciidoctor
+    from("${asciidoctor.outputDir}") {
+        into 'static/docs'
+    }
 }
