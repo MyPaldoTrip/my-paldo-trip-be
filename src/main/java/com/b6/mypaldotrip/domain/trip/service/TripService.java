@@ -150,4 +150,10 @@ public class TripService {
                 .findById(tripId)
                 .orElseThrow(() -> new GlobalException(TripErrorCode.NON_EXIST_TRIP));
     }
+
+    public TripEntity findTripByName(String tripName) {
+        return tripRepository
+                .findByName(tripName)
+                .orElseThrow(() -> new GlobalException(TripErrorCode.NON_EXIST_TRIP));
+    }
 }
