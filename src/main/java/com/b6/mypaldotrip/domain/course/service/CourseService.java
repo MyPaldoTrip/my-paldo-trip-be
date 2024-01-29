@@ -55,8 +55,6 @@ public class CourseService {
         CourseSaveReq req = objectMapper.readValue(reqStr, CourseSaveReq.class);
         String fileUrl = s3Provider.saveFile(multipartFile, "course");
 
-        List<Long> tripIds = req.tripIds();
-
         CityEntity city = cityService.findByCityName(req.cityName());
 
         CourseEntity course =
@@ -68,24 +66,25 @@ public class CourseService {
                         .thumbnailUrl(fileUrl)
                         .build();
 
-        for (Long tripId : tripIds) {
-            TripEntity trip = tripService.findTrip(tripId);
+        CourseEntity savedCourse = courseRepository.save(course);
+
+        for (String tripName : req.tripNames()) {
+            TripEntity trip = tripService.findTripByName(tripName);
             TripCourseEntity tripCourse =
-                    TripCourseEntity.builder().trip(trip).course(course).build();
+                    TripCourseEntity.builder().trip(trip).course(savedCourse).build();
             tripCourseRepository.save(tripCourse);
         }
 
         CourseFileEntity courseFileEntity =
-                CourseFileEntity.builder().courseEntity(course).fileURL(fileUrl).build();
+                CourseFileEntity.builder().courseEntity(savedCourse).fileURL(fileUrl).build();
         courseFileRepository.save(courseFileEntity);
 
-        courseRepository.save(course);
 
         CourseSaveRes res =
                 CourseSaveRes.builder()
-                        .courseId(course.getCourseId())
-                        .title(course.getTitle())
-                        .content(course.getContent())
+                        .courseId(savedCourse.getCourseId())
+                        .title(savedCourse.getTitle())
+                        .content(savedCourse.getContent())
                         .build();
 
         return res;
@@ -131,12 +130,14 @@ public class CourseService {
 
         List<String> urlList = new ArrayList<>();
         List<Long> tripIds = new ArrayList<>();
+        List<String> tripNames = new ArrayList<>();
 
         for (CourseFileEntity courseFileEntity : course.getFiles()) {
             urlList.add(courseFileEntity.getFileURL());
         }
         for (TripCourseEntity tripCourse : course.getTripCourses()) {
             tripIds.add(tripCourse.getTrip().getTripId());
+            tripNames.add(tripCourse.getTrip().getName());
         }
 
         CourseGetRes res =
@@ -147,7 +148,8 @@ public class CourseService {
                         .content(course.getContent())
                         .cityName(course.getCityEntity().getCityName())
                         .fileURL(urlList)
-                        .relatedTripId(tripIds)
+                        .relatedTripIds(tripIds)
+                        .relatedTripNames(tripNames)
                         .createdAt(course.getCreatedAt())
                         .build();
 
@@ -159,11 +161,10 @@ public class CourseService {
         CourseEntity course = findCourse(courseId);
         validateAuth(userEntity, course);
         CityEntity cityEntity = cityService.findByCityName(req.cityName());
-        if (req.tripIds() != null) {
-            course.cleatTripCourses();
-            for (Long tripId : req.tripIds()) {
-                TripEntity trip = tripService.findTrip(tripId);
+        if (req.tripNames() != null) {
             course.clearTripCourses();
+            for (String tripName : req.tripNames()) {
+                TripEntity trip = tripService.findTripByName(tripName);
                 TripCourseEntity tripCourseEntity =
                         TripCourseEntity.builder().course(course).trip(trip).build();
                 course.updateTripCourses(tripCourseEntity);
