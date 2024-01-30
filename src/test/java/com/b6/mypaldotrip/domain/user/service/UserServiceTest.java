@@ -10,14 +10,18 @@ import static org.mockito.Mockito.when;
 
 import com.b6.mypaldotrip.domain.user.CommonTest;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserSignUpReq;
+import com.b6.mypaldotrip.domain.user.controller.dto.request.UserUpdateReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserDeleteRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetProfileRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserSignUpRes;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.UserUpdateRes;
 import com.b6.mypaldotrip.domain.user.exception.UserErrorCode;
 import com.b6.mypaldotrip.domain.user.store.repository.UserRepository;
 import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.common.S3Provider;
 import com.b6.mypaldotrip.global.exception.GlobalException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -26,6 +30,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
@@ -128,4 +133,55 @@ class UserServiceTest implements CommonTest {
         verify(userRepository).findByIdFetchReview(any());
     }
 
+    @Nested
+    @DisplayName("회원수정 테스트")
+    class 회원수정{
+        @Test
+        @DisplayName("회원수정 테스트 성공 - 파일 있을 때")
+        void 회원수정1 () throws IOException {
+            //given
+            MockMultipartFile file = new MockMultipartFile(
+                "multipartFile", "test.jpg", "image/jpeg", "image bytes".getBytes());
+            UserUpdateReq req = UserUpdateReq.builder()
+                .username(TEST_USERNAME)
+                .introduction(TEST_INTRODUCTION)
+                .age(TEST_AGE)
+                .password(TEST_PASSWORD)
+                .build();
+            ObjectMapper objectMapper = new ObjectMapper();
+            given(userRepository.findById(TEST_USERID)).willReturn(Optional.of(TEST_USER));
+
+            //when
+            when(s3Provider.updateFile(any(),any())).thenReturn(TEST_FILE_URL);
+            UserUpdateRes res = userService.updateProfile(file,objectMapper.writeValueAsString(req),TEST_USERID);
+
+            //then
+            assertThat(res.fileURL()).isEqualTo(TEST_FILE_URL);
+            verify(s3Provider).updateFile(any(), any());
+        }
+        @Test
+        @DisplayName("회원수정 테스트 성공 - 파일 없을 때")
+        void 회원수정2 () throws IOException {
+            //given
+            MockMultipartFile file = new MockMultipartFile(
+                "multipartFile", "test.jpg", "image/jpeg", "image bytes".getBytes());
+            UserUpdateReq req = UserUpdateReq.builder()
+                .username(TEST_USERNAME)
+                .introduction(TEST_INTRODUCTION)
+                .age(TEST_AGE)
+                .password(TEST_PASSWORD)
+                .build();
+            ObjectMapper objectMapper = new ObjectMapper();
+            given(userRepository.findById(TEST_USERID)).willReturn(Optional.of(TEST_USER));
+
+            //when
+            when(s3Provider.updateFile(any(),any())).thenThrow(new GlobalException(GlobalResultCode.NOT_FOUND_FILE));
+            when(s3Provider.saveFile(any(),any())).thenReturn(TEST_FILE_URL);
+            UserUpdateRes res =userService.updateProfile(file,objectMapper.writeValueAsString(req),TEST_USERID);
+
+            //then
+            assertThat(res.fileURL()).isEqualTo(TEST_FILE_URL);
+            verify(s3Provider).saveFile(any(),any());
+        }
+    }
 }
