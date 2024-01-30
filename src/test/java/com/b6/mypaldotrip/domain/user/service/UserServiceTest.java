@@ -25,57 +25,52 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest implements CommonTest {
-    @InjectMocks
-    private UserService userService;
-    @Mock
-    private UserRepository userRepository;
-    @Mock
-    private PasswordEncoder passwordEncoder;
-    @Mock
-    private S3Provider s3Provider;
-    @Mock
-    private EmailAuthService emailAuthService;
+    @InjectMocks private UserService userService;
+    @Mock private UserRepository userRepository;
+    @Mock private PasswordEncoder passwordEncoder;
+    @Mock private S3Provider s3Provider;
+    @Mock private EmailAuthService emailAuthService;
 
     @Nested
     @DisplayName("회원가입 테스트")
-    class 회원가입{
+    class 회원가입 {
         @Test
         @DisplayName("회원가입 테스트 성공")
-        void 회원가입1 (){
-            //given
+        void 회원가입1() {
+            // given
             UserSignUpReq req =
-                UserSignUpReq.builder()
-                    .email(TEST_EMAIL)
-                    .username(TEST_USERNAME)
-                    .password(TEST_PASSWORD)
-                    .build();
+                    UserSignUpReq.builder()
+                            .email(TEST_EMAIL)
+                            .username(TEST_USERNAME)
+                            .password(TEST_PASSWORD)
+                            .build();
             given(emailAuthService.isEmailVerified(any())).willReturn(true);
 
-            //when
+            // when
             when(userRepository.save(any())).thenReturn(TEST_USER);
             UserSignUpRes res = userService.signup(req);
 
-            //then
+            // then
             assertThat(res.email()).isEqualTo(TEST_EMAIL);
             verify(passwordEncoder).encode(any());
         }
+
         @Test
         @DisplayName("회원가입 테스트 실패 - 이메일 검증 미완료")
-        void 회원가입2 (){
-            //given
+        void 회원가입2() {
+            // given
             UserSignUpReq req =
-                UserSignUpReq.builder()
-                    .email(TEST_EMAIL)
-                    .username(TEST_USERNAME)
-                    .password(TEST_PASSWORD)
-                    .build();
+                    UserSignUpReq.builder()
+                            .email(TEST_EMAIL)
+                            .username(TEST_USERNAME)
+                            .password(TEST_PASSWORD)
+                            .build();
             given(emailAuthService.isEmailVerified(any())).willReturn(false);
 
-            //when
-            var exception = assertThrows(GlobalException.class,
-                () -> userService.signup(req));
+            // when
+            var exception = assertThrows(GlobalException.class, () -> userService.signup(req));
 
-            //then
+            // then
             assertThat(exception.getResultCode()).isEqualTo(UserErrorCode.BEFORE_EMAIL_VALIDATION);
         }
     }

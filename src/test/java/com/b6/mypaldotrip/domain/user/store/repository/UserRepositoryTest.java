@@ -19,41 +19,39 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("test")
 class UserRepositoryTest implements CommonTest {
 
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired private UserRepository userRepository;
     private UserEntity saveUser;
     private UserEntity saveAnotherUser;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         saveUser = userRepository.save(TEST_USER);
         saveAnotherUser = userRepository.save(TEST_ANOTHER_USER);
     }
 
-
     @Test
     @DisplayName("이메일로 찾기")
-    void 이메일로찾기 (){
-        //given
+    void 이메일로찾기() {
+        // given
         String email = saveUser.getEmail();
 
-        //when
+        // when
         Optional<UserEntity> user = userRepository.findByEmail(email);
 
-        //then
+        // then
         assertThat(user.get()).isEqualTo(TEST_USER);
     }
 
     @Test
     @DisplayName("유저아이디로 유저네임 찾기")
-    void 이름구하기 (){
-        //given
+    void 이름구하기() {
+        // given
         Long userId = saveUser.getUserId();
 
-        //when
+        // when
         String username = userRepository.findUsernameByUserId(userId);
 
-        //then
+        // then
         assertThat(username).isEqualTo(TEST_USERNAME);
     }
 }

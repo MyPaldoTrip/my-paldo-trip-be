@@ -47,6 +47,5 @@ public class CommonControllerTest implements CommonTest {
                         .apply(documentationConfiguration(restDocumentation))
                         .build();
         given(versionConfig.getVersion()).willReturn("v1");
-
     }
 }

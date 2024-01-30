@@ -11,14 +11,15 @@ import org.springframework.context.annotation.Bean;
 @TestConfiguration
 public class UserCustomRepositoryTestConfig {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @PersistenceContext private EntityManager entityManager;
 
     @Bean
-    public JPAQueryFactory jpaQueryFactory(){
-        return new JPAQueryFactory(entityManager);}
+    public JPAQueryFactory jpaQueryFactory() {
+        return new JPAQueryFactory(entityManager);
+    }
+
     @Bean
-    public UserCustomRepository userCustomRepository(){
+    public UserCustomRepository userCustomRepository() {
         return new UserCustomRepositoryImpl(jpaQueryFactory());
     }
 }
