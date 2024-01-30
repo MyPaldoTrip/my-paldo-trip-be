@@ -8,14 +8,17 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.b6.mypaldotrip.domain.user.CommonControllerTest;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserSignUpReq;
+import com.b6.mypaldotrip.domain.user.controller.dto.request.UserUpdateReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserDeleteRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetProfileRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserSignUpRes;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.UserUpdateRes;
 import com.b6.mypaldotrip.domain.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -24,6 +27,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(controllers = {UserController.class})
@@ -170,5 +174,66 @@ class UserControllerTest extends CommonControllerTest {
                 "user/viewMyProfile",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
+    }
+
+    @Nested
+    @DisplayName("회원수정 테스트")
+    class 회원수정{
+        @Test
+        @DisplayName("회원수정 테스트 성공")
+        void 회원수정1 () throws Exception {
+            //given
+            UserUpdateReq req = UserUpdateReq.builder()
+                .username(TEST_USERNAME)
+                .introduction(TEST_INTRODUCTION)
+                .age(TEST_AGE)
+                .password(TEST_PASSWORD)
+                .build();
+            UserUpdateRes res = UserUpdateRes.builder()
+                .email(TEST_EMAIL)
+                .username(TEST_USERNAME)
+                .introduction(TEST_INTRODUCTION)
+                .fileURL(TEST_FILE_URL)
+                .age(TEST_AGE)
+                .level(TEST_LEVEL)
+                .build();
+            MockMultipartFile file = new MockMultipartFile(
+                "multipartFile", "test.jpg", "image/jpeg", "image bytes".getBytes());
+            MockMultipartFile reqPart = new MockMultipartFile(
+                "req", "", "application/json", objectMapper.writeValueAsBytes(req));
+            given(userService.updateProfile(any(),any(),any())).willReturn(res);
+
+            //when
+            ResultActions actions =
+                mockMvc.perform(
+                    multipart("/api/" + versionConfig.getVersion() + "/users")
+                        .file(file)
+                        .file(reqPart)
+                        .with(request -> {request.setMethod("PUT"); return request;})
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .characterEncoding("utf-8"));
+
+            //then
+            actions.andExpect(status().isOk())
+                .andDo(document(
+                    "user/updateProfile",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint())));
+        }
+        @Test
+        @DisplayName("회원수정 테스트 실패 - 요청 파라미터 없음")
+        void 회원수정2 () throws Exception {
+            //given
+
+            //when
+            ResultActions actions =
+                mockMvc.perform(
+                    multipart("/api/" + versionConfig.getVersion() + "/users")
+                        .with(request -> {request.setMethod("PUT"); return request;})
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .characterEncoding("utf-8"));
+            //then
+            actions.andExpect(status().isBadRequest());
+        }
     }
 }
