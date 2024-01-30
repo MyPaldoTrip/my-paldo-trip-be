@@ -32,4 +32,4 @@ jobs:
 
       #      테스트 빼고 빌드
       - name: Build with Gradle
-        run: ./gradlew clean build -x test
+        run: ./gradlew clean build
