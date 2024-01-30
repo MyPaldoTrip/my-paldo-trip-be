@@ -139,4 +139,36 @@ class UserControllerTest extends CommonControllerTest {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint())));
     }
+
+    @Test
+    @DisplayName("내 프로필조회 테스트 성공")
+    void 내프로필조회 () throws Exception {
+        //given
+        UserGetProfileRes res =
+            UserGetProfileRes.builder()
+                .userId(TEST_USERID)
+                .email(TEST_EMAIL)
+                .username(TEST_USERNAME)
+                .introduction(TEST_INTRODUCTION)
+                .profileURL(TEST_FILE_URL)
+                .age(TEST_AGE)
+                .level(TEST_LEVEL)
+                .reviewListResList(new ArrayList<>())
+                .followingEntityList(new ArrayList<>())
+                .followerEntityList(new ArrayList<>())
+                .build();
+        given(userService.viewMyProfile(any())).willReturn(res);
+
+        //when
+        ResultActions actions =
+            mockMvc.perform(
+                get("/api/" + versionConfig.getVersion() + "/users"));
+
+        //then
+        actions.andExpect(status().isOk())
+            .andDo(document(
+                "user/viewMyProfile",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
 }
