@@ -30,6 +30,6 @@ jobs:
       - name: Spotless Check
         run: ./gradlew spotlessCheck
 
-      #      테스트 빼고 빌드
+      #      클린 빌드
       - name: Build with Gradle
         run: ./gradlew clean build
