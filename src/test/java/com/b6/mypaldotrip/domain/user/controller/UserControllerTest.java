@@ -7,12 +7,14 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.b6.mypaldotrip.domain.user.CommonControllerTest;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserSignUpReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserDeleteRes;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetProfileRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserSignUpRes;
 import com.b6.mypaldotrip.domain.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
@@ -102,6 +104,38 @@ class UserControllerTest extends CommonControllerTest {
                 .andDo(
                         document(
                                 "user/deleteUser",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint())));
+    }
+    @Test
+    @DisplayName("회원단건조회 테스트 성공")
+    void 회원단건조회1() throws Exception {
+        // given
+        UserGetProfileRes res =
+                UserGetProfileRes.builder()
+                        .userId(TEST_USERID)
+                        .email(TEST_EMAIL)
+                        .username(TEST_USERNAME)
+                        .introduction(TEST_INTRODUCTION)
+                        .profileURL(TEST_FILE_URL)
+                        .age(TEST_AGE)
+                        .level(TEST_LEVEL)
+                        .reviewListResList(new ArrayList<>())
+                        .followingEntityList(new ArrayList<>())
+                        .followerEntityList(new ArrayList<>())
+                        .build();
+        given(userService.viewProfile(any())).willReturn(res);
+
+        // when
+        ResultActions actions =
+                mockMvc.perform(
+                        get("/api/" + versionConfig.getVersion() + "/users/{userId}", TEST_USERID));
+
+        // then
+        actions.andExpect(status().isOk())
+                .andDo(
+                        document(
+                                "user/viewProfile",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint())));
     }
