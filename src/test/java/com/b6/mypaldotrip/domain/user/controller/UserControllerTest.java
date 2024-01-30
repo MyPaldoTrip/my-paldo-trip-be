@@ -6,11 +6,13 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.b6.mypaldotrip.domain.user.CommonControllerTest;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserSignUpReq;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.UserDeleteRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserSignUpRes;
 import com.b6.mypaldotrip.domain.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
@@ -82,5 +84,25 @@ class UserControllerTest extends CommonControllerTest {
             // then
             actions.andExpect(status().isBadRequest());
         }
+    }
+
+    @Test
+    @DisplayName("회원탈퇴 테스트 성공")
+    void 회원탈퇴1() throws Exception {
+        // given
+        UserDeleteRes res = UserDeleteRes.builder().message("유저 삭제, 삭제할 파일 없음").build();
+        given(userService.deleteUser(any())).willReturn(res);
+
+        // when
+        ResultActions actions =
+                mockMvc.perform(delete("/api/" + versionConfig.getVersion() + "/users"));
+
+        // then
+        actions.andExpect(status().isOk())
+                .andDo(
+                        document(
+                                "user/deleteUser",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint())));
     }
 }
