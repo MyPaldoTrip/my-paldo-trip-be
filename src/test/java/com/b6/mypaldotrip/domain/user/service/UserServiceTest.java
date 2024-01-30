@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import com.b6.mypaldotrip.domain.user.CommonTest;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserSignUpReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserDeleteRes;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetProfileRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserSignUpRes;
 import com.b6.mypaldotrip.domain.user.exception.UserErrorCode;
 import com.b6.mypaldotrip.domain.user.store.repository.UserRepository;
@@ -110,4 +111,21 @@ class UserServiceTest implements CommonTest {
             assertThat(res.message()).isEqualTo(message);
         }
     }
+
+    @Test
+    @DisplayName("회원단건조회 테스트 성공")
+    void 회원단건조회 (){
+        //given
+        given(userRepository.findById(TEST_USERID)).willReturn(Optional.of(TEST_USER));
+
+        //when
+        UserGetProfileRes res = userService.viewProfile(TEST_USERID);
+
+        //then
+        assertThat(res.username()).isEqualTo(TEST_USER.getUsername());
+        verify(userRepository).findByIdFetchFollower(any());
+        verify(userRepository).findByIdFetchFollowing(any());
+        verify(userRepository).findByIdFetchReview(any());
+    }
+
 }
