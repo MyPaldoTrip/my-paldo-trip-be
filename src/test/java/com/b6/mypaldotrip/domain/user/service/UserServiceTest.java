@@ -9,19 +9,25 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.b6.mypaldotrip.domain.user.CommonTest;
+import com.b6.mypaldotrip.domain.user.controller.dto.request.UserListReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserSignUpReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserUpdateReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserDeleteRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetProfileRes;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.UserListRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserSignUpRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserUpdateRes;
 import com.b6.mypaldotrip.domain.user.exception.UserErrorCode;
+import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.domain.user.store.repository.UserRepository;
 import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.common.S3Provider;
 import com.b6.mypaldotrip.global.exception.GlobalException;
+import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -32,6 +38,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest implements CommonTest {
@@ -183,5 +190,21 @@ class UserServiceTest implements CommonTest {
             assertThat(res.fileURL()).isEqualTo(TEST_FILE_URL);
             verify(s3Provider).saveFile(any(),any());
         }
+    }
+
+    @Test
+    @DisplayName("회원목록조회 테스트 성공")
+    void 회원목록조회1 (){
+        //given
+        UserListReq req = UserListReq.builder().build();
+        ReflectionTestUtils.setField(TEST_USER, "modifiedAt", LocalDateTime.now());
+        List<UserEntity> userList = List.of(TEST_USER);
+        given(userRepository.findByDynamicConditions(any(),any())).willReturn(userList);
+
+        //when
+        List<UserListRes> res = userService.getUserList(req,new UserDetailsImpl(TEST_USER));
+
+        //then
+        assertThat(res.get(0).userId()).isEqualTo(TEST_USER.getUserId());
     }
 }
