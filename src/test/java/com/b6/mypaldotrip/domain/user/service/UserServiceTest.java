@@ -207,4 +207,15 @@ class UserServiceTest implements CommonTest {
         //then
         assertThat(res.get(0).userId()).isEqualTo(TEST_USER.getUserId());
     }
+
+    @Test
+    @DisplayName("내 정보 조회 테스트 성공")
+    void 내정보조회 (){
+        //given
+        given(userRepository.findUsernameByUserId(TEST_USERID)).willReturn(TEST_USERNAME);
+        //when
+        UserGetProfileRes res = userService.viewMyProfile(TEST_USERID);
+        //then
+        assertThat(res.username()).isEqualTo(TEST_USER.getUsername());
+    }
 }
