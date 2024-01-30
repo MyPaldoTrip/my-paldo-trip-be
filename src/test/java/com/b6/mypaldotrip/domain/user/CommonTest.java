@@ -10,8 +10,10 @@ public interface CommonTest {
     String TEST_INTRODUCTION = "test introduction";
     String TEST_FILE_URL =
             "https://my-mpt-bucket.s3.ap-northeast-2.amazonaws.com/user/e82283cc-fa55-4cd0-9a61-a2436acbf746.png";
+    String TEST_ROLE = "ROLE_USER";
     Long TEST_AGE = 20L;
     Long TEST_LEVEL = 1L;
+    Long TEST_USERID = 1L;
     String ANOTHER = "another";
     Long ANOTHER_LONG = 1L;
 

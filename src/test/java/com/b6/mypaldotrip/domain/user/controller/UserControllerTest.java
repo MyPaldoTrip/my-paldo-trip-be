@@ -13,13 +13,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.b6.mypaldotrip.domain.user.CommonControllerTest;
+import com.b6.mypaldotrip.domain.user.controller.dto.request.UserListReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserSignUpReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserUpdateReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserDeleteRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetProfileRes;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.UserListRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserSignUpRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserUpdateRes;
 import com.b6.mypaldotrip.domain.user.service.UserService;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -236,4 +241,39 @@ class UserControllerTest extends CommonControllerTest {
             actions.andExpect(status().isBadRequest());
         }
     }
+    @Test
+    @DisplayName("회원목록조회 테스트 성공")
+    void 회원목록조회1 () throws Exception {
+        //given
+        UserListReq req = UserListReq.builder().build();
+        UserListRes res = UserListRes.builder()
+            .userId(TEST_USERID)
+            .email(TEST_EMAIL)
+            .username(TEST_USERNAME)
+            .age(TEST_AGE)
+            .level(TEST_LEVEL)
+            .userRoleValue(TEST_ROLE)
+            .modified(String.valueOf(LocalDateTime.now()))
+            .writeReviewCnt(1)
+            .followerCnt(1)
+            .build();
+        List<UserListRes> resList = List.of(res);
+        given(userService.getUserList(any(),any())).willReturn(resList);
+
+        //when
+        ResultActions actions =
+            mockMvc.perform(
+                post("/api/" + versionConfig.getVersion() + "/users")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8")
+                    .content(objectMapper.writeValueAsString(req)));
+
+        //then
+        actions.andExpect(status().isOk())
+            .andDo(document(
+                "user/getUserList",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
 }
