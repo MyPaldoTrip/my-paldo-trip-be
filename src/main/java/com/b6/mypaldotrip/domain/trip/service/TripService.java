@@ -16,15 +16,16 @@ import com.b6.mypaldotrip.global.common.S3Provider;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -60,6 +61,8 @@ public class TripService {
             String fileUrl = s3Provider.saveFile(multipartFile, "trip");
             TripFileEntity tripFile = TripFileEntity.builder().trip(trip).fileUrl(fileUrl).build();
             tripFileRepository.save(tripFile);
+        } else {
+            throw new GlobalException(TripErrorCode.NO_FILE_ERROR);
         }
 
         tripRepository.save(trip);
