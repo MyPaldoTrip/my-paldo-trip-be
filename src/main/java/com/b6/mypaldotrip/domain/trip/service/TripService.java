@@ -60,6 +60,8 @@ public class TripService {
             String fileUrl = s3Provider.saveFile(multipartFile, "trip");
             TripFileEntity tripFile = TripFileEntity.builder().trip(trip).fileUrl(fileUrl).build();
             tripFileRepository.save(tripFile);
+        } else {
+            throw new GlobalException(TripErrorCode.NO_FILE_ERROR);
         }
 
         tripRepository.save(trip);
