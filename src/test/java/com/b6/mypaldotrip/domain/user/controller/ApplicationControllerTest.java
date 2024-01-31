@@ -13,6 +13,7 @@ import com.b6.mypaldotrip.domain.user.ApplicationCommonTest;
 import com.b6.mypaldotrip.domain.user.CommonControllerTest;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.ApplicationSubmitReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.ApplicationGetListRes;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.ApplicationGetRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.ApplicationSubmitRes;
 import com.b6.mypaldotrip.domain.user.service.ApplicationService;
 import java.util.List;
@@ -87,5 +88,24 @@ class ApplicationControllerTest extends CommonControllerTest implements Applicat
                     "user/application-getList",
                     preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("신청서 단건 조회 테스트 성공")
+    void 신청서단건조회 () throws Exception {
+        //given
+        ApplicationGetRes res = ApplicationGetRes.builder().applicationId(TEST_APPLICATION_ID)
+            .email(TEST_EMAIL).username(TEST_USERNAME).title(TEST_TITLE).content(TEST_CONTENT).verified(DEFAULT_VERIFIED).build();
+        given(applicationService.getApplication(TEST_APPLICATION_ID)).willReturn(res);
+        //when
+        ResultActions actions = mockMvc.perform(
+            get("/api/" + versionConfig.getVersion() + "/users/application/{applicationId}",TEST_APPLICATION_ID));
+        //then
+        actions.andExpect(status().isOk())
+            .andDo(
+            document(
+                "user/application-getApplication",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
     }
 }
