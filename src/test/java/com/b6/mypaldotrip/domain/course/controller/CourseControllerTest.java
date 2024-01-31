@@ -11,15 +11,20 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.b6.mypaldotrip.domain.course.BaseCourseTest;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSaveReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSearchReq;
+import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseUpdateReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseGetRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseSaveRes;
+import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseUpdateRes;
 import com.b6.mypaldotrip.domain.course.service.CourseService;
+import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -158,6 +163,63 @@ class CourseControllerTest extends BaseCourseTest {
                                     "course/getCourse",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint())));
+        }
+    }
+
+    @Nested
+    @DisplayName("코스 수정 테스트")
+    class 코스수정 {
+
+        @Test
+        @DisplayName("코스 수정 성공")
+        void 수정성공() throws Exception {
+            // given
+            CourseUpdateReq req =
+                    CourseUpdateReq.builder()
+                            .title("updated " + TEST_COURSE_TITLE)
+                            .content("updated " + TEST_COURSE_CONTENT)
+                            .cityName("another TestCity")
+                            .tripNames(List.of("updated tripNames"))
+                            .build();
+            CourseUpdateRes res =
+                    CourseUpdateRes.builder()
+                            .title("updated " + TEST_COURSE_TITLE)
+                            .content("updated " + TEST_COURSE_CONTENT)
+                            .build();
+            given(
+                            courseService.updateCourse(
+                                    anyLong(), any(CourseUpdateReq.class), any(UserEntity.class)))
+                    .willReturn(res);
+            // when
+            ResultActions actions =
+                    mockMvc.perform(
+                            put("/api/" + versionConfig.getVersion() + "/courses/1")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .characterEncoding("utf-8")
+                                    .content(objectMapper.writeValueAsString(req)));
+            // then
+            actions.andExpect(status().isOk())
+                    .andDo(
+                            document(
+                                    "course/updateCourse",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint())));
+        }
+
+        @Test
+        @DisplayName("코스 수정 실패 - 파라미터 X")
+        void 수정실패() throws Exception {
+            // given
+
+            // when
+            ResultActions actions =
+                    mockMvc.perform(
+                            put("/api/" + versionConfig.getVersion() + "/courses/1")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .characterEncoding("utf-8")
+                                    .content(""));
+            // then
+            actions.andExpect(status().isBadRequest()).andDo(print());
         }
     }
 }
