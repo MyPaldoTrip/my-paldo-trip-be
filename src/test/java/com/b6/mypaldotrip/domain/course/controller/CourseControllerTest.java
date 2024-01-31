@@ -8,6 +8,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -19,6 +20,7 @@ import com.b6.mypaldotrip.domain.course.BaseCourseTest;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSaveReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSearchReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseUpdateReq;
+import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseDeleteRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseGetRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseSaveRes;
@@ -221,5 +223,23 @@ class CourseControllerTest extends BaseCourseTest {
             // then
             actions.andExpect(status().isBadRequest()).andDo(print());
         }
+    }
+
+    @Test
+    @DisplayName("코스 삭제")
+    void 코스삭제성공() throws Exception {
+        // given
+        CourseDeleteRes res = CourseDeleteRes.builder().msg("1 번 코스 삭제, 삭제할 파일 없음").build();
+        given(courseService.deleteCourse(anyLong(), any(UserEntity.class))).willReturn(res);
+        // when
+        ResultActions actions =
+                mockMvc.perform(delete("/api/" + versionConfig.getVersion() + "/courses/1"));
+        // then
+        actions.andExpect(status().isOk())
+                .andDo(
+                        document(
+                                "course/deleteCourse",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint())));
     }
 }
