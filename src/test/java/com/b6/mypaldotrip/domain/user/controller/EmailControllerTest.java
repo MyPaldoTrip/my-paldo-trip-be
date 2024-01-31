@@ -10,7 +10,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.b6.mypaldotrip.domain.user.CommonControllerTest;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.EmailSendReq;
+import com.b6.mypaldotrip.domain.user.controller.dto.request.EmailVerifyReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.EmailSendRes;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.EmailVerifyRes;
 import com.b6.mypaldotrip.domain.user.service.EmailService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -60,6 +62,44 @@ class EmailControllerTest extends CommonControllerTest {
             //when
             ResultActions actions = mockMvc.perform(
                 post("/api/" + versionConfig.getVersion() + "/users/email")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(req)));
+            //then
+            actions.andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("이메일 검증 테스트")
+    class 이메일검증{
+        @Test
+        @DisplayName("이메일 검증 테스트 성공")
+        void 이메일검증1 () throws Exception {
+            //given
+            EmailVerifyReq req = EmailVerifyReq.builder().email(TEST_EMAIL).code("testCode").build();
+            EmailVerifyRes res = EmailVerifyRes.builder().message("인증 코드 검증 성공").build();
+            given(emailService.verifyEmail(req)).willReturn(res);
+            //when
+            ResultActions actions = mockMvc.perform(
+                post("/api/" + versionConfig.getVersion() + "/users/email/verify")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(req)));
+            //then
+            actions.andExpect(status().isOk())
+                .andDo(
+                    document(
+                        "user/email-verify",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
+        }
+        @Test
+        @DisplayName("이메일 검증 테스트 실패")
+        void 이메일검증2 () throws Exception {
+            //given
+            EmailVerifyReq req = EmailVerifyReq.builder().build();
+            //when
+            ResultActions actions = mockMvc.perform(
+                post("/api/" + versionConfig.getVersion() + "/users/email/verify")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(req)));
             //then
