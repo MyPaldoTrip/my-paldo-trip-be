@@ -23,7 +23,6 @@ import org.springframework.web.context.WebApplicationContext;
 public class CommonControllerTest implements CommonTest {
 
     @Autowired protected MockMvc mockMvc;
-    @Autowired protected MockMvc mockMvcWithoutUser;
     @Autowired protected ObjectMapper objectMapper;
     @Autowired private WebApplicationContext context;
     @Autowired private RestDocumentationContextProvider restDocumentation;
@@ -37,12 +36,6 @@ public class CommonControllerTest implements CommonTest {
                         new UsernamePasswordAuthenticationToken(
                                 testUserDetails, null, testUserDetails.getAuthorities()));
         mockMvc =
-                MockMvcBuilders.webAppContextSetup(context)
-                        .apply(documentationConfiguration(restDocumentation))
-                        .build();
-
-        SecurityContextHolder.clearContext();
-        mockMvcWithoutUser =
                 MockMvcBuilders.webAppContextSetup(context)
                         .apply(documentationConfiguration(restDocumentation))
                         .build();
