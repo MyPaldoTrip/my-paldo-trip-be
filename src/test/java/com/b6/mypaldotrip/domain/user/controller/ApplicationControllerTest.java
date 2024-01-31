@@ -6,12 +6,15 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.b6.mypaldotrip.domain.user.ApplicationCommonTest;
 import com.b6.mypaldotrip.domain.user.CommonControllerTest;
+import com.b6.mypaldotrip.domain.user.controller.dto.request.ApplicationCheckReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.ApplicationSubmitReq;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.ApplicationConfirmRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.ApplicationGetListRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.ApplicationGetRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.ApplicationSubmitRes;
@@ -107,5 +110,42 @@ class ApplicationControllerTest extends CommonControllerTest implements Applicat
                 "user/application-getApplication",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
+    }
+    @Nested
+    @DisplayName("신청서 승인 테스트")
+    class 신청서승인{
+        @Test
+        @DisplayName("신청서 승인 테스트 성공")
+        void 신청서승인1 () throws Exception {
+            //given
+            ApplicationCheckReq req = ApplicationCheckReq.builder().applicationId(TEST_APPLICATION_ID).accept(ANY_STRING).build();
+            ApplicationConfirmRes res = ApplicationConfirmRes.builder().applicationId(TEST_APPLICATION_ID).email(TEST_EMAIL).message("해당 신청이 승인/거절 되었습니다").build();
+            given(applicationService.confirm(req)).willReturn(res);
+            //when
+            ResultActions actions = mockMvc.perform(
+                patch("/api/" + versionConfig.getVersion() + "/users/application")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(req)));
+            //then
+            actions.andExpect(status().isOk())
+                .andDo(
+                    document(
+                        "user/application-confirm",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
+        }
+        @Test
+        @DisplayName("신청서 승인 테스트 실패")
+        void 신청서승인2 () throws Exception {
+            //given
+            ApplicationCheckReq req = ApplicationCheckReq.builder().build();
+            //when
+            ResultActions actions = mockMvc.perform(
+                patch("/api/" + versionConfig.getVersion() + "/users/application")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(req)));
+            //then
+            actions.andExpect(status().isBadRequest());
+        }
     }
 }

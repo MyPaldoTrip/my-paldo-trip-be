@@ -6,4 +6,5 @@ public interface ApplicationCommonTest {
     String TEST_CONTENT = "content";
     Long TEST_APPLICATION_ID = 1L;
     Boolean DEFAULT_VERIFIED = false;
+    String ANY_STRING = "any";
 }
