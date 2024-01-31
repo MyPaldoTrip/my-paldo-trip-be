@@ -94,46 +94,49 @@ class UserServiceTest implements CommonTest {
 
     @Nested
     @DisplayName("회원탈퇴 테스트")
-    class 회원탈퇴{
+    class 회원탈퇴 {
         @Test
         @DisplayName("회원탈퇴 테스트 성공 - 파일 있음")
-        void 회원탈퇴1 (){
-            //given
+        void 회원탈퇴1() {
+            // given
             String message = "유저, 유저파일 삭제";
             given(userRepository.findById(TEST_USERID)).willReturn(Optional.ofNullable(TEST_USER));
 
-            //when
+            // when
             UserDeleteRes res = userService.deleteUser(TEST_USERID);
 
-            //then
+            // then
             assertThat(res.message()).isEqualTo(message);
         }
+
         @Test
         @DisplayName("회원탈퇴 테스트 성공 - 파일 없음")
-        void 회원탈퇴2 (){
-            //given
+        void 회원탈퇴2() {
+            // given
             String message = "유저 삭제, 삭제할 파일 없음";
             given(userRepository.findById(TEST_USERID)).willReturn(Optional.ofNullable(TEST_USER));
 
-            //when
-            doThrow(new GlobalException(GlobalResultCode.NOT_FOUND_FILE)).when(s3Provider).deleteFile(TEST_USER);
+            // when
+            doThrow(new GlobalException(GlobalResultCode.NOT_FOUND_FILE))
+                    .when(s3Provider)
+                    .deleteFile(TEST_USER);
             UserDeleteRes res = userService.deleteUser(TEST_USERID);
 
-            //then
+            // then
             assertThat(res.message()).isEqualTo(message);
         }
     }
 
     @Test
     @DisplayName("회원단건조회 테스트 성공")
-    void 회원단건조회 (){
-        //given
+    void 회원단건조회() {
+        // given
         given(userRepository.findById(TEST_USERID)).willReturn(Optional.of(TEST_USER));
 
-        //when
+        // when
         UserGetProfileRes res = userService.viewProfile(TEST_USERID);
 
-        //then
+        // then
         assertThat(res.username()).isEqualTo(TEST_USER.getUsername());
         verify(userRepository).findByIdFetchFollower(any());
         verify(userRepository).findByIdFetchFollowing(any());
@@ -142,80 +145,90 @@ class UserServiceTest implements CommonTest {
 
     @Nested
     @DisplayName("회원수정 테스트")
-    class 회원수정{
+    class 회원수정 {
         @Test
         @DisplayName("회원수정 테스트 성공 - 파일 있을 때")
-        void 회원수정1 () throws IOException {
-            //given
-            MockMultipartFile file = new MockMultipartFile(
-                "multipartFile", "test.jpg", "image/jpeg", "image bytes".getBytes());
-            UserUpdateReq req = UserUpdateReq.builder()
-                .username(TEST_USERNAME)
-                .introduction(TEST_INTRODUCTION)
-                .age(TEST_AGE)
-                .password(TEST_PASSWORD)
-                .build();
+        void 회원수정1() throws IOException {
+            // given
+            MockMultipartFile file =
+                    new MockMultipartFile(
+                            "multipartFile", "test.jpg", "image/jpeg", "image bytes".getBytes());
+            UserUpdateReq req =
+                    UserUpdateReq.builder()
+                            .username(TEST_USERNAME)
+                            .introduction(TEST_INTRODUCTION)
+                            .age(TEST_AGE)
+                            .password(TEST_PASSWORD)
+                            .build();
             ObjectMapper objectMapper = new ObjectMapper();
             given(userRepository.findById(TEST_USERID)).willReturn(Optional.of(TEST_USER));
 
-            //when
-            when(s3Provider.updateFile(any(),any())).thenReturn(TEST_FILE_URL);
-            UserUpdateRes res = userService.updateProfile(file,objectMapper.writeValueAsString(req),TEST_USERID);
+            // when
+            when(s3Provider.updateFile(any(), any())).thenReturn(TEST_FILE_URL);
+            UserUpdateRes res =
+                    userService.updateProfile(
+                            file, objectMapper.writeValueAsString(req), TEST_USERID);
 
-            //then
+            // then
             assertThat(res.fileURL()).isEqualTo(TEST_FILE_URL);
             verify(s3Provider).updateFile(any(), any());
         }
+
         @Test
         @DisplayName("회원수정 테스트 성공 - 파일 없을 때")
-        void 회원수정2 () throws IOException {
-            //given
-            MockMultipartFile file = new MockMultipartFile(
-                "multipartFile", "test.jpg", "image/jpeg", "image bytes".getBytes());
-            UserUpdateReq req = UserUpdateReq.builder()
-                .username(TEST_USERNAME)
-                .introduction(TEST_INTRODUCTION)
-                .age(TEST_AGE)
-                .password(TEST_PASSWORD)
-                .build();
+        void 회원수정2() throws IOException {
+            // given
+            MockMultipartFile file =
+                    new MockMultipartFile(
+                            "multipartFile", "test.jpg", "image/jpeg", "image bytes".getBytes());
+            UserUpdateReq req =
+                    UserUpdateReq.builder()
+                            .username(TEST_USERNAME)
+                            .introduction(TEST_INTRODUCTION)
+                            .age(TEST_AGE)
+                            .password(TEST_PASSWORD)
+                            .build();
             ObjectMapper objectMapper = new ObjectMapper();
             given(userRepository.findById(TEST_USERID)).willReturn(Optional.of(TEST_USER));
 
-            //when
-            when(s3Provider.updateFile(any(),any())).thenThrow(new GlobalException(GlobalResultCode.NOT_FOUND_FILE));
-            when(s3Provider.saveFile(any(),any())).thenReturn(TEST_FILE_URL);
-            UserUpdateRes res =userService.updateProfile(file,objectMapper.writeValueAsString(req),TEST_USERID);
+            // when
+            when(s3Provider.updateFile(any(), any()))
+                    .thenThrow(new GlobalException(GlobalResultCode.NOT_FOUND_FILE));
+            when(s3Provider.saveFile(any(), any())).thenReturn(TEST_FILE_URL);
+            UserUpdateRes res =
+                    userService.updateProfile(
+                            file, objectMapper.writeValueAsString(req), TEST_USERID);
 
-            //then
+            // then
             assertThat(res.fileURL()).isEqualTo(TEST_FILE_URL);
-            verify(s3Provider).saveFile(any(),any());
+            verify(s3Provider).saveFile(any(), any());
         }
     }
 
     @Test
     @DisplayName("회원목록조회 테스트 성공")
-    void 회원목록조회1 (){
-        //given
+    void 회원목록조회1() {
+        // given
         UserListReq req = UserListReq.builder().build();
         ReflectionTestUtils.setField(TEST_USER, "modifiedAt", LocalDateTime.now());
         List<UserEntity> userList = List.of(TEST_USER);
-        given(userRepository.findByDynamicConditions(any(),any())).willReturn(userList);
+        given(userRepository.findByDynamicConditions(any(), any())).willReturn(userList);
 
-        //when
-        List<UserListRes> res = userService.getUserList(req,new UserDetailsImpl(TEST_USER));
+        // when
+        List<UserListRes> res = userService.getUserList(req, new UserDetailsImpl(TEST_USER));
 
-        //then
+        // then
         assertThat(res.get(0).userId()).isEqualTo(TEST_USER.getUserId());
     }
 
     @Test
     @DisplayName("내 정보 조회 테스트 성공")
-    void 내정보조회 (){
-        //given
+    void 내정보조회() {
+        // given
         given(userRepository.findUsernameByUserId(TEST_USERID)).willReturn(TEST_USERNAME);
-        //when
+        // when
         UserGetProfileRes res = userService.viewMyProfile(TEST_USERID);
-        //then
+        // then
         assertThat(res.username()).isEqualTo(TEST_USER.getUsername());
     }
 }

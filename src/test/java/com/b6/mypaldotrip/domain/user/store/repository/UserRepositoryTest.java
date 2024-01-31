@@ -50,6 +50,6 @@ class UserRepositoryTest implements CommonTest {
         String username = userRepository.findUsernameByUserId(userId);
 
         // then
-        assertThat(username).isEqualTo(ANOTHER+TEST_USERNAME);
+        assertThat(username).isEqualTo(ANOTHER + TEST_USERNAME);
     }
 }
