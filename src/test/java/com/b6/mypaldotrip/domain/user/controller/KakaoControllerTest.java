@@ -42,4 +42,21 @@ class KakaoControllerTest extends CommonControllerTest {
                     preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint())));
     }
+    @Test
+    @DisplayName("카카오 로그인 테스트")
+    void 카카오로그인 () throws Exception {
+        //given
+        String code = "testCode";
+        //when
+        ResultActions actions = mockMvc.perform(
+            get("/api/" + versionConfig.getVersion() + "/users/kakao-login")
+                .param("code",code));
+        //then
+        actions.andExpect(status().isOk())
+            .andDo(
+                document(
+                    "user/kakao-login",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint())));
+    }
 }
