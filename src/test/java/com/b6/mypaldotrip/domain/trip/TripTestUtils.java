@@ -1,5 +1,8 @@
 package com.b6.mypaldotrip.domain.trip;
 
+import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+
 import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,9 +17,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 
 @WebMvcTest
 @AutoConfigureRestDocs
@@ -40,11 +40,11 @@ public class TripTestUtils implements TripTest {
                         .apply(documentationConfiguration(restDocumentation))
                         .build();
 
-//        SecurityContextHolder.clearContext();
-//        mockMvcWithoutUser =
-//                MockMvcBuilders.webAppContextSetup(context)
-//                        .apply(documentationConfiguration(restDocumentation))
-//                        .build();
+        //        SecurityContextHolder.clearContext();
+        //        mockMvcWithoutUser =
+        //                MockMvcBuilders.webAppContextSetup(context)
+        //                        .apply(documentationConfiguration(restDocumentation))
+        //                        .build();
         given(versionConfig.getVersion()).willReturn("v1");
     }
 }

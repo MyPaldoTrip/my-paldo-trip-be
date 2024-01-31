@@ -1,5 +1,13 @@
 package com.b6.mypaldotrip.domain.trip.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.b6.mypaldotrip.domain.trip.TripTestUtils;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripListReq;
@@ -8,6 +16,9 @@ import com.b6.mypaldotrip.domain.trip.controller.dto.response.*;
 import com.b6.mypaldotrip.domain.trip.service.TripService;
 import com.b6.mypaldotrip.domain.trip.store.entity.Category;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,24 +30,11 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @WebMvcTest(controllers = {TripController.class})
 @MockBean(JpaMetamodelMappingContext.class)
 class TripControllerTest extends TripTestUtils {
 
-    @MockBean
-    private TripService tripService;
+    @MockBean private TripService tripService;
 
     @Nested
     @DisplayName("여행정보 생성 테스트")
@@ -62,10 +60,10 @@ class TripControllerTest extends TripTestUtils {
                             .tripFileList(Collections.emptyList())
                             .build();
             given(
-                    tripService.createTrip(
-                            anyString(),
-                            any(MultipartFile.class),
-                            any(UserDetailsImpl.class)))
+                            tripService.createTrip(
+                                    anyString(),
+                                    any(MultipartFile.class),
+                                    any(UserDetailsImpl.class)))
                     .willReturn(res);
 
             // when
@@ -117,30 +115,33 @@ class TripControllerTest extends TripTestUtils {
     void 여행정보_목록조회() throws Exception {
         // given
         TripListReq req = TripListReq.builder().build();
-        List<TripListRes> res = Arrays.asList(
-                TripListRes.builder()
-                        .tripId(1L)
-                        .city(TEST_CITY_NAME)
-                        .category(Category.ATTRACTION)
-                        .name(TEST_TRIP_NAME)
-                        .averageRating(5.0)
-                        .reviews(100)
-                        .fileUrlList(Collections.emptyList())
-                        .build());
+        List<TripListRes> res =
+                Arrays.asList(
+                        TripListRes.builder()
+                                .tripId(1L)
+                                .city(TEST_CITY_NAME)
+                                .category(Category.ATTRACTION)
+                                .name(TEST_TRIP_NAME)
+                                .averageRating(5.0)
+                                .reviews(100)
+                                .fileUrlList(Collections.emptyList())
+                                .build());
         given(tripService.getTripList(any(TripListReq.class))).willReturn(res);
 
         // when
-        ResultActions actions = mockMvc.perform(
-                post("/api/" + versionConfig.getVersion() + "/trips/lists")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req))
-        );
+        ResultActions actions =
+                mockMvc.perform(
+                        post("/api/" + versionConfig.getVersion() + "/trips/lists")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(req)));
 
         // then
         actions.andExpect(status().isOk())
-                .andDo(document("trip/getTripList",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())));
+                .andDo(
+                        document(
+                                "trip/getTripList",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint())));
     }
 
     @Test
@@ -174,7 +175,7 @@ class TripControllerTest extends TripTestUtils {
     @Test
     @DisplayName("여행정보 수정 테스트 성공")
     void 여행정보_수정() throws Exception {
-        //given
+        // given
         TripUpdateReq req =
                 TripUpdateReq.builder()
                         .cityName(TEST_CITY_NAME)
@@ -212,16 +213,15 @@ class TripControllerTest extends TripTestUtils {
     @DisplayName("여행정보 삭제 테스트 성공")
     void 여행정보_삭제() throws Exception {
         // given
-        TripDeleteRes res =
-                TripDeleteRes.builder()
-                        .message("삭제 완료 메세지")
-                        .build();
-        given(tripService.deleteTrip(any(),any())).willReturn(res);
+        TripDeleteRes res = TripDeleteRes.builder().message("삭제 완료 메세지").build();
+        given(tripService.deleteTrip(any(), any())).willReturn(res);
 
         // when
         ResultActions actions =
                 mockMvc.perform(
-                        delete("/api/" + versionConfig.getVersion() + "/trips/{tripId}", TEST_TRIPID));
+                        delete(
+                                "/api/" + versionConfig.getVersion() + "/trips/{tripId}",
+                                TEST_TRIPID));
 
         // then
         actions.andExpect(status().isOk())
