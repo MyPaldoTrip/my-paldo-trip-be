@@ -124,7 +124,32 @@ class TripControllerTest extends TripTestUtils {
                     mockMvc.perform(
                                     multipart("/api/" + versionConfig.getVersion() + "/trips")
                                             .file(jsonReq)
+                                            .characterEncoding("utf-8")
                                             .contentType(MediaType.MULTIPART_FORM_DATA));
+
+            // then
+            actions.andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("여행정보 생성 실패 - 요청 파라미터 없음")
+        void 여행정보_생성3() throws Exception {
+            // given
+            TripCreateReq req = TripCreateReq.builder().build();
+
+            // when
+            MockMultipartFile jsonReq =
+                    new MockMultipartFile(
+                            "req",
+                            "",
+                            "application/json",
+                            objectMapper.writeValueAsString(req).getBytes());
+            ResultActions actions =
+                    mockMvc.perform(
+                            multipart("/api/" + versionConfig.getVersion() + "/trips")
+                                    .file(jsonReq)
+                                    .characterEncoding("utf-8")
+                                    .contentType(MediaType.MULTIPART_FORM_DATA));
 
             // then
             actions.andExpect(status().isBadRequest());
