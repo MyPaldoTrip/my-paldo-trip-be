@@ -4,10 +4,7 @@ import com.b6.mypaldotrip.domain.trip.TripTestUtils;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripListReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripUpdateReq;
-import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripCreateRes;
-import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripGetRes;
-import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripListRes;
-import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripUpdateRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.*;
 import com.b6.mypaldotrip.domain.trip.service.TripService;
 import com.b6.mypaldotrip.domain.trip.store.entity.Category;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
@@ -176,7 +173,7 @@ class TripControllerTest extends TripTestUtils {
 
     @Test
     @DisplayName("여행정보 수정 테스트 성공")
-    void 여행정보_수정1() throws Exception {
+    void 여행정보_수정() throws Exception {
         //given
         TripUpdateReq req =
                 TripUpdateReq.builder()
@@ -209,6 +206,29 @@ class TripControllerTest extends TripTestUtils {
                                 "trip/updateTrip",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint())));
+    }
 
+    @Test
+    @DisplayName("여행정보 삭제 테스트 성공")
+    void 여행정보_삭제() throws Exception {
+        // given
+        TripDeleteRes res =
+                TripDeleteRes.builder()
+                        .message("삭제 완료 메세지")
+                        .build();
+        given(tripService.deleteTrip(any(),any())).willReturn(res);
+
+        // when
+        ResultActions actions =
+                mockMvc.perform(
+                        delete("/api/" + versionConfig.getVersion() + "/trips/{tripId}", TEST_TRIPID));
+
+        // then
+        actions.andExpect(status().isOk())
+                .andDo(
+                        document(
+                                "trip/deleteTrip",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint())));
     }
 }
