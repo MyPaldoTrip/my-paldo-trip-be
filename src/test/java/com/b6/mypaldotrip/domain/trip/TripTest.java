@@ -13,6 +13,8 @@ public interface TripTest {
     Long TEST_LEVEL = 1L;
     String ANOTHER = "another";
     Long ANOTHER_LONG = 1L;
+
+    Long TEST_TRIPID = 1L;
     String TEST_CITY_NAME = "test city name";
     String TEST_TRIP_NAME = "test trip name";
     String TEST_DESCRIPTION = "test description";

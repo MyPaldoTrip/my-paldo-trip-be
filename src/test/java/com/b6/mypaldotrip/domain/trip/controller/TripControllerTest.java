@@ -4,6 +4,7 @@ import com.b6.mypaldotrip.domain.trip.TripTestUtils;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripListReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripCreateRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripGetRes;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripListRes;
 import com.b6.mypaldotrip.domain.trip.service.TripService;
 import com.b6.mypaldotrip.domain.trip.store.entity.Category;
@@ -28,8 +29,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = {TripController.class})
@@ -188,4 +188,31 @@ class TripControllerTest extends TripTestUtils {
                         preprocessResponse(prettyPrint())));
     }
 
+    @Test
+    @DisplayName("여행정보 단건 조회 성공")
+    void 여행정보_단건조회() throws Exception {
+        // given
+        TripGetRes res =
+                TripGetRes.builder()
+                        .tripId(1L)
+                        .city(TEST_CITY_NAME)
+                        .category(Category.ATTRACTION)
+                        .description(TEST_DESCRIPTION)
+                        .urlList(Collections.emptyList())
+                        .build();
+        given(tripService.getTrip(any())).willReturn(res);
+
+        // when
+        ResultActions actions =
+                mockMvc.perform(
+                        get("/api/" + versionConfig.getVersion() + "/trips/{tripId}", TEST_TRIPID));
+
+        // then
+        actions.andExpect(status().isOk())
+                .andDo(
+                        document(
+                                "trip/getTrip",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint())));
+    }
 }
