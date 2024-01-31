@@ -3,9 +3,11 @@ package com.b6.mypaldotrip.domain.trip.controller;
 import com.b6.mypaldotrip.domain.trip.TripTestUtils;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripListReq;
+import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripUpdateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripCreateRes;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripGetRes;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripListRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripUpdateRes;
 import com.b6.mypaldotrip.domain.trip.service.TripService;
 import com.b6.mypaldotrip.domain.trip.store.entity.Category;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
@@ -170,5 +172,43 @@ class TripControllerTest extends TripTestUtils {
                                 "trip/getTrip",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("여행정보 수정 테스트 성공")
+    void 여행정보_수정1() throws Exception {
+        //given
+        TripUpdateReq req =
+                TripUpdateReq.builder()
+                        .cityName(TEST_CITY_NAME)
+                        .category(Category.ATTRACTION)
+                        .name(TEST_TRIP_NAME)
+                        .description(TEST_DESCRIPTION)
+                        .build();
+        TripUpdateRes res =
+                TripUpdateRes.builder()
+                        .city(TEST_CITY_NAME)
+                        .category(Category.ATTRACTION)
+                        .name(TEST_TRIP_NAME)
+                        .description(TEST_DESCRIPTION)
+                        .build();
+        given(tripService.updateTrip(any(), any(), any())).willReturn(res);
+
+        // when
+        ResultActions actions =
+                mockMvc.perform(
+                        patch("/api/" + versionConfig.getVersion() + "/trips/{tripId}", TEST_TRIPID)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .characterEncoding("utf-8")
+                                .content(objectMapper.writeValueAsString(req)));
+
+        // then
+        actions.andExpect(status().isOk())
+                .andDo(
+                        document(
+                                "trip/updateTrip",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint())));
+
     }
 }
