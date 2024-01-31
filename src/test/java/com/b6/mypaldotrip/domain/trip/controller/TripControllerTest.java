@@ -36,7 +36,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @MockBean(JpaMetamodelMappingContext.class)
 class TripControllerTest extends TripTestUtils {
 
-    @MockBean private TripService tripService;
+    @MockBean
+    private TripService tripService;
 
     @Nested
     @DisplayName("여행정보 생성 테스트")
@@ -62,10 +63,10 @@ class TripControllerTest extends TripTestUtils {
                             .tripFileList(Collections.emptyList())
                             .build();
             given(
-                            tripService.createTrip(
-                                    anyString(),
-                                    any(MultipartFile.class),
-                                    any(UserDetailsImpl.class)))
+                    tripService.createTrip(
+                            anyString(),
+                            any(MultipartFile.class),
+                            any(UserDetailsImpl.class)))
                     .willReturn(res);
 
             // when
@@ -80,11 +81,11 @@ class TripControllerTest extends TripTestUtils {
                             objectMapper.writeValueAsString(req).getBytes());
             ResultActions actions =
                     mockMvc.perform(
-                                    multipart("/api/" + versionConfig.getVersion() + "/trips")
-                                            .file(multipartFile)
-                                            .file(jsonReq)
-                                            .characterEncoding("utf-8")
-                                            .contentType(MediaType.MULTIPART_FORM_DATA));
+                            multipart("/api/" + versionConfig.getVersion() + "/trips")
+                                    .file(multipartFile)
+                                    .file(jsonReq)
+                                    .characterEncoding("utf-8")
+                                    .contentType(MediaType.MULTIPART_FORM_DATA));
 
             // then
             actions.andExpect(status().isCreated())
@@ -122,10 +123,10 @@ class TripControllerTest extends TripTestUtils {
                             objectMapper.writeValueAsString(req).getBytes());
             ResultActions actions =
                     mockMvc.perform(
-                                    multipart("/api/" + versionConfig.getVersion() + "/trips")
-                                            .file(jsonReq)
-                                            .characterEncoding("utf-8")
-                                            .contentType(MediaType.MULTIPART_FORM_DATA));
+                            multipart("/api/" + versionConfig.getVersion() + "/trips")
+                                    .file(jsonReq)
+                                    .characterEncoding("utf-8")
+                                    .contentType(MediaType.MULTIPART_FORM_DATA));
 
             // then
             actions.andExpect(status().isBadRequest());
@@ -156,33 +157,35 @@ class TripControllerTest extends TripTestUtils {
         }
     }
 
-    @Nested
-    @DisplayName("여행정보 목록 조회 테스트")
-    class 여행정보_목록조회 {
+    @Test
+    @DisplayName("여행정보 목록 조회 성공")
+    void 여행정보_목록조회() throws Exception {
+        // given
+        TripListReq req = TripListReq.builder().build();
+        List<TripListRes> res = Arrays.asList(
+                TripListRes.builder()
+                        .tripId(1L)
+                        .city(TEST_CITY_NAME)
+                        .category(Category.ATTRACTION)
+                        .name(TEST_TRIP_NAME)
+                        .averageRating(5.0)
+                        .reviews(100)
+                        .fileUrlList(Collections.emptyList())
+                        .build());
+        given(tripService.getTripList(any(TripListReq.class))).willReturn(res);
 
-        @Test
-        @DisplayName("여행정보 목록 조회 성공")
-        void 여행정보_목록조회() throws Exception {
-            // given
-            TripListReq req = TripListReq.builder().build();
-            List<TripListRes> res = Arrays.asList(
-                    new TripListRes(1L, TEST_CITY_NAME, Category.ATTRACTION, TEST_TRIP_NAME, 5.0, 100, List.of("url1", "url2"))
-            );
-            given(tripService.getTripList(any(TripListReq.class))).willReturn(res);
+        // when
+        ResultActions actions = mockMvc.perform(
+                post("/api/" + versionConfig.getVersion() + "/trips/lists")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req))
+        );
 
-            // when
-            ResultActions actions = mockMvc.perform(
-                    post("/api/" + versionConfig.getVersion() + "/trips/lists")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(req))
-            );
-
-            // then
-            actions.andExpect(status().isOk())
-                    .andDo(document("trip/getTripList",
-                            preprocessRequest(prettyPrint()),
-                            preprocessResponse(prettyPrint())));
-        }
+        // then
+        actions.andExpect(status().isOk())
+                .andDo(document("trip/getTripList",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
     }
 
 }
