@@ -6,20 +6,19 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum CityMapping {
-    SEOUL("서울", "seoul"),
-    BUSAN("부산", "busan"),
-    INCHEON("인천", "incheon"),
-    DAEGU("대구", "daegu"),
+    SEOUL("서울특별시", "seoul"),
+    INCHEON("인천광역시", "incheon"),
+    BUSAN("부산광역시", "busan"),
+    DAEGU("대구광역시", "daegu"),
+    GWANGJU("광주광역시", "Gwangju"),
+    ULSAN("울산광역시", "Ulsan"),
     JEJU("제주도", "jeju"),
-    GWANGJU("광주", "Gwangju"),
-    DAEJEON("대전", "Daejeon "),
-    GYEONGGI("경기", "Gyeonggi-do"),
-    CHUNGNAM("충남", "Chungcheongnam-do"),
-    CHUNGBUK("충북", "Chungcheongbuk-do"),
-    JEOLLANAM("전라남도", "Jeollanam-do"),
-    JEOLLABUK("전라북도", "Jeollabuk-do"),
-    GYEONGSANGNAM("경상남도", "Gyeongsangnam-do"),
-    GYEONGSANGBUK("경상북도", "Gyeongsangbuk-do");
+    DAEJEON("대전광역시", "Daejeon "),
+    GYEONGGI("경기도", "Gyeonggi-do"),
+    GANGWON("강원도", "Gangwon-do"),
+    CHUNGNAM("충청도", "Chungcheongnam-do"),
+    JEOLLANAM("전라도", "Jeollanam-do"),
+    GYEONGSANGNAM("경상도", "Gyeongsangnam-do");
 
     private final String beforeCityName;
     private final String changeCityName;
