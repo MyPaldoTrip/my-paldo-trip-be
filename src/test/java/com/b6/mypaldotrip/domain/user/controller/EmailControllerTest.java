@@ -31,78 +31,86 @@ class EmailControllerTest extends CommonControllerTest {
 
     @Nested
     @DisplayName("이메일 발송 테스트")
-    class 이메일발송{
+    class 이메일발송 {
         @Test
         @DisplayName("이메일 발송 테스트 성공")
-        void 이메일발송1 () throws Exception {
-            //given
+        void 이메일발송1() throws Exception {
+            // given
             EmailSendReq req = EmailSendReq.builder().email(TEST_EMAIL).build();
-            EmailSendRes res = EmailSendRes.builder().recipientEmail(TEST_EMAIL).message("인증 코드 발송").build();
+            EmailSendRes res =
+                    EmailSendRes.builder().recipientEmail(TEST_EMAIL).message("인증 코드 발송").build();
             given(emailService.sendEmail(req)).willReturn(res);
 
-            //when
-            ResultActions actions = mockMvc.perform(
-                post("/api/" + versionConfig.getVersion() + "/users/email")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(req)));
+            // when
+            ResultActions actions =
+                    mockMvc.perform(
+                            post("/api/" + versionConfig.getVersion() + "/users/email")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(req)));
 
-            //then
+            // then
             actions.andExpect(status().isOk())
-                .andDo(
-                    document(
-                        "user/email-send",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())));
+                    .andDo(
+                            document(
+                                    "user/email-send",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint())));
         }
+
         @Test
         @DisplayName("이메일 발송 테스트 실패")
-        void 이메일발송2 () throws Exception {
-            //given
+        void 이메일발송2() throws Exception {
+            // given
             EmailSendReq req = EmailSendReq.builder().email("test").build();
-            //when
-            ResultActions actions = mockMvc.perform(
-                post("/api/" + versionConfig.getVersion() + "/users/email")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(req)));
-            //then
+            // when
+            ResultActions actions =
+                    mockMvc.perform(
+                            post("/api/" + versionConfig.getVersion() + "/users/email")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(req)));
+            // then
             actions.andExpect(status().isBadRequest());
         }
     }
 
     @Nested
     @DisplayName("이메일 검증 테스트")
-    class 이메일검증{
+    class 이메일검증 {
         @Test
         @DisplayName("이메일 검증 테스트 성공")
-        void 이메일검증1 () throws Exception {
-            //given
-            EmailVerifyReq req = EmailVerifyReq.builder().email(TEST_EMAIL).code("testCode").build();
+        void 이메일검증1() throws Exception {
+            // given
+            EmailVerifyReq req =
+                    EmailVerifyReq.builder().email(TEST_EMAIL).code("testCode").build();
             EmailVerifyRes res = EmailVerifyRes.builder().message("인증 코드 검증 성공").build();
             given(emailService.verifyEmail(req)).willReturn(res);
-            //when
-            ResultActions actions = mockMvc.perform(
-                post("/api/" + versionConfig.getVersion() + "/users/email/verify")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(req)));
-            //then
+            // when
+            ResultActions actions =
+                    mockMvc.perform(
+                            post("/api/" + versionConfig.getVersion() + "/users/email/verify")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(req)));
+            // then
             actions.andExpect(status().isOk())
-                .andDo(
-                    document(
-                        "user/email-verify",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())));
+                    .andDo(
+                            document(
+                                    "user/email-verify",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint())));
         }
+
         @Test
         @DisplayName("이메일 검증 테스트 실패")
-        void 이메일검증2 () throws Exception {
-            //given
+        void 이메일검증2() throws Exception {
+            // given
             EmailVerifyReq req = EmailVerifyReq.builder().build();
-            //when
-            ResultActions actions = mockMvc.perform(
-                post("/api/" + versionConfig.getVersion() + "/users/email/verify")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(req)));
-            //then
+            // when
+            ResultActions actions =
+                    mockMvc.perform(
+                            post("/api/" + versionConfig.getVersion() + "/users/email/verify")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(req)));
+            // then
             actions.andExpect(status().isBadRequest());
         }
     }

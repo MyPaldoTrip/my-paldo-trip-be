@@ -26,37 +26,39 @@ class KakaoControllerTest extends CommonControllerTest {
 
     @Test
     @DisplayName("카카오 인증 코드 테스트")
-    void 카카오인증코드 () throws Exception {
-        //given
+    void 카카오인증코드() throws Exception {
+        // given
         String expectedUrl = "testUrl";
         given(kakaoService.redirect()).willReturn(expectedUrl);
-        //when
-        ResultActions actions = mockMvc.perform(
-            get("/api/" + versionConfig.getVersion() + "/users/kakao-code"));
-        //then
+        // when
+        ResultActions actions =
+                mockMvc.perform(get("/api/" + versionConfig.getVersion() + "/users/kakao-code"));
+        // then
         actions.andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl(expectedUrl))
-            .andDo(
-                document(
-                    "user/kakao-code",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint())));
+                .andExpect(redirectedUrl(expectedUrl))
+                .andDo(
+                        document(
+                                "user/kakao-code",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint())));
     }
+
     @Test
     @DisplayName("카카오 로그인 테스트")
-    void 카카오로그인 () throws Exception {
-        //given
+    void 카카오로그인() throws Exception {
+        // given
         String code = "testCode";
-        //when
-        ResultActions actions = mockMvc.perform(
-            get("/api/" + versionConfig.getVersion() + "/users/kakao-login")
-                .param("code",code));
-        //then
+        // when
+        ResultActions actions =
+                mockMvc.perform(
+                        get("/api/" + versionConfig.getVersion() + "/users/kakao-login")
+                                .param("code", code));
+        // then
         actions.andExpect(status().isOk())
-            .andDo(
-                document(
-                    "user/kakao-login",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint())));
+                .andDo(
+                        document(
+                                "user/kakao-login",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint())));
     }
 }

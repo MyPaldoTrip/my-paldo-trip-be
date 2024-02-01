@@ -24,23 +24,24 @@ class EmailServiceTest implements CommonTest {
 
     @Test
     @DisplayName("이메일 발송 테스트")
-    void 이메일발송 (){
-        //given
+    void 이메일발송() {
+        // given
         EmailSendReq req = EmailSendReq.builder().email(TEST_EMAIL).build();
-        //when
-        when(emailUtil.sendMessage(any(),any())).thenReturn(TEST_EMAIL);
+        // when
+        when(emailUtil.sendMessage(any(), any())).thenReturn(TEST_EMAIL);
         EmailSendRes res = emailService.sendEmail(req);
-        //then
+        // then
         assertThat(res.recipientEmail()).isEqualTo(TEST_EMAIL);
     }
+
     @Test
     @DisplayName("이메일 검증 테스트")
-    void 이메일검증 (){
-        //given
+    void 이메일검증() {
+        // given
         EmailVerifyReq req = EmailVerifyReq.builder().email(TEST_EMAIL).code("testCode").build();
-        //when
+        // when
         EmailVerifyRes res = emailService.verifyEmail(req);
-        //then
+        // then
         assertThat(res.message()).isEqualTo("인증 코드 검증 성공");
     }
 }

@@ -37,114 +37,154 @@ class ApplicationControllerTest extends CommonControllerTest implements Applicat
 
     @Nested
     @DisplayName("신청서 제출 테스트")
-    class 신청서제출{
+    class 신청서제출 {
         @Test
         @DisplayName("신청서 제출 테스트 성공")
-        void 신청서제출1 () throws Exception {
-            //given
-            ApplicationSubmitReq req = ApplicationSubmitReq.builder().title(TEST_TITLE).content(TEST_CONTENT).build();
-            ApplicationSubmitRes res = ApplicationSubmitRes.builder().email(TEST_EMAIL).username(TEST_USERNAME)
-                .title(TEST_TITLE).content(TEST_CONTENT).build();
+        void 신청서제출1() throws Exception {
+            // given
+            ApplicationSubmitReq req =
+                    ApplicationSubmitReq.builder().title(TEST_TITLE).content(TEST_CONTENT).build();
+            ApplicationSubmitRes res =
+                    ApplicationSubmitRes.builder()
+                            .email(TEST_EMAIL)
+                            .username(TEST_USERNAME)
+                            .title(TEST_TITLE)
+                            .content(TEST_CONTENT)
+                            .build();
             given(applicationService.submit(req, TEST_USER)).willReturn(res);
-            //when
-            ResultActions actions = mockMvc.perform(
-                post("/api/" + versionConfig.getVersion() + "/users/application")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(req)));
-            //then
+            // when
+            ResultActions actions =
+                    mockMvc.perform(
+                            post("/api/" + versionConfig.getVersion() + "/users/application")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(req)));
+            // then
             actions.andExpect(status().isCreated())
-                .andDo(
-                    document(
-                        "user/application-submit",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())));
+                    .andDo(
+                            document(
+                                    "user/application-submit",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint())));
         }
+
         @Test
         @DisplayName("신청서 제출 테스트 실패")
-        void 신청서제출2 () throws Exception {
-            //given
+        void 신청서제출2() throws Exception {
+            // given
             ApplicationSubmitReq req = ApplicationSubmitReq.builder().build();
-            //when
-            ResultActions actions = mockMvc.perform(
-                post("/api/" + versionConfig.getVersion() + "/users/application")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(req)));
-            //then
+            // when
+            ResultActions actions =
+                    mockMvc.perform(
+                            post("/api/" + versionConfig.getVersion() + "/users/application")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(req)));
+            // then
             actions.andExpect(status().isBadRequest());
         }
     }
 
     @Test
     @DisplayName("신청서 목록 조회 테스트 성공")
-    void 신청서목록조회 () throws Exception {
-        //given
-        ApplicationGetListRes res = ApplicationGetListRes.builder().applicationId(TEST_APPLICATION_ID)
-            .email(TEST_EMAIL).username(TEST_USERNAME).title(TEST_TITLE).verified(DEFAULT_VERIFIED).build();
+    void 신청서목록조회() throws Exception {
+        // given
+        ApplicationGetListRes res =
+                ApplicationGetListRes.builder()
+                        .applicationId(TEST_APPLICATION_ID)
+                        .email(TEST_EMAIL)
+                        .username(TEST_USERNAME)
+                        .title(TEST_TITLE)
+                        .verified(DEFAULT_VERIFIED)
+                        .build();
         given(applicationService.getList()).willReturn(List.of(res));
-        //when
-        ResultActions actions = mockMvc.perform(
-            get("/api/" + versionConfig.getVersion() + "/users/application"));
-        //then
+        // when
+        ResultActions actions =
+                mockMvc.perform(get("/api/" + versionConfig.getVersion() + "/users/application"));
+        // then
         actions.andExpect(status().isOk())
-            .andDo(
-                document(
-                    "user/application-getList",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint())));
+                .andDo(
+                        document(
+                                "user/application-getList",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint())));
     }
 
     @Test
     @DisplayName("신청서 단건 조회 테스트 성공")
-    void 신청서단건조회 () throws Exception {
-        //given
-        ApplicationGetRes res = ApplicationGetRes.builder().applicationId(TEST_APPLICATION_ID)
-            .email(TEST_EMAIL).username(TEST_USERNAME).title(TEST_TITLE).content(TEST_CONTENT).verified(DEFAULT_VERIFIED).build();
+    void 신청서단건조회() throws Exception {
+        // given
+        ApplicationGetRes res =
+                ApplicationGetRes.builder()
+                        .applicationId(TEST_APPLICATION_ID)
+                        .email(TEST_EMAIL)
+                        .username(TEST_USERNAME)
+                        .title(TEST_TITLE)
+                        .content(TEST_CONTENT)
+                        .verified(DEFAULT_VERIFIED)
+                        .build();
         given(applicationService.getApplication(TEST_APPLICATION_ID)).willReturn(res);
-        //when
-        ResultActions actions = mockMvc.perform(
-            get("/api/" + versionConfig.getVersion() + "/users/application/{applicationId}",TEST_APPLICATION_ID));
-        //then
+        // when
+        ResultActions actions =
+                mockMvc.perform(
+                        get(
+                                "/api/"
+                                        + versionConfig.getVersion()
+                                        + "/users/application/{applicationId}",
+                                TEST_APPLICATION_ID));
+        // then
         actions.andExpect(status().isOk())
-            .andDo(
-            document(
-                "user/application-getApplication",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint())));
+                .andDo(
+                        document(
+                                "user/application-getApplication",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint())));
     }
+
     @Nested
     @DisplayName("신청서 승인 테스트")
-    class 신청서승인{
+    class 신청서승인 {
         @Test
         @DisplayName("신청서 승인 테스트 성공")
-        void 신청서승인1 () throws Exception {
-            //given
-            ApplicationCheckReq req = ApplicationCheckReq.builder().applicationId(TEST_APPLICATION_ID).accept(ANY_STRING).build();
-            ApplicationConfirmRes res = ApplicationConfirmRes.builder().applicationId(TEST_APPLICATION_ID).email(TEST_EMAIL).message("해당 신청이 승인/거절 되었습니다").build();
+        void 신청서승인1() throws Exception {
+            // given
+            ApplicationCheckReq req =
+                    ApplicationCheckReq.builder()
+                            .applicationId(TEST_APPLICATION_ID)
+                            .accept(ANY_STRING)
+                            .build();
+            ApplicationConfirmRes res =
+                    ApplicationConfirmRes.builder()
+                            .applicationId(TEST_APPLICATION_ID)
+                            .email(TEST_EMAIL)
+                            .message("해당 신청이 승인/거절 되었습니다")
+                            .build();
             given(applicationService.confirm(req)).willReturn(res);
-            //when
-            ResultActions actions = mockMvc.perform(
-                patch("/api/" + versionConfig.getVersion() + "/users/application")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(req)));
-            //then
+            // when
+            ResultActions actions =
+                    mockMvc.perform(
+                            patch("/api/" + versionConfig.getVersion() + "/users/application")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(req)));
+            // then
             actions.andExpect(status().isOk())
-                .andDo(
-                    document(
-                        "user/application-confirm",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())));
+                    .andDo(
+                            document(
+                                    "user/application-confirm",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint())));
         }
+
         @Test
         @DisplayName("신청서 승인 테스트 실패")
-        void 신청서승인2 () throws Exception {
-            //given
+        void 신청서승인2() throws Exception {
+            // given
             ApplicationCheckReq req = ApplicationCheckReq.builder().build();
-            //when
-            ResultActions actions = mockMvc.perform(
-                patch("/api/" + versionConfig.getVersion() + "/users/application")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(req)));
-            //then
+            // when
+            ResultActions actions =
+                    mockMvc.perform(
+                            patch("/api/" + versionConfig.getVersion() + "/users/application")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(req)));
+            // then
             actions.andExpect(status().isBadRequest());
         }
     }
