@@ -14,7 +14,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.b6.mypaldotrip.domain.chat.ChatRepositoryTestBase;
-import com.b6.mypaldotrip.domain.chat.controller.ChatController;
 import com.b6.mypaldotrip.domain.chat.controller.dto.request.CreateRoomReq;
 import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoleRes;
 import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomSaveRes;
@@ -43,8 +42,7 @@ public class ChatControllerTest extends ChatRepositoryTestBase {
 
     @Autowired
     private MockMvc mockMvc;
-    //    @MockBean
-//    private VersionConfig versionConfig;
+
     @MockBean
     private JwtUtil jwtUtil;
 
@@ -153,31 +151,6 @@ public class ChatControllerTest extends ChatRepositoryTestBase {
                     preprocessResponse(prettyPrint())))
                 .andReturn();
         }
-
-//        @Test
-//        @DisplayName("채팅방 만들기 테스트 실패")
-//        void 채팅방_만들기_실패() throws Exception {
-//            // given
-//            // 가짜 토큰
-//            String fakeToken = "FAKE_TOKEN";
-//            CreateRoomReq createRoomReq = new CreateRoomReq(chatRoom1.getChatRoomName());  // 이미 존재하는 채팅방 이름 사용
-//
-//            when(versionConfig.getVersion()).thenReturn("v1");
-//            when(jwtUtil.createToken(TEST_EMAIL)).thenReturn(fakeToken);
-//
-//            MvcResult result = mockMvc.perform(
-//                    post("/api/"+versionConfig.getVersion()+"/chat-rooms/rooms", createRoomReq)
-//                        .with(csrf())
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(new ObjectMapper().writeValueAsString(createRoomReq))
-//                        .header("Authorization", fakeToken)) // 인증 토큰 제공
-//                .andExpect(status().isBadRequest())
-//                .andDo(document(
-//                    "chat-rooms/rooms",
-//                    preprocessRequest(prettyPrint()),
-//                    preprocessResponse(prettyPrint())))
-//                .andReturn();
-//        }
 
 
     }
