@@ -4,9 +4,7 @@ import com.b6.mypaldotrip.domain.weather.controller.dto.CustomOpenWeatherReq;
 import com.b6.mypaldotrip.domain.weather.controller.dto.CustomOpenWeatherRes;
 import com.b6.mypaldotrip.domain.weather.controller.dto.OpenWeatherRes;
 import com.b6.mypaldotrip.domain.weather.controller.dto.OpenWeatherRes.WeatherItem;
-import com.b6.mypaldotrip.domain.weather.exception.WeatherErrorCode;
 import com.b6.mypaldotrip.domain.weather.store.CityMapping;
-import com.b6.mypaldotrip.global.exception.GlobalException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -49,10 +47,7 @@ public class WeatherService {
         List<WeatherItem> weatherfilteredList = Collections.emptyList();
 
         if (weatherResponse != null && weatherResponse.list() != null) {
-            // 3시에 해당하는 데이터만 필터링하여 응답
             weatherfilteredList = weatherResponse.list().stream().toList();
-        } else {
-            throw new GlobalException(WeatherErrorCode.WEATHER_CHECK_FAIL);
         }
         return new OpenWeatherRes(weatherfilteredList);
     }

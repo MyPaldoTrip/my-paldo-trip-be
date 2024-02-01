@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum WeatherErrorCode implements ResultCode {
-    WEATHER_CHECK_FAIL(HttpStatus.BAD_REQUEST, "날씨 조회 실패.");
+    WEATHER_CHECK_FAIL(HttpStatus.BAD_REQUEST, "날씨 조회 실패."),
+    WEATHER_CITY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 도시 조회 실패");
     private final HttpStatus httpStatus;
     private final String message;
 }

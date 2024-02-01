@@ -1,5 +1,7 @@
 package com.b6.mypaldotrip.domain.weather.store;
 
+import com.b6.mypaldotrip.domain.weather.exception.WeatherErrorCode;
+import com.b6.mypaldotrip.global.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -28,6 +30,6 @@ public enum CityMapping {
                 return city.changeCityName;
             }
         }
-        return koreanName; // 매핑이 없을 경우 그대로 반환
+        throw new GlobalException(WeatherErrorCode.WEATHER_CITY_NOT_FOUND);
     }
 }
