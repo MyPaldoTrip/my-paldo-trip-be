@@ -1,6 +1,10 @@
 package com.b6.mypaldotrip.domain.trip;
 
+import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
+import com.b6.mypaldotrip.domain.trip.store.entity.Category;
+import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
 import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
+import java.util.Collections;
 
 public interface TripTest {
     String TEST_USERNAME = "name";
@@ -13,11 +17,28 @@ public interface TripTest {
     Long TEST_LEVEL = 1L;
     String ANOTHER = "another";
     Long ANOTHER_LONG = 1L;
-
     Long TEST_TRIPID = 1L;
     String TEST_CITY_NAME = "test city name";
     String TEST_TRIP_NAME = "test trip name";
     String TEST_DESCRIPTION = "test description";
+    String TEST_PROVINCE_NAME = "test province";
+    String TEST_CITY_INFO = "test city info";
+
+    CityEntity TEST_CITY =
+            CityEntity.builder()
+                    .provinceName(TEST_PROVINCE_NAME)
+                    .cityName(TEST_CITY_NAME)
+                    .cityInfo(TEST_CITY_INFO)
+                    .build();
+
+    TripEntity TEST_TRIP =
+            TripEntity.builder()
+                    .city(TEST_CITY)
+                    .category(Category.ATTRACTION)
+                    .name(TEST_TRIP_NAME)
+                    .description(TEST_DESCRIPTION)
+                    .tripFileList(Collections.emptyList())
+                    .build();
 
     UserEntity TEST_USER =
             UserEntity.builder()
