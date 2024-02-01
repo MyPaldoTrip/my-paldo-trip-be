@@ -12,10 +12,7 @@ import com.b6.mypaldotrip.domain.trip.TripTest;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripListReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripUpdateReq;
-import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripCreateRes;
-import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripGetRes;
-import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripListRes;
-import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripUpdateRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.*;
 import com.b6.mypaldotrip.domain.trip.exception.TripErrorCode;
 import com.b6.mypaldotrip.domain.trip.store.entity.Category;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
@@ -259,6 +256,45 @@ public class TripServiceTest implements TripTest {
                     .isInstanceOf(GlobalException.class)
                     .extracting(th -> ((GlobalException) th).getResultCode().getMessage())
                     .isEqualTo(TripErrorCode.NON_EXIST_TRIP.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("여행정보 삭제 테스트")
+    class 여행정보_삭제 {
+
+        @Test
+        @DisplayName("여행정보 삭제 테스트 성공")
+        void 여행정보_삭제1() {
+            // given
+            TEST_USER.acceptPermission();
+            given(tripRepository.findById(TEST_TRIPID)).willReturn(Optional.of(TEST_TRIP));
+
+            // when
+            TripDeleteRes res = tripService.deleteTrip(TEST_TRIPID, new UserDetailsImpl(TEST_USER));
+
+            // then
+            assertThat(res.message()).isEqualTo("여행 정보가 삭제되었습니다.");
+            verify(tripRepository, times(1)).delete(TEST_TRIP);
+        }
+
+        @Test
+        @DisplayName("d여행정보 삭제 테스트 실패 - 권한이 없을 때")
+        void 여행정보_삭제2() {
+            // given
+
+            // when
+
+            // then
+            Throwable thrown =
+                    catchThrowable(
+                            () -> {
+                                tripService.deleteTrip(TEST_TRIPID, new UserDetailsImpl(TEST_USER));
+                            });
+            assertThat(thrown)
+                    .isInstanceOf(GlobalException.class)
+                    .extracting(th -> ((GlobalException) th).getResultCode().getMessage())
+                    .isEqualTo(TripErrorCode.UNAUTHORIZED_ROLE_ERROR.getMessage());
         }
     }
 }
