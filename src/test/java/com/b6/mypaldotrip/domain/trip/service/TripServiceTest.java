@@ -4,12 +4,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 import com.b6.mypaldotrip.domain.city.service.CityService;
 import com.b6.mypaldotrip.domain.trip.TripTest;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
+import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripListReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripCreateRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripListRes;
 import com.b6.mypaldotrip.domain.trip.store.entity.Category;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
 import com.b6.mypaldotrip.domain.trip.store.repository.TripRepository;
@@ -19,6 +22,7 @@ import com.b6.mypaldotrip.global.common.S3Provider;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -170,5 +174,21 @@ public class TripServiceTest implements TripTest {
                                             new UserDetailsImpl(TEST_USER)));
             assertThat(thrown).isInstanceOf(RuntimeException.class);
         }
+    }
+
+    @Test
+    @DisplayName("여행정보 목록 조회 테스트 성공")
+    void 여행정보_목록조회() {
+        // given
+        TripListReq req = TripListReq.builder().build();
+        List<TripEntity> tripEntityList = List.of(TEST_TRIP);
+        given(tripRepository.searchTripsAndSort(any(), any(), any(), any()))
+                .willReturn(tripEntityList);
+
+        // when
+        List<TripListRes> res = tripService.getTripList(req);
+
+        // then
+        assertThat(res.get(0).tripId()).isEqualTo(TEST_TRIP.getTripId());
     }
 }
