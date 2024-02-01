@@ -47,8 +47,9 @@ public class ChatMessageService {
         if (chatRoomEntityRepository.findByChatRoomId(chatRoomId).isPresent()) {
 
             chatMessageRepository.save(chatMessage);
+            return chatMessage;
         }
-        return chatMessage;
+        return null;
     }
 
     public ChatRoomInfoRes findAllMessagesByChatRoomId(String chatRoomId) {
