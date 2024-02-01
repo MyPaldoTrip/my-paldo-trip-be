@@ -1,5 +1,6 @@
 package com.b6.mypaldotrip.domain.trip.service;
 
+import static com.b6.mypaldotrip.domain.user.store.entity.UserRole.ROLE_USER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,6 +35,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 public class TripServiceTest implements TripTest {
@@ -279,9 +281,10 @@ public class TripServiceTest implements TripTest {
         }
 
         @Test
-        @DisplayName("d여행정보 삭제 테스트 실패 - 권한이 없을 때")
+        @DisplayName("여행정보 삭제 테스트 실패 - 권한이 없을 때")
         void 여행정보_삭제2() {
             // given
+            ReflectionTestUtils.setField(TEST_USER, "userRole", ROLE_USER);
 
             // when
 
