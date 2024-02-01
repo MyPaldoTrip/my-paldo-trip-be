@@ -12,6 +12,7 @@ import com.b6.mypaldotrip.domain.trip.TripTest;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripListReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripCreateRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripGetRes;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripListRes;
 import com.b6.mypaldotrip.domain.trip.store.entity.Category;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
@@ -190,5 +191,22 @@ public class TripServiceTest implements TripTest {
 
         // then
         assertThat(res.get(0).tripId()).isEqualTo(TEST_TRIP.getTripId());
+    }
+
+    @Test
+    @DisplayName("여행정보 단건 조회 테스트 성공")
+    void 여행정보_단건조회() {
+        // given
+        given(tripRepository.findById(TEST_TRIPID)).willReturn(Optional.of(TEST_TRIP));
+
+        // when
+        TripGetRes res = tripService.getTrip(TEST_TRIPID);
+
+        // then
+        assertThat(res.tripId()).isEqualTo(TEST_TRIP.getTripId());
+        assertThat(res.city()).isEqualTo(TEST_TRIP.getCity().getCityName());
+        assertThat(res.category()).isEqualTo(TEST_TRIP.getCategory());
+        assertThat(res.name()).isEqualTo(TEST_TRIP.getName());
+        assertThat(res.description()).isEqualTo(TEST_TRIP.getDescription());
     }
 }
