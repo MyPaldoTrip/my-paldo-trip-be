@@ -11,15 +11,19 @@ import com.b6.mypaldotrip.domain.city.service.CityService;
 import com.b6.mypaldotrip.domain.trip.TripTest;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripListReq;
+import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripUpdateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripCreateRes;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripGetRes;
 import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripListRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripUpdateRes;
+import com.b6.mypaldotrip.domain.trip.exception.TripErrorCode;
 import com.b6.mypaldotrip.domain.trip.store.entity.Category;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
 import com.b6.mypaldotrip.domain.trip.store.repository.TripRepository;
 import com.b6.mypaldotrip.domain.tripFile.store.entity.TripFileEntity;
 import com.b6.mypaldotrip.domain.tripFile.store.repository.TripFileRepository;
 import com.b6.mypaldotrip.global.common.S3Provider;
+import com.b6.mypaldotrip.global.exception.GlobalException;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -208,5 +212,53 @@ public class TripServiceTest implements TripTest {
         assertThat(res.category()).isEqualTo(TEST_TRIP.getCategory());
         assertThat(res.name()).isEqualTo(TEST_TRIP.getName());
         assertThat(res.description()).isEqualTo(TEST_TRIP.getDescription());
+    }
+
+    @Nested
+    @DisplayName("여행정보 수정 테스트")
+    class 여행정보_수정 {
+
+        @Test
+        @DisplayName("여행정보 수정 테스트 성공")
+        void 여행정보_수정1() {
+            // given
+            TripUpdateReq req = TripUpdateReq.builder().build();
+            TEST_USER.acceptPermission();
+            given(tripRepository.findById(TEST_TRIPID)).willReturn(Optional.of(TEST_TRIP));
+            given(cityService.findByCityName(req.cityName())).willReturn(TEST_CITY);
+
+            // when
+            TripUpdateRes res =
+                    tripService.updateTrip(TEST_TRIPID, req, new UserDetailsImpl(TEST_USER));
+
+            // then
+            assertThat(res.city()).isEqualTo(TEST_CITY.getCityName());
+            assertThat(res.category()).isEqualTo(TEST_TRIP.getCategory());
+            assertThat(res.name()).isEqualTo(TEST_TRIP.getName());
+            assertThat(res.description()).isEqualTo(TEST_TRIP.getDescription());
+        }
+
+        @Test
+        @DisplayName("여행정보 수정 테스트 실패 - 여행정보가 존재하지 않을 때")
+        void 여행정보_수정2() {
+            // given
+            TripUpdateReq req = TripUpdateReq.builder().build();
+            TEST_USER.acceptPermission();
+            given(tripRepository.findById(TEST_TRIPID)).willReturn(Optional.empty());
+
+            // when
+
+            // then
+            Throwable thrown =
+                    catchThrowable(
+                            () -> {
+                                tripService.updateTrip(
+                                        TEST_TRIPID, req, new UserDetailsImpl(TEST_USER));
+                            });
+            assertThat(thrown)
+                    .isInstanceOf(GlobalException.class)
+                    .extracting(th -> ((GlobalException) th).getResultCode().getMessage())
+                    .isEqualTo(TripErrorCode.NON_EXIST_TRIP.getMessage());
+        }
     }
 }
