@@ -69,7 +69,7 @@ public class ChatController {
         String validatedChatRoomName = chatMessageService.validateChatRoomName(req.chatRoomName());
         ChatRoomSaveRes chatRoomSaveRes = chatMessageService.createARoom(validatedChatRoomName);
         return RestResponse.success(
-                        chatRoomSaveRes, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                        chatRoomSaveRes, GlobalResultCode.CREATED, versionConfig.getVersion())
                 .toResponseEntity();
     }
 
