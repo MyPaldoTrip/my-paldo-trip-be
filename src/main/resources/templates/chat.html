@@ -508,8 +508,9 @@
         const messageContent = messageInput.value.trim();
         console.log("messageContent = "+messageContent);
         if (messageContent && stompClient) {
+
             const chatMessageEntity = {
-                chatRoomId : chatRoomId,
+                chatRoomId: chatRoomId,
                 chatRoomName: chatRoomName,
                 senderId: nickname,
                 recipientId: selectedRoomId,
@@ -518,7 +519,13 @@
             };
             // chatRoomId와 senderId를 실제 값으로 대체해야 합니다.
 
-            stompClient.send(`/app/chatting/${chatRoomId}`, {}, JSON.stringify(chatMessageEntity));
+            // 메시지 길이가 150자를 초과하는 경우
+            if (messageContent.length > 150) {
+                alert("메시지의 길이는 150자를 초과할 수 없습니다.");
+            } else {
+                stompClient.send(`/app/chatting/${chatRoomId}`, {},
+                    JSON.stringify(chatMessageEntity));
+            }
             //stompClient.send("/app/chat", {}, JSON.stringify(chatMessageEntity));
             //displayMessage(senderId, messageInput.value.trim());
             messageInput.value = '';
@@ -526,6 +533,7 @@
         chatArea.scrollTop = chatArea.scrollHeight;
         event.preventDefault();
     }
+
 
     async function onMessageReceived(payload) {
         //await findAndDisplayConnectedRooms();//지워보기

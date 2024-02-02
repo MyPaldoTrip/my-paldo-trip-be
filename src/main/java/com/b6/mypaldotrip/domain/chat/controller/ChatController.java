@@ -85,12 +85,17 @@ public class ChatController {
 
     @MessageMapping("/chatting/{chatRoomId}")
     public void chatRoomToUsers(
-            @DestinationVariable String chatRoomId, @Payload ChatMessage chatMessage) {
+        @DestinationVariable String chatRoomId, @Payload ChatMessage chatMessage) {
+
+        if(chatMessage.getContent().length() > 150) {
+            throw new IllegalArgumentException("메시지의 길이는 150자를 초과할 수 없습니다.");
+        }
 
         ChatMessage chatRoom = chatMessageService.saveMessageIfRoomExists(chatRoomId, chatMessage);
 
         messagingTemplate.convertAndSend("/topic/public/", chatMessage);
     }
+
 
     @DeleteMapping("/rooms/{chatRoomName}")
     public ResponseEntity<RestResponse<ChatRoomEntity>> deleteChatRoom(
