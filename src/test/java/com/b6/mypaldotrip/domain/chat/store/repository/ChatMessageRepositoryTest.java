@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -24,9 +23,7 @@ import org.springframework.data.mongodb.core.query.Query;
 @ExtendWith(MockitoExtension.class)
 public class ChatMessageRepositoryTest {
 
-    @Mock
-    private ChatMessageRepository chatMessageRepository;
-
+    @Mock private ChatMessageRepository chatMessageRepository;
 
     @Autowired private MongoTemplate mongoTemplate;
     protected String chatRoomId1;
@@ -46,19 +43,19 @@ public class ChatMessageRepositoryTest {
         // given
         chatRoomId1 = "id1";
         ChatMessage chatMessage1 =
-            ChatMessage.builder()
-                .chatRoomId(chatRoomId1)
-                .senderId("user1")
-                .content("Hello, Test!")
-                .timestamp(new Date())
-                .build();
+                ChatMessage.builder()
+                        .chatRoomId(chatRoomId1)
+                        .senderId("user1")
+                        .content("Hello, Test!")
+                        .timestamp(new Date())
+                        .build();
         ChatMessage chatMessage2 =
-            ChatMessage.builder()
-                .chatRoomId(chatRoomId1)
-                .senderId("user2")
-                .content("Hello,Test!")
-                .timestamp(new Date())
-                .build();
+                ChatMessage.builder()
+                        .chatRoomId(chatRoomId1)
+                        .senderId("user2")
+                        .content("Hello,Test!")
+                        .timestamp(new Date())
+                        .build();
         List<ChatMessage> chatMessages = Arrays.asList(chatMessage1, chatMessage2);
 
         // when
@@ -69,8 +66,8 @@ public class ChatMessageRepositoryTest {
         // then
         assertEquals(2, result.size());
         assertThat(result)
-            .usingElementComparatorIgnoringFields("id", "timestamp")
-            .contains(chatMessage1, chatMessage2);
+                .usingElementComparatorIgnoringFields("id", "timestamp")
+                .contains(chatMessage1, chatMessage2);
     }
 
     @Test
@@ -79,19 +76,19 @@ public class ChatMessageRepositoryTest {
         chatRoomId1 = "id1";
         chatRoomId2 = "id2";
         ChatMessage chatMessage1 =
-            ChatMessage.builder()
-                .chatRoomId(chatRoomId1)
-                .senderId(senderId)
-                .content("Hello")
-                .timestamp(new Date())
-                .build();
+                ChatMessage.builder()
+                        .chatRoomId(chatRoomId1)
+                        .senderId(senderId)
+                        .content("Hello")
+                        .timestamp(new Date())
+                        .build();
         ChatMessage chatMessage2 =
-            ChatMessage.builder()
-                .chatRoomId(chatRoomId2)
-                .senderId(senderId)
-                .content("Hi")
-                .timestamp(new Date())
-                .build();
+                ChatMessage.builder()
+                        .chatRoomId(chatRoomId2)
+                        .senderId(senderId)
+                        .content("Hi")
+                        .timestamp(new Date())
+                        .build();
 
         List<ChatMessage> mockMessages = Arrays.asList(chatMessage1, chatMessage2);
 
@@ -102,8 +99,7 @@ public class ChatMessageRepositoryTest {
 
         assertEquals(2, foundMessages.size());
         assertThat(foundMessages)
-            .usingElementComparatorIgnoringFields("id", "timestamp")
-            .contains(chatMessage1, chatMessage2);
+                .usingElementComparatorIgnoringFields("id", "timestamp")
+                .contains(chatMessage1, chatMessage2);
     }
-
 }
