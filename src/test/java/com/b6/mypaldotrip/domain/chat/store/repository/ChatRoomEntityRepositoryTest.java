@@ -17,8 +17,7 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 @ExtendWith(MockitoExtension.class)
 public class ChatRoomEntityRepositoryTest {
 
-    @Mock
-    private ChatRoomEntityRepository chatRoomEntityRepository;
+    @Mock private ChatRoomEntityRepository chatRoomEntityRepository;
 
     protected String chatRoomId;
     protected String chatRoomName;
@@ -29,17 +28,17 @@ public class ChatRoomEntityRepositoryTest {
         chatRoomId = "id1";
         chatRoomName = "chatRoom1";
         chatRoomEntity =
-            ChatRoomEntity.builder().chatRoomId(chatRoomId).chatRoomName(chatRoomName).build();
+                ChatRoomEntity.builder().chatRoomId(chatRoomId).chatRoomName(chatRoomName).build();
     }
 
     @Test
     void findByChatRoomIdTest() {
         // when
-        when(chatRoomEntityRepository.findByChatRoomId(chatRoomId)).thenReturn(
-            Optional.of(chatRoomEntity));
+        when(chatRoomEntityRepository.findByChatRoomId(chatRoomId))
+                .thenReturn(Optional.of(chatRoomEntity));
 
         Optional<ChatRoomEntity> foundEntity =
-            chatRoomEntityRepository.findByChatRoomId(chatRoomId);
+                chatRoomEntityRepository.findByChatRoomId(chatRoomId);
 
         // then
         assertTrue(foundEntity.isPresent());
@@ -49,11 +48,11 @@ public class ChatRoomEntityRepositoryTest {
     @Test
     void findByChatRoomNameTest() {
         // when
-        when(chatRoomEntityRepository.findByChatRoomName(chatRoomName)).thenReturn(
-            Optional.of(chatRoomEntity));
+        when(chatRoomEntityRepository.findByChatRoomName(chatRoomName))
+                .thenReturn(Optional.of(chatRoomEntity));
 
         Optional<ChatRoomEntity> foundEntity =
-            chatRoomEntityRepository.findByChatRoomName(chatRoomName);
+                chatRoomEntityRepository.findByChatRoomName(chatRoomName);
 
         // then
         assertTrue(foundEntity.isPresent());
