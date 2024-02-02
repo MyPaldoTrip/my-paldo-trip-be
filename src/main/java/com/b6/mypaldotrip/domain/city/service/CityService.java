@@ -14,9 +14,11 @@ import com.b6.mypaldotrip.domain.city.s3.repository.CityFileRepository;
 import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
 import com.b6.mypaldotrip.domain.city.store.entity.CitySort;
 import com.b6.mypaldotrip.domain.city.store.repository.CityRepository;
-import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
+import com.b6.mypaldotrip.domain.trip.exception.TripErrorCode;
+import com.b6.mypaldotrip.domain.user.store.entity.UserRole;
 import com.b6.mypaldotrip.global.common.S3Provider;
 import com.b6.mypaldotrip.global.exception.GlobalException;
+import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
@@ -33,12 +35,12 @@ public class CityService {
     private final CityFileRepository cityFileRepository;
     private final S3Provider s3Provider;
 
-    public CityCreateRes createCity(String req, UserEntity user, MultipartFile multipartFile)
+    public CityCreateRes createCity(String req, UserDetailsImpl userDetails, MultipartFile multipartFile)
             throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         CityCreateReq cityCreateReq = objectMapper.readValue(req, CityCreateReq.class);
         // 유저의 권한이 관리자인지 확인(securityconfig에서 관리자만 할수 있게 하는지)
-
+        checkAuthorization(userDetails);
         // 같은 시 명이 중복되는지 확인
         cityDuplicationCheck(cityCreateReq.cityName());
 
@@ -51,12 +53,16 @@ public class CityService {
 
         cityRepository.save(cityEntity);
 
-        if (isImage(multipartFile)) {
-        String fileURL = s3Provider.saveFile(multipartFile, "city");
-        cityFileRepository.save(
-                CityFileEntity.builder().fileUrl(fileURL).cityEntity(cityEntity).build());
-        } else {
+        // MultipartFile이 null이 아니고 이미지가 아닌 경우 예외 처리
+        if (multipartFile != null && !isImage(multipartFile)) {
             throw new GlobalException(CityErrorCode.WRONG_FILE_EXTENSION);
+        }
+
+        // MultipartFile이 null이 아니면 이미지 업로드 및 저장
+        if (multipartFile != null) {
+            String fileURL = s3Provider.saveFile(multipartFile, "city");
+            cityFileRepository.save(
+                CityFileEntity.builder().fileUrl(fileURL).cityEntity(cityEntity).build());
         }
 
         return CityCreateRes.builder()
@@ -145,9 +151,26 @@ public class CityService {
             throw new GlobalException(CityErrorCode.ALREADY_CITY_EXIST);
         }
     }
-    public boolean isImage(MultipartFile file) {// 이미지만 허용
+    private static void checkAuthorization(UserDetailsImpl userDetails) {
+        if (userDetails.getUserEntity().getUserRole() == UserRole.ROLE_USER) {
+            throw new GlobalException(TripErrorCode.UNAUTHORIZED_ROLE_ERROR);
+        }
+    }
+
+    public boolean isImage(MultipartFile file) {
         String contentType = file.getContentType();
-        return contentType != null && contentType.startsWith("image");
+
+        if (contentType != null && contentType.startsWith("image")) {
+            String fileName = file.getOriginalFilename();
+            if (fileName != null) {
+                String lowerCaseFileName = fileName.toLowerCase();
+                if (lowerCaseFileName.endsWith(".gif")) {
+                    throw new GlobalException(CityErrorCode.WRONG_FILE_EXTENSION);
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
 }

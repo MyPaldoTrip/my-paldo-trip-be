@@ -45,9 +45,9 @@ public class CityController {
     public ResponseEntity<RestResponse<CityCreateRes>> createCity(
             @Valid @RequestPart(value = "req") String req,
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestPart(value = "multipartFile") MultipartFile multipartFile)
+            @RequestPart(value = "multipartFile", required = false) MultipartFile multipartFile)
             throws IOException {
-        CityCreateRes res = cityService.createCity(req, userDetails.getUserEntity(), multipartFile);
+        CityCreateRes res = cityService.createCity(req, userDetails, multipartFile);
         return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
                 .toResponseEntity();
     }
