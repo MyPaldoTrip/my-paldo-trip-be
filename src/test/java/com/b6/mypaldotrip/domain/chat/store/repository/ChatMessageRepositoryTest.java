@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -25,7 +24,7 @@ public class ChatMessageRepositoryTest {
 
     @Mock private ChatMessageRepository chatMessageRepository;
 
-    @Autowired private MongoTemplate mongoTemplate;
+    @Mock private MongoTemplate mongoTemplate;
     protected String chatRoomId1;
 
     protected String chatRoomId2;
