@@ -22,21 +22,19 @@ import org.springframework.data.mongodb.core.query.Query;
 @ExtendWith(MockitoExtension.class)
 public class ChatMessageRepositoryTest {
 
-    @Autowired
-    private ChatMessageRepository chatMessageRepository;
+    @Autowired private ChatMessageRepository chatMessageRepository;
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    @Autowired private MongoTemplate mongoTemplate;
     protected String chatRoomId1;
 
     protected String chatRoomId2;
 
     @AfterEach
     void cleanup() {
-        mongoTemplate.remove(Query.query(Criteria.where("chatRoomId").is(chatRoomId1)),
-            ChatMessage.class);
-        mongoTemplate.remove(Query.query(Criteria.where("chatRoomId").is(chatRoomId2)),
-            ChatMessage.class);
+        mongoTemplate.remove(
+                Query.query(Criteria.where("chatRoomId").is(chatRoomId1)), ChatMessage.class);
+        mongoTemplate.remove(
+                Query.query(Criteria.where("chatRoomId").is(chatRoomId2)), ChatMessage.class);
     }
 
     @Test
@@ -44,18 +42,20 @@ public class ChatMessageRepositoryTest {
     void findAllMessagesByChatRoomIdSuccessTest() {
         // given
         chatRoomId1 = "id1";
-        ChatMessage chatMessage1 = ChatMessage.builder()
-            .chatRoomId(chatRoomId1)
-            .senderId("user1")
-            .content("Hello, Test!")
-            .timestamp(new Date())
-            .build();
-        ChatMessage chatMessage2 = ChatMessage.builder()
-            .chatRoomId(chatRoomId1)
-            .senderId("user2")
-            .content("Hello, Test!")
-            .timestamp(new Date())
-            .build();
+        ChatMessage chatMessage1 =
+                ChatMessage.builder()
+                        .chatRoomId(chatRoomId1)
+                        .senderId("user1")
+                        .content("Hello, Test!")
+                        .timestamp(new Date())
+                        .build();
+        ChatMessage chatMessage2 =
+                ChatMessage.builder()
+                        .chatRoomId(chatRoomId1)
+                        .senderId("user2")
+                        .content("Hello, Test!")
+                        .timestamp(new Date())
+                        .build();
         List<ChatMessage> chatMessages = Arrays.asList(chatMessage1, chatMessage2);
 
         chatMessageRepository.save(chatMessage1);
@@ -66,36 +66,38 @@ public class ChatMessageRepositoryTest {
 
         // then
         assertEquals(2, result.size());
-        assertThat(result).usingElementComparatorIgnoringFields("id", "timestamp")
-            .contains(chatMessage1, chatMessage2);
+        assertThat(result)
+                .usingElementComparatorIgnoringFields("id", "timestamp")
+                .contains(chatMessage1, chatMessage2);
     }
-
 
     @Test
     void findAllBySenderIdTest() {
         String senderId = "user1";
         chatRoomId1 = "id1";
         chatRoomId2 = "id2";
-        ChatMessage chatMessage1 = ChatMessage.builder()
-            .chatRoomId(chatRoomId1)
-            .senderId(senderId)
-            .content("Hello")
-            .timestamp(new Date())
-            .build();
-        ChatMessage chatMessage2 = ChatMessage.builder()
-            .chatRoomId(chatRoomId2)
-            .senderId(senderId)
-            .content("Hi")
-            .timestamp(new Date())
-            .build();
+        ChatMessage chatMessage1 =
+                ChatMessage.builder()
+                        .chatRoomId(chatRoomId1)
+                        .senderId(senderId)
+                        .content("Hello")
+                        .timestamp(new Date())
+                        .build();
+        ChatMessage chatMessage2 =
+                ChatMessage.builder()
+                        .chatRoomId(chatRoomId2)
+                        .senderId(senderId)
+                        .content("Hi")
+                        .timestamp(new Date())
+                        .build();
         chatMessageRepository.save(chatMessage1);
         chatMessageRepository.save(chatMessage2);
 
         List<ChatMessage> foundMessages = chatMessageRepository.findAllBySenderId(senderId);
 
         assertEquals(2, foundMessages.size());
-        assertThat(foundMessages).usingElementComparatorIgnoringFields("id", "timestamp")
-            .contains(chatMessage1, chatMessage2);
+        assertThat(foundMessages)
+                .usingElementComparatorIgnoringFields("id", "timestamp")
+                .contains(chatMessage1, chatMessage2);
     }
 }
-

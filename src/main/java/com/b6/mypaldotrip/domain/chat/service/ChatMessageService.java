@@ -1,5 +1,6 @@
 package com.b6.mypaldotrip.domain.chat.service;
 
+import com.b6.mypaldotrip.domain.chat.controller.dto.request.CreateRoomReq;
 import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomIdRes;
 import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomInfoRes;
 import com.b6.mypaldotrip.domain.chat.controller.dto.response.ChatRoomSaveRes;
@@ -96,5 +97,11 @@ public class ChatMessageService {
                         .orElseThrow(() -> new GlobalException(ChatErrorCode.CHATROOM_NOT_FOUND));
         System.out.println("chatRoomEntity.getChatRoomId() = " + chatRoomEntity.getChatRoomId());
         return ChatRoomIdRes.builder().chatRoomId(chatRoomEntity.getChatRoomId()).build();
+    }
+
+    public ChatRoomSaveRes createChatRoom(CreateRoomReq req) {
+        String validatedChatRoomName = validateChatRoomName(req.chatRoomName());
+        ChatRoomSaveRes chatRoomSaveRes = createARoom(validatedChatRoomName);
+        return chatRoomSaveRes;
     }
 }

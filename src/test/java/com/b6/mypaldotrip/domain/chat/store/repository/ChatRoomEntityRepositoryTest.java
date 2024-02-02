@@ -17,8 +17,7 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 @ExtendWith(MockitoExtension.class)
 public class ChatRoomEntityRepositoryTest {
 
-    @Autowired
-    private ChatRoomEntityRepository chatRoomEntityRepository;
+    @Autowired private ChatRoomEntityRepository chatRoomEntityRepository;
 
     protected String chatRoomId;
     protected String chatRoomName;
@@ -28,8 +27,8 @@ public class ChatRoomEntityRepositoryTest {
     void setup() {
         chatRoomId = "id1";
         chatRoomName = "chatRoom1";
-        chatRoomEntity = ChatRoomEntity.builder().chatRoomId(chatRoomId).chatRoomName(chatRoomName)
-            .build();
+        chatRoomEntity =
+                ChatRoomEntity.builder().chatRoomId(chatRoomId).chatRoomName(chatRoomName).build();
 
         chatRoomEntityRepository.save(chatRoomEntity);
     }
@@ -41,8 +40,8 @@ public class ChatRoomEntityRepositoryTest {
 
     @Test
     void findByChatRoomIdTest() {
-        Optional<ChatRoomEntity> foundEntity = chatRoomEntityRepository.findByChatRoomId(
-            chatRoomId);
+        Optional<ChatRoomEntity> foundEntity =
+                chatRoomEntityRepository.findByChatRoomId(chatRoomId);
 
         assertTrue(foundEntity.isPresent());
         assertEquals(chatRoomId, foundEntity.get().getChatRoomId());
@@ -50,8 +49,8 @@ public class ChatRoomEntityRepositoryTest {
 
     @Test
     void findByChatRoomNameTest() {
-        Optional<ChatRoomEntity> foundEntity = chatRoomEntityRepository.findByChatRoomName(
-            chatRoomName);
+        Optional<ChatRoomEntity> foundEntity =
+                chatRoomEntityRepository.findByChatRoomName(chatRoomName);
 
         assertTrue(foundEntity.isPresent());
         assertEquals(chatRoomName, foundEntity.get().getChatRoomName());
