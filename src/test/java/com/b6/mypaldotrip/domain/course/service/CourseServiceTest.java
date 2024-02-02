@@ -11,9 +11,11 @@ import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
 import com.b6.mypaldotrip.domain.course.CourseTest;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSaveReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSearchReq;
+import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseUpdateReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseGetRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseSaveRes;
+import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseUpdateRes;
 import com.b6.mypaldotrip.domain.course.store.entity.CourseEntity;
 import com.b6.mypaldotrip.domain.course.store.repository.CourseRepository;
 import com.b6.mypaldotrip.domain.courseFile.store.repository.CourseFileRepository;
@@ -150,5 +152,31 @@ class CourseServiceTest implements CourseTest {
             // then
             assertEquals(courseId, res.courseId());
         }
+    }
+
+    @Test
+    @DisplayName("코스 수정")
+    void 코스수정() {
+        // given
+        Long courseId = 1L;
+        CourseUpdateReq req =
+                CourseUpdateReq.builder()
+                        .title(TEST_COURSE_TITLE)
+                        .content(TEST_COURSE_CONTENT)
+                        .cityName("updated cityName")
+                        .tripNames(List.of("updated tripNames"))
+                        .build();
+        CityEntity city = CityEntity.builder().build();
+        TripEntity trip = TripEntity.builder().build();
+        when(courseRepository.findById(courseId)).thenReturn(Optional.of(TEST_COURSE));
+        when(cityService.findByCityName(any())).thenReturn(city);
+        when(tripService.findTripByName(any())).thenReturn(trip);
+
+        // when
+        CourseUpdateRes res = courseService.updateCourse(courseId, req, TEST_USER);
+
+        // then
+        assertEquals(TEST_COURSE.getTitle(), res.title());
+        assertEquals(TEST_COURSE.getContent(), res.content());
     }
 }
