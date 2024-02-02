@@ -53,7 +53,7 @@ public class ChatMessageRepositoryTest {
                 ChatMessage.builder()
                         .chatRoomId(chatRoomId1)
                         .senderId("user2")
-                        .content("Hello, Test!")
+                        .content("Hello,Test!")
                         .timestamp(new Date())
                         .build();
         List<ChatMessage> chatMessages = Arrays.asList(chatMessage1, chatMessage2);
