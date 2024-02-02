@@ -13,6 +13,7 @@ import com.b6.mypaldotrip.domain.user.controller.dto.response.UserUpdateRes;
 import com.b6.mypaldotrip.domain.user.exception.UserErrorCode;
 import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.domain.user.store.repository.UserRepository;
+import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.common.S3Provider;
 import com.b6.mypaldotrip.global.exception.GlobalException;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
@@ -140,14 +141,19 @@ public class UserService {
 
         ObjectMapper objectMapper = new ObjectMapper();
         UserUpdateReq req = objectMapper.readValue(reqJson, UserUpdateReq.class);
-
-        String password = passwordEncoder.encode(req.password());
-        String fileUrl;
-        try {
-            fileUrl = s3Provider.updateFile(userEntity, multipartFile);
-        } catch (GlobalException e) {
-            fileUrl = s3Provider.saveFile(multipartFile, "user");
+        if (req.username()==null || req.password()==null){
+            throw new GlobalException(GlobalResultCode.VALIDATION_ERROR);
         }
+        String password = passwordEncoder.encode(req.password());
+        String fileUrl = null;
+        if(multipartFile!=null){
+            try {
+                fileUrl = s3Provider.updateFile(userEntity, multipartFile);
+            } catch (GlobalException e) {
+                fileUrl = s3Provider.saveFile(multipartFile, "user");
+            }    
+        }
+        
 
         userEntity.update(req.username(), req.introduction(), req.age(), password, fileUrl);
 
