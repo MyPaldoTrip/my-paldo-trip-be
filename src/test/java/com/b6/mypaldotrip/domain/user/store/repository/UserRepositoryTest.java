@@ -20,12 +20,10 @@ import org.springframework.test.context.ActiveProfiles;
 class UserRepositoryTest implements CommonTest {
 
     @Autowired private UserRepository userRepository;
-    private UserEntity saveUser;
     private UserEntity saveAnotherUser;
 
     @BeforeEach
     void setUp() {
-        saveUser = userRepository.save(TEST_USER);
         saveAnotherUser = userRepository.save(TEST_ANOTHER_USER);
     }
 
@@ -33,25 +31,25 @@ class UserRepositoryTest implements CommonTest {
     @DisplayName("이메일로 찾기")
     void 이메일로찾기() {
         // given
-        String email = saveUser.getEmail();
+        String email = saveAnotherUser.getEmail();
 
         // when
         Optional<UserEntity> user = userRepository.findByEmail(email);
 
         // then
-        assertThat(user.get()).isEqualTo(TEST_USER);
+        assertThat(user.get()).isEqualTo(saveAnotherUser);
     }
 
     @Test
     @DisplayName("유저아이디로 유저네임 찾기")
     void 이름구하기() {
         // given
-        Long userId = saveUser.getUserId();
+        Long userId = saveAnotherUser.getUserId();
 
         // when
         String username = userRepository.findUsernameByUserId(userId);
 
         // then
-        assertThat(username).isEqualTo(TEST_USERNAME);
+        assertThat(username).isEqualTo(ANOTHER + TEST_USERNAME);
     }
 }

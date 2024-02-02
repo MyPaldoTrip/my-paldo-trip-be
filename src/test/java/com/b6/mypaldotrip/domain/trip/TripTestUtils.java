@@ -1,4 +1,4 @@
-package com.b6.mypaldotrip.domain.user;
+package com.b6.mypaldotrip.domain.trip;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -20,7 +20,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 @WebMvcTest
 @AutoConfigureRestDocs
-public class CommonControllerTest implements CommonTest {
+public class TripTestUtils implements TripTest {
 
     @Autowired protected MockMvc mockMvc;
     @Autowired protected ObjectMapper objectMapper;
@@ -39,6 +39,12 @@ public class CommonControllerTest implements CommonTest {
                 MockMvcBuilders.webAppContextSetup(context)
                         .apply(documentationConfiguration(restDocumentation))
                         .build();
+
+        //        SecurityContextHolder.clearContext();
+        //        mockMvcWithoutUser =
+        //                MockMvcBuilders.webAppContextSetup(context)
+        //                        .apply(documentationConfiguration(restDocumentation))
+        //                        .build();
         given(versionConfig.getVersion()).willReturn("v1");
     }
 }
