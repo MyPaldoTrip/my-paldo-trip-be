@@ -59,15 +59,4 @@ public interface TripTest {
                     .age(TEST_AGE)
                     .level(TEST_LEVEL)
                     .build();
-
-    UserEntity TEST_ANOTHER_USER =
-            UserEntity.builder()
-                    .username(ANOTHER + TEST_USERNAME)
-                    .email(ANOTHER + TEST_EMAIL)
-                    .password(ANOTHER + TEST_PASSWORD)
-                    .introduction(ANOTHER + TEST_INTRODUCTION)
-                    .fileURL(ANOTHER + TEST_FILE_URL)
-                    .age(ANOTHER_LONG + TEST_AGE)
-                    .level(ANOTHER_LONG + TEST_LEVEL)
-                    .build();
 }
