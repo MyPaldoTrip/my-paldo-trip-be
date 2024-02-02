@@ -51,9 +51,13 @@ public class CityService {
 
         cityRepository.save(cityEntity);
 
+        if (isImage(multipartFile)) {
         String fileURL = s3Provider.saveFile(multipartFile, "city");
         cityFileRepository.save(
                 CityFileEntity.builder().fileUrl(fileURL).cityEntity(cityEntity).build());
+        } else {
+            throw new GlobalException(CityErrorCode.WRONG_FILE_EXTENSION);
+        }
 
         return CityCreateRes.builder()
                 .provinceName(cityEntity.getProvinceName())
@@ -141,4 +145,9 @@ public class CityService {
             throw new GlobalException(CityErrorCode.ALREADY_CITY_EXIST);
         }
     }
+    public boolean isImage(MultipartFile file) {// 이미지만 허용
+        String contentType = file.getContentType();
+        return contentType != null && contentType.startsWith("image");
+    }
+
 }
