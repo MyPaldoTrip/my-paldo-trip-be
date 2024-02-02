@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.b6.mypaldotrip.domain.city.service.CityService;
@@ -12,6 +13,7 @@ import com.b6.mypaldotrip.domain.course.CourseTest;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSaveReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSearchReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseUpdateReq;
+import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseDeleteRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseGetRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseSaveRes;
@@ -178,5 +180,41 @@ class CourseServiceTest implements CourseTest {
         // then
         assertEquals(TEST_COURSE.getTitle(), res.title());
         assertEquals(TEST_COURSE.getContent(), res.content());
+    }
+
+    @Nested
+    @DisplayName("코스 삭제")
+    class 파일삭제 {
+
+        @Test
+        @DisplayName("코스 삭제 - 파일 X")
+        void 코스삭제() {
+            // given
+            Long courseId = 1L;
+            String msg = courseId + "번 코스 삭제, 삭제할 파일 없음";
+            given(courseRepository.findById(courseId)).willReturn(Optional.of(TEST_COURSE));
+
+            // when
+            CourseDeleteRes res = courseService.deleteCourse(courseId, TEST_USER);
+            // then
+            verify(courseRepository).delete(TEST_COURSE);
+            assertEquals(msg, res.msg());
+        }
+
+        @Test
+        @DisplayName("코스 삭제 - 파일 O")
+        void 코스삭제2() {
+            // given
+            Long courseId = 1L;
+            String msg = courseId + "번 코스, 파일 삭제";
+            given(courseRepository.findById(courseId)).willReturn(Optional.of(ANOTHER_COURSE));
+            ANOTHER_COURSE.getFiles().add(COURSE_FILE);
+
+            // when
+            CourseDeleteRes res = courseService.deleteCourse(courseId, TEST_USER);
+            // then
+            verify(courseRepository).delete(ANOTHER_COURSE);
+            assertEquals(msg, res.msg());
+        }
     }
 }
