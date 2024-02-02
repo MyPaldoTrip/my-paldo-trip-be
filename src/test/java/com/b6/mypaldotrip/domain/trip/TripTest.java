@@ -40,6 +40,15 @@ public interface TripTest {
                     .tripFileList(Collections.emptyList())
                     .build();
 
+    TripEntity TEST_ANOTHER_TRIP =
+            TripEntity.builder()
+                    .city(TEST_CITY)
+                    .category(Category.ATTRACTION)
+                    .name(ANOTHER + TEST_TRIP_NAME)
+                    .description(TEST_DESCRIPTION)
+                    .tripFileList(Collections.emptyList())
+                    .build();
+
     UserEntity TEST_USER =
             UserEntity.builder()
                     .username(TEST_USERNAME)
