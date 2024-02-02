@@ -4,6 +4,7 @@ import com.b6.mypaldotrip.global.common.GlobalResultCode;
 import com.b6.mypaldotrip.global.config.VersionConfig;
 import com.b6.mypaldotrip.global.response.RestResponse;
 import com.b6.mypaldotrip.global.template.ResultCode;
+import jakarta.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,14 @@ public class GlobalExceptionHandler {
             DataIntegrityViolationException e) {
 
         ResultCode resultCode = GlobalResultCode.DUPLICATE;
+        return RestResponse.error(resultCode, versionConfig.getVersion()).toResponseEntity();
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<RestResponse<Object>> handleConstraintViolationException(
+        ConstraintViolationException e) {
+        log.error(e.getMessage());
+        ResultCode resultCode = GlobalResultCode.VALIDATION_ERROR;
         return RestResponse.error(resultCode, versionConfig.getVersion()).toResponseEntity();
     }
 }
