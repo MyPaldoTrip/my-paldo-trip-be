@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<RestResponse<Object>> handleConstraintViolationException(
-        ConstraintViolationException e) {
+            ConstraintViolationException e) {
         log.error(e.getMessage());
         ResultCode resultCode = GlobalResultCode.VALIDATION_ERROR;
         return RestResponse.error(resultCode, versionConfig.getVersion()).toResponseEntity();

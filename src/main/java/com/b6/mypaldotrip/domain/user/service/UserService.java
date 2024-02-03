@@ -141,19 +141,18 @@ public class UserService {
 
         ObjectMapper objectMapper = new ObjectMapper();
         UserUpdateReq req = objectMapper.readValue(reqJson, UserUpdateReq.class);
-        if (req.username()==null || req.password()==null){
+        if (req.username() == null || req.password() == null) {
             throw new GlobalException(GlobalResultCode.VALIDATION_ERROR);
         }
         String password = passwordEncoder.encode(req.password());
         String fileUrl = null;
-        if(multipartFile!=null){
+        if (multipartFile != null) {
             try {
                 fileUrl = s3Provider.updateFile(userEntity, multipartFile);
             } catch (GlobalException e) {
                 fileUrl = s3Provider.saveFile(multipartFile, "user");
-            }    
+            }
         }
-        
 
         userEntity.update(req.username(), req.introduction(), req.age(), password, fileUrl);
 

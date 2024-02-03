@@ -47,9 +47,13 @@ public class UserEntity extends BaseEntity {
 
     @Length(max = 40)
     private String introduction;
+
     private String fileURL;
-    @Min(1)@Max(100)
+
+    @Min(1)
+    @Max(100)
     private Long age;
+
     private Long level;
 
     @Enumerated(EnumType.STRING)
