@@ -1,0 +1,30 @@
+ifndef::snippets[]
+:snippets: ../../build/generated-snippets
+endif::[]
+= My Paldo Trip - REST API 문서
+:sectnums:
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+'''
+[[USER-API]]
+== User API
+'''
+=== 회원가입
+==== Request
+include::{snippets}/user/signup/http-request.adoc[]
+==== Response
+include::{snippets}/user/signup/http-response.adoc[]
+
+[[TRIP-API]]
+== Trip API
+
+[[COURSE-API]]
+== Course API
+
+[[CHAT-API]]
+== Chat API
