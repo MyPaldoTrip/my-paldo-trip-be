@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -81,8 +82,7 @@ public class TripService {
     }
 
     @Transactional
-    public List<TripListRes> getTripList(TripListReq req) {
-        Pageable pageable = PageRequest.of(req.page(), 20);
+    @Cacheable(cacheNames = "PopularTrips", key = "#req.tripSort()", condition = "#req.tripSort() == #req.tripSort().RATING && #req.size() == 14")
     public TripListWrapper getTripList(TripListReq req) {
         Pageable pageable = PageRequest.of(req.page(), req.size());
         TripSort sort = (req.tripSort() != null) ? req.tripSort() : TripSort.CREATED;
