@@ -15,10 +15,10 @@ import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSearchReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseUpdateReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseDeleteRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseGetRes;
-import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseSaveRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseUpdateRes;
 import com.b6.mypaldotrip.domain.course.store.entity.CourseEntity;
+import com.b6.mypaldotrip.domain.course.store.entity.CourseListWrapper;
 import com.b6.mypaldotrip.domain.course.store.repository.CourseRepository;
 import com.b6.mypaldotrip.domain.courseFile.store.repository.CourseFileRepository;
 import com.b6.mypaldotrip.domain.trip.service.TripService;
@@ -106,12 +106,12 @@ class CourseServiceTest implements CourseTest {
                     .thenReturn(coursePage);
 
             // when
-            List<CourseListRes> res =
-                    courseService.getCourseListByDynamicConditions(0, 10, req, userDetails);
+            CourseListWrapper courseListWrapper = courseService.getCourseListByDynamicConditions(0,
+                10, req, userDetails);
 
             // then
-            assertEquals(courseEntities.size(), res.size());
-            assertEquals(TEST_COURSE.getTitle(), res.get(0).title());
+            assertEquals(courseEntities.size(), courseListWrapper.courseListResList().size());
+            assertEquals(TEST_COURSE.getTitle(), courseListWrapper.courseListResList().get(0).title());
         }
 
         @Test
@@ -132,12 +132,12 @@ class CourseServiceTest implements CourseTest {
                     .thenReturn(coursePage);
 
             // when
-            List<CourseListRes> res =
-                    courseService.getCourseListByDynamicConditions(0, 10, req, userDetails);
+            CourseListWrapper courseListWrapper = courseService.getCourseListByDynamicConditions(0,
+                10, req, userDetails);
 
             // then
-            assertEquals(courseEntities.size(), res.size());
-            assertEquals(TEST_COURSE.getTitle(), res.get(0).title());
+            assertEquals(courseEntities.size(), courseListWrapper.courseListResList().size());
+            assertEquals(TEST_COURSE.getTitle(), courseListWrapper.courseListResList().get(0).title());
         }
 
         @Test
