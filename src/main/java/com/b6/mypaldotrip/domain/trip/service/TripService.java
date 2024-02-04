@@ -78,6 +78,7 @@ public class TripService {
     @Transactional
     public List<TripListRes> getTripList(TripListReq req) {
         Pageable pageable = PageRequest.of(req.page(), 20);
+        Pageable pageable = PageRequest.of(req.page(), req.size());
         TripSort sort = (req.tripSort() != null) ? req.tripSort() : TripSort.CREATED;
         return tripRepository
                 .searchTripsAndSort(req.cityName(), req.category(), sort, pageable)
