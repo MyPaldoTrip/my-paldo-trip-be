@@ -48,8 +48,7 @@ public class TripController {
     }
 
     @PostMapping("/lists")
-    public ResponseEntity<RestResponse<TripListWrapper>> getTripList(
-            @RequestBody TripListReq req) {
+    public ResponseEntity<RestResponse<TripListWrapper>> getTripList(@RequestBody TripListReq req) {
         TripListWrapper res = tripService.getTripList(req);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();

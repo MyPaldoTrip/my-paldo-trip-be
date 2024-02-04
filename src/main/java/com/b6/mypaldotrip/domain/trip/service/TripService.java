@@ -82,28 +82,32 @@ public class TripService {
     }
 
     @Transactional
-    @Cacheable(cacheNames = "PopularTrips", key = "#req.tripSort()", condition = "#req.tripSort() == #req.tripSort().RATING && #req.size() == 14")
+    @Cacheable(
+            cacheNames = "PopularTrips",
+            key = "#req.tripSort()",
+            condition = "#req.tripSort() == #req.tripSort().RATING && #req.size() == 14")
     public TripListWrapper getTripList(TripListReq req) {
         Pageable pageable = PageRequest.of(req.page(), req.size());
         TripSort sort = (req.tripSort() != null) ? req.tripSort() : TripSort.CREATED;
-        List<TripListRes> res = tripRepository
-                .searchTripsAndSort(req.cityName(), req.category(), sort, pageable)
-                .stream()
-                .map(
-                        trip ->
-                                TripListRes.builder()
-                                        .tripId(trip.getTripId())
-                                        .city(trip.getCity().getCityName())
-                                        .category(trip.getCategory())
-                                        .name(trip.getName())
-                                        .averageRating(trip.getAverageRating())
-                                        .reviews(trip.getReviewList().size())
-                                        .fileUrlList(
-                                                trip.getTripFileList().stream()
-                                                        .map(TripFileEntity::getFileUrl)
-                                                        .toList())
-                                        .build())
-                .toList();
+        List<TripListRes> res =
+                tripRepository
+                        .searchTripsAndSort(req.cityName(), req.category(), sort, pageable)
+                        .stream()
+                        .map(
+                                trip ->
+                                        TripListRes.builder()
+                                                .tripId(trip.getTripId())
+                                                .city(trip.getCity().getCityName())
+                                                .category(trip.getCategory())
+                                                .name(trip.getName())
+                                                .averageRating(trip.getAverageRating())
+                                                .reviews(trip.getReviewList().size())
+                                                .fileUrlList(
+                                                        trip.getTripFileList().stream()
+                                                                .map(TripFileEntity::getFileUrl)
+                                                                .toList())
+                                                .build())
+                        .toList();
 
         return TripListWrapper.builder().tripListRes(res).build();
     }
