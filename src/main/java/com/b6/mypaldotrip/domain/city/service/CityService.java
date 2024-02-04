@@ -35,7 +35,8 @@ public class CityService {
     private final CityFileRepository cityFileRepository;
     private final S3Provider s3Provider;
 
-    public CityCreateRes createCity(String req, UserDetailsImpl userDetails, MultipartFile multipartFile)
+    public CityCreateRes createCity(
+            String req, UserDetailsImpl userDetails, MultipartFile multipartFile)
             throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         CityCreateReq cityCreateReq = objectMapper.readValue(req, CityCreateReq.class);
@@ -58,7 +59,7 @@ public class CityService {
         if (multipartFile != null) {
             String fileURL = s3Provider.saveFile(multipartFile, "city");
             cityFileRepository.save(
-                CityFileEntity.builder().fileUrl(fileURL).cityEntity(cityEntity).build());
+                    CityFileEntity.builder().fileUrl(fileURL).cityEntity(cityEntity).build());
         }
         cityRepository.save(cityEntity);
 
@@ -70,7 +71,7 @@ public class CityService {
     }
 
     @Transactional
-    public CityUpdateRes updateCity(Long cityId, CityUpdateReq req,UserDetailsImpl userDetails) {
+    public CityUpdateRes updateCity(Long cityId, CityUpdateReq req, UserDetailsImpl userDetails) {
         checkAuthorization(userDetails);
         // 수정하려는 시가 존재하는지 확인
         CityEntity cityEntity = findCity(cityId);
@@ -83,7 +84,7 @@ public class CityService {
                 .build();
     }
 
-    public CityDeleteRes deleteCity(Long cityId,UserDetailsImpl userDetails) {
+    public CityDeleteRes deleteCity(Long cityId, UserDetailsImpl userDetails) {
         checkAuthorization(userDetails);
         CityEntity cityEntity = findCity(cityId);
         cityRepository.delete(cityEntity);
@@ -150,6 +151,7 @@ public class CityService {
             throw new GlobalException(CityErrorCode.ALREADY_CITY_EXIST);
         }
     }
+
     private static void checkAuthorization(UserDetailsImpl userDetails) {
         if (userDetails.getUserEntity().getUserRole() == UserRole.ROLE_USER) {
             throw new GlobalException(TripErrorCode.UNAUTHORIZED_ROLE_ERROR);
@@ -171,5 +173,5 @@ public class CityService {
             }
         }
         return false;
-}
+    }
 }

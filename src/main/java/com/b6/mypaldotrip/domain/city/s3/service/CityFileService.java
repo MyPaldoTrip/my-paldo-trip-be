@@ -26,12 +26,13 @@ public class CityFileService {
 
     public CityFileRes saveFile(Long cityId, MultipartFile multipartFile) throws IOException {
         CityEntity city = cityService.findCity(cityId);
-        if (isImage(multipartFile)) {
+        if (multipartFile != null && !isImage(multipartFile)) {
+            throw new GlobalException(CityErrorCode.WRONG_FILE_EXTENSION);
+        }
+        if (multipartFile != null) {
             String fileURL = s3Provider.saveFile(multipartFile, "city");
             cityFileRepository.save(
                     CityFileEntity.builder().fileUrl(fileURL).cityEntity(city).build());
-        } else {
-            throw new GlobalException(CityErrorCode.WRONG_FILE_EXTENSION);
         }
 
         return CityFileRes.builder().msg("파일이 성공적으로 업로드 되었습니다.").build();
@@ -76,8 +77,20 @@ public class CityFileService {
         return cityFileEntity;
     }
 
-    private boolean isImage(MultipartFile file) {// 이미지만 허용
+    public boolean isImage(MultipartFile file) {
+
         String contentType = file.getContentType();
-        return contentType != null && contentType.startsWith("image");
+
+        if (contentType != null && contentType.startsWith("image")) {
+            String fileName = file.getOriginalFilename();
+            if (fileName != null) {
+                String lowerCaseFileName = fileName.toLowerCase();
+                if (lowerCaseFileName.endsWith(".gif")) {
+                    return false; // 잘못된 확장자인 경우 false 반환
+                }
+                return true;
+            }
+        }
+        return false;
     }
 }

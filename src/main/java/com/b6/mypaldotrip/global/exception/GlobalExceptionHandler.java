@@ -45,12 +45,12 @@ public class GlobalExceptionHandler {
         ResultCode resultCode = GlobalResultCode.DUPLICATE;
         return RestResponse.error(resultCode, versionConfig.getVersion()).toResponseEntity();
     }
+
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<RestResponse<Object>> handleMaxUploadSizeExceededException(
-        MaxUploadSizeExceededException e) {
+            MaxUploadSizeExceededException e) {
 
         ResultCode resultCode = GlobalResultCode.WRONG_FILE_EXCEED;
         return RestResponse.error(resultCode, versionConfig.getVersion()).toResponseEntity();
     }
-
 }

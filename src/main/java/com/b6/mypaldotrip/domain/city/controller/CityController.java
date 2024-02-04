@@ -54,19 +54,18 @@ public class CityController {
 
     @PutMapping("/{cityId}") // 수정
     public ResponseEntity<RestResponse<CityUpdateRes>> updateCity(
-            @PathVariable Long cityId, @RequestBody CityUpdateReq cityUpdateReq,
-             @AuthenticationPrincipal UserDetailsImpl userDetails
-            ) {
-        CityUpdateRes res = cityService.updateCity(cityId, cityUpdateReq,userDetails);
+            @PathVariable Long cityId,
+            @RequestBody CityUpdateReq cityUpdateReq,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        CityUpdateRes res = cityService.updateCity(cityId, cityUpdateReq, userDetails);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
 
     @DeleteMapping("/{cityId}") // 삭제
-    public ResponseEntity<RestResponse<CityDeleteRes>> deleteCity(@PathVariable Long cityId,
-             @AuthenticationPrincipal UserDetailsImpl userDetails)
-             {
-        CityDeleteRes res = cityService.deleteCity(cityId,userDetails);
+    public ResponseEntity<RestResponse<CityDeleteRes>> deleteCity(
+            @PathVariable Long cityId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        CityDeleteRes res = cityService.deleteCity(cityId, userDetails);
         // userDetails.getUser());
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
