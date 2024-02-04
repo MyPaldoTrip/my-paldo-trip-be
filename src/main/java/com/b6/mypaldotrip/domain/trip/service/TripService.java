@@ -84,8 +84,8 @@ public class TripService {
     @Transactional
     @Cacheable(
             cacheNames = "PopularTrips",
-            key = "#req.tripSort()",
-            condition = "#req.tripSort() == #req.tripSort().RATING && #req.size() == 14")
+            key = "#req.size",
+            condition = "#req.tripSort() == #req.tripSort()?.RATING && #req.size() == 14")
     public TripListWrapper getTripList(TripListReq req) {
         Pageable pageable = PageRequest.of(req.page(), req.size());
         TripSort sort = (req.tripSort() != null) ? req.tripSort() : TripSort.CREATED;
