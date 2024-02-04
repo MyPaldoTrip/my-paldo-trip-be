@@ -14,12 +14,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Getter
@@ -35,14 +38,22 @@ public class UserEntity extends BaseEntity {
     private String email;
 
     @Column(nullable = false, unique = true)
+    @Length(max = 20)
     private String username;
 
     @Column(nullable = false)
+    @Length(max = 20)
     private String password;
 
+    @Length(max = 40)
     private String introduction;
+
     private String fileURL;
+
+    @Min(1)
+    @Max(100)
     private Long age;
+
     private Long level;
 
     @Enumerated(EnumType.STRING)
