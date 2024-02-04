@@ -13,7 +13,8 @@ public enum GlobalResultCode implements ResultCode {
     DUPLICATE(HttpStatus.CONFLICT, "중복 에러입니다."),
     VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "Validation에러입니다. 입력 조건을 확인해주세요"),
     NOT_FOUND_FILE(HttpStatus.NOT_FOUND, "파일을 찾을 수 없습니다."),
-    NOT_FOUND_TOKEN(HttpStatus.FORBIDDEN, "토큰이 존재하지 않거나 유효하지 않습니다.");
+    NOT_FOUND_TOKEN(HttpStatus.FORBIDDEN, "토큰이 존재하지 않거나 유효하지 않습니다."),
+    WRONG_FILE_EXCEED(HttpStatus.BAD_REQUEST, "파일 크기가 초과되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

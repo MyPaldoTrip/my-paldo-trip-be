@@ -43,7 +43,10 @@ public class CityService {
         checkAuthorization(userDetails);
         // 같은 시 명이 중복되는지 확인
         cityDuplicationCheck(cityCreateReq.cityName());
-
+        // MultipartFile이 null이 아니고 이미지가 아닌 경우 예외 처리
+        if (multipartFile != null && !isImage(multipartFile)) {
+            throw new GlobalException(CityErrorCode.WRONG_FILE_EXTENSION);
+        }
         CityEntity cityEntity =
                 CityEntity.builder()
                         .provinceName(cityCreateReq.provinceName())
@@ -51,19 +54,13 @@ public class CityService {
                         .cityInfo(cityCreateReq.cityInfo())
                         .build();
 
-        cityRepository.save(cityEntity);
-
-        // MultipartFile이 null이 아니고 이미지가 아닌 경우 예외 처리
-        if (multipartFile != null && !isImage(multipartFile)) {
-            throw new GlobalException(CityErrorCode.WRONG_FILE_EXTENSION);
-        }
-
         // MultipartFile이 null이 아니면 이미지 업로드 및 저장
         if (multipartFile != null) {
             String fileURL = s3Provider.saveFile(multipartFile, "city");
             cityFileRepository.save(
                 CityFileEntity.builder().fileUrl(fileURL).cityEntity(cityEntity).build());
         }
+        cityRepository.save(cityEntity);
 
         return CityCreateRes.builder()
                 .provinceName(cityEntity.getProvinceName())
@@ -73,7 +70,8 @@ public class CityService {
     }
 
     @Transactional
-    public CityUpdateRes updateCity(Long cityId, CityUpdateReq req) {
+    public CityUpdateRes updateCity(Long cityId, CityUpdateReq req,UserDetailsImpl userDetails) {
+        checkAuthorization(userDetails);
         // 수정하려는 시가 존재하는지 확인
         CityEntity cityEntity = findCity(cityId);
         cityEntity.update(req.provinceName(), req.cityName(), req.cityInfo());
@@ -85,7 +83,8 @@ public class CityService {
                 .build();
     }
 
-    public CityDeleteRes deleteCity(Long cityId) {
+    public CityDeleteRes deleteCity(Long cityId,UserDetailsImpl userDetails) {
+        checkAuthorization(userDetails);
         CityEntity cityEntity = findCity(cityId);
         cityRepository.delete(cityEntity);
         CityDeleteRes res =
@@ -158,6 +157,7 @@ public class CityService {
     }
 
     public boolean isImage(MultipartFile file) {
+
         String contentType = file.getContentType();
 
         if (contentType != null && contentType.startsWith("image")) {
@@ -165,12 +165,11 @@ public class CityService {
             if (fileName != null) {
                 String lowerCaseFileName = fileName.toLowerCase();
                 if (lowerCaseFileName.endsWith(".gif")) {
-                    throw new GlobalException(CityErrorCode.WRONG_FILE_EXTENSION);
+                    return false; // 잘못된 확장자인 경우 false 반환
                 }
                 return true;
             }
         }
         return false;
-    }
-
+}
 }
