@@ -1,5 +1,6 @@
 package com.b6.mypaldotrip.global.config;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,7 @@ public class CacheConfig {
 
         // 리소스 유형에 따라 만료 시간을 다르게 지정
         Map<String, RedisCacheConfiguration> redisCacheConfigMap = new HashMap<>();
+        redisCacheConfigMap.put("PopularCourses", defaultConfig.entryTtl(Duration.ofMinutes(30)));
 
         RedisCacheManager redisCacheManager = RedisCacheManager.builder(connectionFactory)
             .withInitialCacheConfigurations(redisCacheConfigMap)
