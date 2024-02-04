@@ -12,6 +12,7 @@ import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseSaveRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseUpdateRes;
 import com.b6.mypaldotrip.domain.course.exception.CourseErrorCode;
 import com.b6.mypaldotrip.domain.course.store.entity.CourseEntity;
+import com.b6.mypaldotrip.domain.course.store.entity.CourseListWrapper;
 import com.b6.mypaldotrip.domain.course.store.entity.CourseSort;
 import com.b6.mypaldotrip.domain.course.store.repository.CourseRepository;
 import com.b6.mypaldotrip.domain.courseFile.store.entity.CourseFileEntity;
@@ -92,6 +93,7 @@ public class CourseService {
 
     @Transactional
     public List<CourseListRes> getCourseListByDynamicConditions(
+    public CourseListWrapper getCourseListByDynamicConditions(
             int page, int size, CourseSearchReq req, UserDetailsImpl userDetails) {
         Long userId;
         if (userDetails != null) {
@@ -126,8 +128,8 @@ public class CourseService {
                                                 .thumbnailUrl(courseEntity.getThumbnailUrl())
                                                 .build())
                         .toList();
-
-        return res;
+        CourseListWrapper courseListWrapper = CourseListWrapper.builder().courseListResList(res).build();
+        return courseListWrapper;
     }
 
     @Transactional
