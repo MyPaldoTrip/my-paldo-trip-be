@@ -112,7 +112,8 @@ class CourseControllerTest extends BaseCourseTest {
                                     .level(1L)
                                     .commentCount(0)
                                     .build());
-            CourseListWrapper courseListWrapper = CourseListWrapper.builder().courseListResList(res).build();
+            CourseListWrapper courseListWrapper =
+                    CourseListWrapper.builder().courseListResList(res).build();
 
             given(
                             courseService.getCourseListByDynamicConditions(

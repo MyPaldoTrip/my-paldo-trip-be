@@ -15,8 +15,8 @@ public record CourseListRes(
         String content,
         int totalPage,
         @JsonSerialize(using = LocalDateTimeSerializer.class)
-        @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-        LocalDateTime createdAt,
+                @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+                LocalDateTime createdAt,
         Long level,
         int commentCount,
         int likeCount,

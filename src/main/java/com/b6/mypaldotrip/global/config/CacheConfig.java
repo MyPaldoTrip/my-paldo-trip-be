@@ -17,16 +17,20 @@ public class CacheConfig {
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
 
-        RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
-            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+        RedisCacheConfiguration defaultConfig =
+                RedisCacheConfiguration.defaultCacheConfig()
+                        .serializeValuesWith(
+                                RedisSerializationContext.SerializationPair.fromSerializer(
+                                        new GenericJackson2JsonRedisSerializer()));
 
         // 리소스 유형에 따라 만료 시간을 다르게 지정
         Map<String, RedisCacheConfiguration> redisCacheConfigMap = new HashMap<>();
         redisCacheConfigMap.put("PopularCourses", defaultConfig.entryTtl(Duration.ofMinutes(30)));
 
-        RedisCacheManager redisCacheManager = RedisCacheManager.builder(connectionFactory)
-            .withInitialCacheConfigurations(redisCacheConfigMap)
-            .build();
+        RedisCacheManager redisCacheManager =
+                RedisCacheManager.builder(connectionFactory)
+                        .withInitialCacheConfigurations(redisCacheConfigMap)
+                        .build();
 
         return redisCacheManager;
     }

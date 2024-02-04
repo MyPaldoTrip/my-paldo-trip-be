@@ -106,12 +106,13 @@ class CourseServiceTest implements CourseTest {
                     .thenReturn(coursePage);
 
             // when
-            CourseListWrapper courseListWrapper = courseService.getCourseListByDynamicConditions(0,
-                10, req, userDetails);
+            CourseListWrapper courseListWrapper =
+                    courseService.getCourseListByDynamicConditions(0, 10, req, userDetails);
 
             // then
             assertEquals(courseEntities.size(), courseListWrapper.courseListResList().size());
-            assertEquals(TEST_COURSE.getTitle(), courseListWrapper.courseListResList().get(0).title());
+            assertEquals(
+                    TEST_COURSE.getTitle(), courseListWrapper.courseListResList().get(0).title());
         }
 
         @Test
@@ -132,12 +133,13 @@ class CourseServiceTest implements CourseTest {
                     .thenReturn(coursePage);
 
             // when
-            CourseListWrapper courseListWrapper = courseService.getCourseListByDynamicConditions(0,
-                10, req, userDetails);
+            CourseListWrapper courseListWrapper =
+                    courseService.getCourseListByDynamicConditions(0, 10, req, userDetails);
 
             // then
             assertEquals(courseEntities.size(), courseListWrapper.courseListResList().size());
-            assertEquals(TEST_COURSE.getTitle(), courseListWrapper.courseListResList().get(0).title());
+            assertEquals(
+                    TEST_COURSE.getTitle(), courseListWrapper.courseListResList().get(0).title());
         }
 
         @Test

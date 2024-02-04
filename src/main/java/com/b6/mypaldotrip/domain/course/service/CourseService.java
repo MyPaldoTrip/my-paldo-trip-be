@@ -93,7 +93,10 @@ public class CourseService {
     }
 
     @Transactional
-    @Cacheable(cacheNames = "PopularCourses", key = "#req.courseSort()", condition = "#req.courseSort() == #req.courseSort().LIKE && #size == 4")
+    @Cacheable(
+            cacheNames = "PopularCourses",
+            key = "#req.courseSort()",
+            condition = "#req.courseSort() == #req.courseSort().LIKE && #size == 4")
     public CourseListWrapper getCourseListByDynamicConditions(
             int page, int size, CourseSearchReq req, UserDetailsImpl userDetails) {
         Long userId;
@@ -129,7 +132,8 @@ public class CourseService {
                                                 .thumbnailUrl(courseEntity.getThumbnailUrl())
                                                 .build())
                         .toList();
-        CourseListWrapper courseListWrapper = CourseListWrapper.builder().courseListResList(res).build();
+        CourseListWrapper courseListWrapper =
+                CourseListWrapper.builder().courseListResList(res).build();
         return courseListWrapper;
     }
 
