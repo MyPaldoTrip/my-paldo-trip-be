@@ -4,15 +4,26 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.b6.mypaldotrip.domain.trip.TripTestUtils;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripListReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripUpdateReq;
-import com.b6.mypaldotrip.domain.trip.controller.dto.response.*;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripCreateRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripDeleteRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripGetRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripListRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripListWrapper;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripUpdateRes;
 import com.b6.mypaldotrip.domain.trip.service.TripService;
 import com.b6.mypaldotrip.domain.trip.store.entity.Category;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
@@ -126,7 +137,8 @@ class TripControllerTest extends TripTestUtils {
                                 .reviews(100)
                                 .fileUrlList(Collections.emptyList())
                                 .build());
-        given(tripService.getTripList(any(TripListReq.class))).willReturn(res);
+        TripListWrapper wrapper = TripListWrapper.builder().tripListRes(res).build();
+        given(tripService.getTripList(any(TripListReq.class))).willReturn(wrapper);
 
         // when
         ResultActions actions =

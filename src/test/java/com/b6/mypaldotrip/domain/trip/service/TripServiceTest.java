@@ -6,14 +6,20 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.b6.mypaldotrip.domain.city.service.CityService;
 import com.b6.mypaldotrip.domain.trip.TripTest;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripListReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripUpdateReq;
-import com.b6.mypaldotrip.domain.trip.controller.dto.response.*;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripCreateRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripDeleteRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripGetRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripListWrapper;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripUpdateRes;
 import com.b6.mypaldotrip.domain.trip.exception.TripErrorCode;
 import com.b6.mypaldotrip.domain.trip.store.entity.Category;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
@@ -184,16 +190,16 @@ public class TripServiceTest implements TripTest {
     @DisplayName("여행정보 목록 조회 테스트 성공")
     void 여행정보_목록조회() {
         // given
-        TripListReq req = TripListReq.builder().build();
+        TripListReq req = TripListReq.builder().size(5).build();
         List<TripEntity> tripEntityList = List.of(TEST_TRIP);
         given(tripRepository.searchTripsAndSort(any(), any(), any(), any()))
                 .willReturn(tripEntityList);
 
         // when
-        List<TripListRes> res = tripService.getTripList(req);
+        TripListWrapper wrapper = tripService.getTripList(req);
 
         // then
-        assertThat(res.get(0).tripId()).isEqualTo(TEST_TRIP.getTripId());
+        assertThat(wrapper.tripListRes().get(0).tripId()).isEqualTo(TEST_TRIP.getTripId());
     }
 
     @Test
