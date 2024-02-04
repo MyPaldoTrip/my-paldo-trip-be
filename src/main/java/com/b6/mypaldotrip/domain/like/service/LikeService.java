@@ -23,6 +23,7 @@ public class LikeService {
     private final CourseService courseService;
     private final VersionConfig versionConfig;
 
+//    @CacheEvict(cacheNames = "courses", key = "'LIKE'")
     public ResponseEntity<RestResponse<LikeToggleRes>> toggleLike(Long courseId, UserEntity user) {
         CourseEntity course = courseService.findCourse(courseId);
         Optional<LikeEntity> like = likeRepository.findByUserEntityAndCourseEntity(user, course);

@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -92,7 +93,7 @@ public class CourseService {
     }
 
     @Transactional
-    public List<CourseListRes> getCourseListByDynamicConditions(
+    @Cacheable(cacheNames = "PopularCourses", key = "#req.courseSort()", condition = "#req.courseSort() == #req.courseSort().LIKE && #size == 4")
     public CourseListWrapper getCourseListByDynamicConditions(
             int page, int size, CourseSearchReq req, UserDetailsImpl userDetails) {
         Long userId;
