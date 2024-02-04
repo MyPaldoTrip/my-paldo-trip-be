@@ -4,7 +4,12 @@ import com.b6.mypaldotrip.domain.city.service.CityService;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripListReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripUpdateReq;
-import com.b6.mypaldotrip.domain.trip.controller.dto.response.*;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripCreateRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripDeleteRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripGetRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripListRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripListWrapper;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripUpdateRes;
 import com.b6.mypaldotrip.domain.trip.exception.TripErrorCode;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripSort;
@@ -78,9 +83,10 @@ public class TripService {
     @Transactional
     public List<TripListRes> getTripList(TripListReq req) {
         Pageable pageable = PageRequest.of(req.page(), 20);
+    public TripListWrapper getTripList(TripListReq req) {
         Pageable pageable = PageRequest.of(req.page(), req.size());
         TripSort sort = (req.tripSort() != null) ? req.tripSort() : TripSort.CREATED;
-        return tripRepository
+        List<TripListRes> res = tripRepository
                 .searchTripsAndSort(req.cityName(), req.category(), sort, pageable)
                 .stream()
                 .map(
@@ -98,6 +104,8 @@ public class TripService {
                                                         .toList())
                                         .build())
                 .toList();
+
+        return TripListWrapper.builder().tripListRes(res).build();
     }
 
     @Transactional
