@@ -5,4 +5,5 @@ import com.b6.mypaldotrip.domain.trip.store.entity.TripSort;
 import lombok.Builder;
 
 @Builder
-public record TripListReq(String cityName, Category category, TripSort tripSort, int page) {}
+public record TripListReq(
+        String cityName, Category category, TripSort tripSort, int page, int size) {}

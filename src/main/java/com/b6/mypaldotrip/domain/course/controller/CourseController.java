@@ -4,7 +4,7 @@ import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseSearchReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseUpdateReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseDeleteRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseGetRes;
-import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListRes;
+import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListWrapper;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseSaveRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseUpdateRes;
 import com.b6.mypaldotrip.domain.course.service.CourseService;
@@ -14,7 +14,6 @@ import com.b6.mypaldotrip.global.response.RestResponse;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.io.IOException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -52,12 +51,12 @@ public class CourseController {
     }
 
     @PostMapping("/list")
-    public ResponseEntity<RestResponse<List<CourseListRes>>> getCourseListByDynamicConditions(
+    public ResponseEntity<RestResponse<CourseListWrapper>> getCourseListByDynamicConditions(
             @RequestParam int page,
             @RequestParam int size,
             @RequestBody CourseSearchReq req,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        List<CourseListRes> res =
+        CourseListWrapper res =
                 courseService.getCourseListByDynamicConditions(page, size, req, userDetails);
 
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())

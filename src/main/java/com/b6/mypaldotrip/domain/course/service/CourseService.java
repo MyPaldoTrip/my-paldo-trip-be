@@ -8,6 +8,7 @@ import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseUpdateReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseDeleteRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseGetRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListRes;
+import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListWrapper;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseSaveRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseUpdateRes;
 import com.b6.mypaldotrip.domain.course.exception.CourseErrorCode;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -91,7 +93,11 @@ public class CourseService {
     }
 
     @Transactional
-    public List<CourseListRes> getCourseListByDynamicConditions(
+    @Cacheable(
+            cacheNames = "PopularCourses",
+            key = "#req.courseSort()",
+            condition = "#req.courseSort() == #req.courseSort().LIKE && #size == 4")
+    public CourseListWrapper getCourseListByDynamicConditions(
             int page, int size, CourseSearchReq req, UserDetailsImpl userDetails) {
         Long userId;
         if (userDetails != null) {
@@ -126,8 +132,9 @@ public class CourseService {
                                                 .thumbnailUrl(courseEntity.getThumbnailUrl())
                                                 .build())
                         .toList();
-
-        return res;
+        CourseListWrapper courseListWrapper =
+                CourseListWrapper.builder().courseListResList(res).build();
+        return courseListWrapper;
     }
 
     @Transactional
