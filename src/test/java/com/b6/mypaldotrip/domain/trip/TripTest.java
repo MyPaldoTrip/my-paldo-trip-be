@@ -40,6 +40,15 @@ public interface TripTest {
                     .tripFileList(Collections.emptyList())
                     .build();
 
+    TripEntity TEST_ANOTHER_TRIP =
+            TripEntity.builder()
+                    .city(TEST_CITY)
+                    .category(Category.ATTRACTION)
+                    .name(ANOTHER + TEST_TRIP_NAME)
+                    .description(TEST_DESCRIPTION)
+                    .tripFileList(Collections.emptyList())
+                    .build();
+
     UserEntity TEST_USER =
             UserEntity.builder()
                     .username(TEST_USERNAME)
@@ -49,16 +58,5 @@ public interface TripTest {
                     .fileURL(TEST_FILE_URL)
                     .age(TEST_AGE)
                     .level(TEST_LEVEL)
-                    .build();
-
-    UserEntity TEST_ANOTHER_USER =
-            UserEntity.builder()
-                    .username(ANOTHER + TEST_USERNAME)
-                    .email(ANOTHER + TEST_EMAIL)
-                    .password(ANOTHER + TEST_PASSWORD)
-                    .introduction(ANOTHER + TEST_INTRODUCTION)
-                    .fileURL(ANOTHER + TEST_FILE_URL)
-                    .age(ANOTHER_LONG + TEST_AGE)
-                    .level(ANOTHER_LONG + TEST_LEVEL)
                     .build();
 }
