@@ -24,6 +24,7 @@ import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import com.b6.mypaldotrip.domain.user.store.entity.UserRole;
 import com.b6.mypaldotrip.global.common.S3Provider;
 import com.b6.mypaldotrip.global.exception.GlobalException;
+import com.b6.mypaldotrip.global.security.UserDetailsImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -91,7 +92,13 @@ public class CourseService {
 
     @Transactional
     public List<CourseListRes> getCourseListByDynamicConditions(
-            int page, int size, CourseSearchReq req, Long userId) {
+            int page, int size, CourseSearchReq req, UserDetailsImpl userDetails) {
+        Long userId;
+        if (userDetails != null) {
+            userId = userDetails.getUserEntity().getUserId();
+        } else {
+            userId = -1L;
+        }
         Pageable pageable = PageRequest.of(page, size);
         CourseSort courseSort = req.courseSort() != null ? req.courseSort() : CourseSort.MODIFIED;
         Boolean filterByFollowing = req.filterByFollowing();

@@ -26,7 +26,7 @@ jobs:
 
 #      테스트 빼고 빌드
       - name: Build with Gradle
-        run: ./gradlew clean build -x test
+        run: ./gradlew clean build
 
       - name: Get the timestamp
         id: timestamp
@@ -57,3 +57,4 @@ jobs:
             sudo docker rm $(sudo docker ps -aq)
             export TIMESTAMP=${{ steps.timestamp.outputs.timestamp }};
             sudo -E docker-compose up -d
+            sudo docker system prune -a -f --volumes
