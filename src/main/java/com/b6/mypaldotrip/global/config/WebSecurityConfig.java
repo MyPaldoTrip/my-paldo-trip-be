@@ -75,6 +75,14 @@ public class WebSecurityConfig {
                                         "/api/" + versionConfig.getVersion() + "/trips/**")
                                 .permitAll()
                                 .requestMatchers(
+                                        "/api/" + versionConfig.getVersion() + "/trips/lists")
+                                .permitAll()
+                                .requestMatchers(
+                                        "/api/"
+                                                + versionConfig.getVersion()
+                                                + "/trips/{tripId}/reviews/lists")
+                                .permitAll()
+                                .requestMatchers(
                                         "/api/" + versionConfig.getVersion() + "/courses/**")
                                 .permitAll()
                                 .requestMatchers(
