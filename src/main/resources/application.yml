@@ -76,4 +76,6 @@ kakao:
   secret-key : ${KAKAO_SECRET_KEY}
   target-ip : ${KAKAO_TARGET_IP}
 
+weather:
+  api-key: ${WEATHER_API_KEY}
 
