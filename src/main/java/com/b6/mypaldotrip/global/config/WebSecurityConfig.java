@@ -1,13 +1,11 @@
 package com.b6.mypaldotrip.global.config;
 
-import com.b6.mypaldotrip.global.security.JwtAuthenticationFilter;
-import com.b6.mypaldotrip.global.security.JwtAuthorizationFilter;
-import com.b6.mypaldotrip.global.security.JwtUtil;
-import com.b6.mypaldotrip.global.security.UserDetailsServiceImpl;
+import com.b6.mypaldotrip.global.security.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -45,6 +43,11 @@ public class WebSecurityConfig {
     }
 
     @Bean
+    public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint() {
+        return new JwtAuthenticationEntryPoint();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // CSRF 설정
         http.csrf((csrf) -> csrf.disable());
@@ -56,6 +59,8 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests(
                 (authorizeHttpRequests) ->
                         authorizeHttpRequests
+                                .requestMatchers("/error")
+                                .permitAll()
                                 .requestMatchers(
                                         PathRequest.toStaticResources().atCommonLocations())
                                 .permitAll()
@@ -65,7 +70,9 @@ public class WebSecurityConfig {
                                 .requestMatchers(
                                         "/api/" + versionConfig.getVersion() + "/cities/**")
                                 .permitAll()
-                                .requestMatchers("/api/" + versionConfig.getVersion() + "/trips/**")
+                                .requestMatchers(
+                                        HttpMethod.GET,
+                                        "/api/" + versionConfig.getVersion() + "/trips/**")
                                 .permitAll()
                                 .requestMatchers(
                                         "/api/" + versionConfig.getVersion() + "/courses/**")
@@ -89,6 +96,9 @@ public class WebSecurityConfig {
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated());
+
+        http.exceptionHandling(e -> e.authenticationEntryPoint(jwtAuthenticationEntryPoint()));
+
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
