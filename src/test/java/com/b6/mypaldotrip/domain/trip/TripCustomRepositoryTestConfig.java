@@ -1,7 +1,7 @@
-package com.b6.mypaldotrip.domain.course;
+package com.b6.mypaldotrip.domain.trip;
 
-import com.b6.mypaldotrip.domain.course.store.repository.CustomCourseRepository;
-import com.b6.mypaldotrip.domain.course.store.repository.CustomCourseRepositoryImpl;
+import com.b6.mypaldotrip.domain.user.store.repository.UserCustomRepository;
+import com.b6.mypaldotrip.domain.user.store.repository.UserCustomRepositoryImpl;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
 @TestConfiguration
-public class CustomCourseRepositoryTestConfig {
+public class TripCustomRepositoryTestConfig {
 
     @PersistenceContext private EntityManager entityManager;
 
@@ -19,7 +19,7 @@ public class CustomCourseRepositoryTestConfig {
     }
 
     @Bean
-    public CustomCourseRepository customCourseRepository() {
-        return new CustomCourseRepositoryImpl(jpaQueryFactory());
+    public UserCustomRepository userCustomRepository() {
+        return new UserCustomRepositoryImpl(jpaQueryFactory());
     }
 }

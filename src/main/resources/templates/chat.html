@@ -16,7 +16,7 @@
             justify-content: center;
             height: 100vh;
             flex-direction: column;
-            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/js/korea_autumn.jpg');
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://cdn.pixabay.com/photo/2022/08/05/05/59/korea-7366036_1280.jpg');
             background-size: cover;
             background-repeat: no-repeat;
         }
@@ -304,10 +304,6 @@
     let username = null;
 
 
-
-
-
-
     function connect() {
         // URL에서 토큰을 추출합니다.
         const url = window.location.href;
@@ -403,7 +399,7 @@
         console.log(listItem.id);
 
         const userImage = document.createElement('img');
-        userImage.src = '/js/hanok.png';
+        userImage.src = 'https://cdn.pixabay.com/photo/2017/03/22/01/01/knocker-2163643_1280.jpg';
         userImage.alt = room.chatRoomName;
 
         const usernameSpan = document.createElement('span');
@@ -508,8 +504,9 @@
         const messageContent = messageInput.value.trim();
         console.log("messageContent = "+messageContent);
         if (messageContent && stompClient) {
+
             const chatMessageEntity = {
-                chatRoomId : chatRoomId,
+                chatRoomId: chatRoomId,
                 chatRoomName: chatRoomName,
                 senderId: nickname,
                 recipientId: selectedRoomId,
@@ -518,7 +515,13 @@
             };
             // chatRoomId와 senderId를 실제 값으로 대체해야 합니다.
 
-            stompClient.send(`/app/chatting/${chatRoomId}`, {}, JSON.stringify(chatMessageEntity));
+            // 메시지 길이가 150자를 초과하는 경우
+            if (messageContent.length > 150) {
+                alert("메시지의 길이는 150자를 초과할 수 없습니다.");
+            } else {
+                stompClient.send(`/app/chatting/${chatRoomId}`, {},
+                    JSON.stringify(chatMessageEntity));
+            }
             //stompClient.send("/app/chat", {}, JSON.stringify(chatMessageEntity));
             //displayMessage(senderId, messageInput.value.trim());
             messageInput.value = '';
@@ -526,6 +529,7 @@
         chatArea.scrollTop = chatArea.scrollHeight;
         event.preventDefault();
     }
+
 
     async function onMessageReceived(payload) {
         //await findAndDisplayConnectedRooms();//지워보기
@@ -654,7 +658,7 @@
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('오류가 발생했습니다.');
+            alert('채팅방을 찾을 수 없습니다.');
         });
     });
 

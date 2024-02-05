@@ -167,6 +167,13 @@ public class CourseService {
         CourseEntity course = findCourse(courseId);
         validateAuth(userEntity, course);
         CityEntity cityEntity = cityService.findByCityName(req.cityName());
+        String thumbnailUrl;
+        if (!course.getFiles().isEmpty()) {
+            thumbnailUrl = course.getFiles().get(0).getFileURL();
+        } else {
+            thumbnailUrl = null;
+        }
+
         if (req.tripNames() != null) {
             course.clearTripCourses();
             for (String tripName : req.tripNames()) {
@@ -177,7 +184,7 @@ public class CourseService {
             }
         }
 
-        course.updateCourse(req.title(), req.content(), cityEntity);
+        course.updateCourse(req.title(), req.content(), cityEntity, thumbnailUrl);
 
         CourseUpdateRes res =
                 CourseUpdateRes.builder()
@@ -195,12 +202,11 @@ public class CourseService {
         validateAuth(userEntity, course);
 
         courseRepository.delete(course);
-
-        for (CourseFileEntity courseFileEntity : course.getFiles()) {
-            try {
+        if (course.getFiles().isEmpty()) {
+            return CourseDeleteRes.builder().msg(courseId + "번 코스 삭제, 삭제할 파일 없음").build();
+        } else {
+            for (CourseFileEntity courseFileEntity : course.getFiles()) {
                 s3Provider.deleteFile(courseFileEntity);
-            } catch (GlobalException e) {
-                return CourseDeleteRes.builder().msg(courseId + "번 코스 삭제, 삭제할 파일 없음").build();
             }
         }
 
