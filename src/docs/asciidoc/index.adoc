@@ -28,3 +28,44 @@ include::{snippets}/user/signup/http-response.adoc[]
 
 [[CHAT-API]]
 == Chat API
+=== 방이름으로 채팅방 검색
+==== Request
+include::{snippets}/chat-rooms/search/http-request.adoc[]
+==== Response
+include::{snippets}/chat-rooms/search/http-response.adoc[]
+
+=== 한 채팅방에 속한 모든 메시지 불러오기
+==== Request
+include::{snippets}/채팅방_모든_메시지/http-request.adoc[]
+==== Response
+include::{snippets}/채팅방_모든_메시지/http-response.adoc[]
+
+=== 채팅방 만들기  : 성공
+==== Request
+include::{snippets}/채팅방_만들기/http-request.adoc[]
+==== Response
+include::{snippets}/채팅방_만들기/http-response.adoc[]
+
+=== 채팅방 리스트 받기  : 성공
+==== Request
+include::{snippets}/채팅방_리스트_받기/http-request.adoc[]
+==== Response
+include::{snippets}/채팅방_리스트_받기/http-response.adoc[]
+
+=== 채팅방 삭제  : 성공
+==== Request
+include::{snippets}/chat-rooms/rooms/{chatRoomName}/http-request.adoc[]
+==== Response
+include::{snippets}/chat-rooms/rooms/{chatRoomName}/http-response.adoc[]
+
+=== 채팅방 이름 수정  : 성공
+==== Request
+include::{snippets}/채팅방_이름_수정_테스트/http-request.adoc[]
+==== Response
+include::{snippets}/채팅방_이름_수정_테스트/http-response.adoc[]
+
+=== 채팅방 권한 테스트 : 성공
+==== Request
+include::{snippets}/chat-rooms_users_getRole/http-request.adoc[]
+==== Response
+include::{snippets}/chat-rooms_users_getRole/http-response.adoc[]

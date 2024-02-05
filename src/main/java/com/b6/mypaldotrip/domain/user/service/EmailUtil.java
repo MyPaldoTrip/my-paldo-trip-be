@@ -58,7 +58,7 @@ public class EmailUtil {
         if (Objects.equals(emailAuth.getCode(), code)) {
             emailAuthService.successVerify(emailAuth);
         } else {
-            throw new GlobalException(EmailErrorCode.COND_MISMATCH);
+            throw new GlobalException(EmailErrorCode.CODE_MISMATCH);
         }
     }
 }
