@@ -23,6 +23,7 @@ import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseUpdateReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseDeleteRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseGetRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListRes;
+import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListWrapper;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseSaveRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseUpdateRes;
 import com.b6.mypaldotrip.domain.course.service.CourseService;
@@ -111,6 +112,8 @@ class CourseControllerTest extends BaseCourseTest {
                                     .level(1L)
                                     .commentCount(0)
                                     .build());
+            CourseListWrapper courseListWrapper =
+                    CourseListWrapper.builder().courseListResList(res).build();
 
             given(
                             courseService.getCourseListByDynamicConditions(
@@ -118,7 +121,7 @@ class CourseControllerTest extends BaseCourseTest {
                                     anyInt(),
                                     any(CourseSearchReq.class),
                                     any(UserDetailsImpl.class)))
-                    .willReturn(res);
+                    .willReturn(courseListWrapper);
 
             // when
             ResultActions actions =

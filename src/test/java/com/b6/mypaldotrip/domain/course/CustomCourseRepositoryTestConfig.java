@@ -19,7 +19,7 @@ public class CustomCourseRepositoryTestConfig {
     }
 
     @Bean
-    public CustomCourseRepository courseCustomRepository() {
+    public CustomCourseRepository customCourseRepository() {
         return new CustomCourseRepositoryImpl(jpaQueryFactory());
     }
 }
