@@ -56,6 +56,8 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests(
                 (authorizeHttpRequests) ->
                         authorizeHttpRequests
+                                .requestMatchers("/error")
+                                .permitAll()
                                 .requestMatchers(
                                         PathRequest.toStaticResources().atCommonLocations())
                                 .permitAll()
