@@ -57,4 +57,4 @@ jobs:
             sudo docker rm $(sudo docker ps -aq)
             export TIMESTAMP=${{ steps.timestamp.outputs.timestamp }};
             sudo -E docker-compose up -d
-            sudo docker system prune -a -f
+            sudo docker system prune -a -f --volumes
