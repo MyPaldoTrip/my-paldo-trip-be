@@ -13,6 +13,7 @@ import com.b6.mypaldotrip.domain.user.controller.dto.request.UserListReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserSignUpReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserUpdateReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserDeleteRes;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetMyProfileRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetProfileRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserListRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserSignUpRes;
@@ -225,9 +226,15 @@ class UserServiceTest implements CommonTest {
     @DisplayName("내 정보 조회 테스트 성공")
     void 내정보조회() {
         // given
-        given(userRepository.findUsernameByUserId(TEST_USERID)).willReturn(TEST_USERNAME);
+        UserGetMyProfileRes getMyProfileRes =
+                UserGetMyProfileRes.builder()
+                        .userId(TEST_USERID)
+                        .username(TEST_USERNAME)
+                        .userRole(TEST_ROLE)
+                        .build();
+        given(userRepository.findNameAndRoleByUserId(TEST_USERID)).willReturn(getMyProfileRes);
         // when
-        UserGetProfileRes res = userService.viewMyProfile(TEST_USERID);
+        UserGetMyProfileRes res = userService.viewMyProfile(TEST_USERID);
         // then
         assertThat(res.username()).isEqualTo(TEST_USER.getUsername());
     }

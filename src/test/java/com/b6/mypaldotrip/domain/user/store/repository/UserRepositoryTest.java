@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.b6.mypaldotrip.domain.user.CommonTest;
 import com.b6.mypaldotrip.domain.user.UserCustomRepositoryTestConfig;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetMyProfileRes;
 import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,9 +48,9 @@ class UserRepositoryTest implements CommonTest {
         Long userId = saveAnotherUser.getUserId();
 
         // when
-        String username = userRepository.findUsernameByUserId(userId);
+        UserGetMyProfileRes res = userRepository.findNameAndRoleByUserId(userId);
 
         // then
-        assertThat(username).isEqualTo(ANOTHER + TEST_USERNAME);
+        assertThat(res.username()).isEqualTo(ANOTHER + TEST_USERNAME);
     }
 }
