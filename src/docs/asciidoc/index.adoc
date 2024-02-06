@@ -22,6 +22,35 @@ include::{snippets}/user/signup/http-response.adoc[]
 
 [[TRIP-API]]
 == Trip API
+=== 여행정보 생성
+==== Request
+include::{snippets}/trip/createTrip/http-request.adoc[]
+==== Response
+include::{snippets}/trip/createTrip/http-response.adoc[]
+
+=== 여행정보 목록조회
+==== Request
+include::{snippets}/trip/getTripList/http-request.adoc[]
+==== Response
+include::{snippets}/trip/getTripList/http-response.adoc[]
+
+=== 여행정보 단건조회
+==== Request
+include::{snippets}/trip/getTrip/http-request.adoc[]
+==== Response
+include::{snippets}/trip/getTrip/http-response.adoc[]
+
+=== 여행정보 수정
+==== Request
+include::{snippets}/trip/updateTrip/http-request.adoc[]
+==== Response
+include::{snippets}/trip/updateTrip/http-response.adoc[]
+
+=== 여행정보 삭제
+==== Request
+include::{snippets}/trip/deleteTrip/http-request.adoc[]
+==== Response
+include::{snippets}/trip/deleteTrip/http-response.adoc[]
 
 [[COURSE-API]]
 == Course API
