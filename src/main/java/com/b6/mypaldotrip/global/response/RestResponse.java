@@ -17,7 +17,7 @@ public class RestResponse<T> implements Serializable {
     private Integer code;
     private String message;
     private T data;
-    private MetaData metaData;
+    //    private MetaData metaData;
 
     public ResponseEntity<RestResponse<T>> toResponseEntity() {
         HttpHeaders headers = new HttpHeaders();
@@ -31,7 +31,7 @@ public class RestResponse<T> implements Serializable {
                 .code(resultCode.getHttpStatus().value())
                 .message(resultCode.getMessage())
                 .data(data)
-                .metaData(MetaData.builder().apiVersion(version).build())
+                //                .metaData(MetaData.builder().apiVersion(version).build())
                 .build();
     }
 
@@ -39,7 +39,7 @@ public class RestResponse<T> implements Serializable {
         return RestResponse.<T>builder()
                 .code(resultCode.getHttpStatus().value())
                 .message(resultCode.getMessage())
-                .metaData(MetaData.builder().apiVersion(version).build())
+                //                .metaData(MetaData.builder().apiVersion(version).build())
                 .build();
     }
 
@@ -48,7 +48,7 @@ public class RestResponse<T> implements Serializable {
         return RestResponse.builder()
                 .code(HttpStatus.BAD_REQUEST.value())
                 .message("requestValidException : " + errors.stream().toList().toString())
-                .metaData(MetaData.builder().apiVersion(version).build())
+                //                .metaData(MetaData.builder().apiVersion(version).build())
                 .build();
     }
 }

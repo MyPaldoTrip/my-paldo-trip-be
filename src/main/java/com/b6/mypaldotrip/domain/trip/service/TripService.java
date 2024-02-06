@@ -4,7 +4,12 @@ import com.b6.mypaldotrip.domain.city.service.CityService;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripCreateReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripListReq;
 import com.b6.mypaldotrip.domain.trip.controller.dto.request.TripUpdateReq;
-import com.b6.mypaldotrip.domain.trip.controller.dto.response.*;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripCreateRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripDeleteRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripGetRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripListRes;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripListWrapper;
+import com.b6.mypaldotrip.domain.trip.controller.dto.response.TripUpdateRes;
 import com.b6.mypaldotrip.domain.trip.exception.TripErrorCode;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripEntity;
 import com.b6.mypaldotrip.domain.trip.store.entity.TripSort;
@@ -20,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -76,27 +82,34 @@ public class TripService {
     }
 
     @Transactional
-    public List<TripListRes> getTripList(TripListReq req) {
-        Pageable pageable = PageRequest.of(req.page(), 20);
+    @Cacheable(
+            cacheNames = "PopularTrips",
+            key = "#req.size",
+            condition = "#req.tripSort() == #req.tripSort()?.RATING && #req.size() == 14")
+    public TripListWrapper getTripList(TripListReq req) {
+        Pageable pageable = PageRequest.of(req.page(), req.size());
         TripSort sort = (req.tripSort() != null) ? req.tripSort() : TripSort.CREATED;
-        return tripRepository
-                .searchTripsAndSort(req.cityName(), req.category(), sort, pageable)
-                .stream()
-                .map(
-                        trip ->
-                                TripListRes.builder()
-                                        .tripId(trip.getTripId())
-                                        .city(trip.getCity().getCityName())
-                                        .category(trip.getCategory())
-                                        .name(trip.getName())
-                                        .averageRating(trip.getAverageRating())
-                                        .reviews(trip.getReviewList().size())
-                                        .fileUrlList(
-                                                trip.getTripFileList().stream()
-                                                        .map(TripFileEntity::getFileUrl)
-                                                        .toList())
-                                        .build())
-                .toList();
+        List<TripListRes> res =
+                tripRepository
+                        .searchTripsAndSort(req.cityName(), req.category(), sort, pageable)
+                        .stream()
+                        .map(
+                                trip ->
+                                        TripListRes.builder()
+                                                .tripId(trip.getTripId())
+                                                .city(trip.getCity().getCityName())
+                                                .category(trip.getCategory())
+                                                .name(trip.getName())
+                                                .averageRating(trip.getAverageRating())
+                                                .reviews(trip.getReviewList().size())
+                                                .fileUrlList(
+                                                        trip.getTripFileList().stream()
+                                                                .map(TripFileEntity::getFileUrl)
+                                                                .toList())
+                                                .build())
+                        .toList();
+
+        return TripListWrapper.builder().tripListRes(res).build();
     }
 
     @Transactional

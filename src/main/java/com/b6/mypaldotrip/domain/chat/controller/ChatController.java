@@ -66,10 +66,11 @@ public class ChatController {
     @PostMapping("/rooms")
     public ResponseEntity<RestResponse<ChatRoomSaveRes>> createChatRoom(
             @RequestBody CreateRoomReq req) {
-        String validatedChatRoomName = chatMessageService.validateChatRoomName(req.chatRoomName());
-        ChatRoomSaveRes chatRoomSaveRes = chatMessageService.createARoom(validatedChatRoomName);
+
+        ChatRoomSaveRes chatRoomSaveRes = chatMessageService.createChatRoom(req);
+
         return RestResponse.success(
-                        chatRoomSaveRes, GlobalResultCode.SUCCESS, versionConfig.getVersion())
+                        chatRoomSaveRes, GlobalResultCode.CREATED, versionConfig.getVersion())
                 .toResponseEntity();
     }
 
@@ -85,6 +86,10 @@ public class ChatController {
     @MessageMapping("/chatting/{chatRoomId}")
     public void chatRoomToUsers(
             @DestinationVariable String chatRoomId, @Payload ChatMessage chatMessage) {
+
+        if (chatMessage.getContent().length() > 150) {
+            throw new IllegalArgumentException("메시지의 길이는 150자를 초과할 수 없습니다.");
+        }
 
         ChatMessage chatRoom = chatMessageService.saveMessageIfRoomExists(chatRoomId, chatMessage);
 

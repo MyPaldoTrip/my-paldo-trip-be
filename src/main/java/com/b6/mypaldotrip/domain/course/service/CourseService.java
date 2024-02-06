@@ -8,6 +8,7 @@ import com.b6.mypaldotrip.domain.course.controller.dto.request.CourseUpdateReq;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseDeleteRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseGetRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListRes;
+import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseListWrapper;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseSaveRes;
 import com.b6.mypaldotrip.domain.course.controller.dto.response.CourseUpdateRes;
 import com.b6.mypaldotrip.domain.course.exception.CourseErrorCode;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -91,7 +93,11 @@ public class CourseService {
     }
 
     @Transactional
-    public List<CourseListRes> getCourseListByDynamicConditions(
+    @Cacheable(
+            cacheNames = "PopularCourses",
+            key = "#req.courseSort()",
+            condition = "#req.courseSort() == #req.courseSort().LIKE && #size == 4")
+    public CourseListWrapper getCourseListByDynamicConditions(
             int page, int size, CourseSearchReq req, UserDetailsImpl userDetails) {
         Long userId;
         if (userDetails != null) {
@@ -126,8 +132,9 @@ public class CourseService {
                                                 .thumbnailUrl(courseEntity.getThumbnailUrl())
                                                 .build())
                         .toList();
-
-        return res;
+        CourseListWrapper courseListWrapper =
+                CourseListWrapper.builder().courseListResList(res).build();
+        return courseListWrapper;
     }
 
     @Transactional
@@ -167,6 +174,13 @@ public class CourseService {
         CourseEntity course = findCourse(courseId);
         validateAuth(userEntity, course);
         CityEntity cityEntity = cityService.findByCityName(req.cityName());
+        String thumbnailUrl;
+        if (!course.getFiles().isEmpty()) {
+            thumbnailUrl = course.getFiles().get(0).getFileURL();
+        } else {
+            thumbnailUrl = null;
+        }
+
         if (req.tripNames() != null) {
             course.clearTripCourses();
             for (String tripName : req.tripNames()) {
@@ -177,7 +191,7 @@ public class CourseService {
             }
         }
 
-        course.updateCourse(req.title(), req.content(), cityEntity);
+        course.updateCourse(req.title(), req.content(), cityEntity, thumbnailUrl);
 
         CourseUpdateRes res =
                 CourseUpdateRes.builder()
@@ -195,12 +209,11 @@ public class CourseService {
         validateAuth(userEntity, course);
 
         courseRepository.delete(course);
-
-        for (CourseFileEntity courseFileEntity : course.getFiles()) {
-            try {
+        if (course.getFiles().isEmpty()) {
+            return CourseDeleteRes.builder().msg(courseId + "번 코스 삭제, 삭제할 파일 없음").build();
+        } else {
+            for (CourseFileEntity courseFileEntity : course.getFiles()) {
                 s3Provider.deleteFile(courseFileEntity);
-            } catch (GlobalException e) {
-                return CourseDeleteRes.builder().msg(courseId + "번 코스 삭제, 삭제할 파일 없음").build();
             }
         }
 
