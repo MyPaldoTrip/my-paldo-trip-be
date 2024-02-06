@@ -142,6 +142,31 @@ include::{snippets}/trip/deleteTrip/http-response.adoc[]
 
 [[COURSE-API]]
 == Course API
+=== 코스생성
+==== Request
+include::{snippets}/course/create/http-request.adoc[]
+==== Response
+include::{snippets}/course/create/http-response.adoc[]
+=== 코스 목록조회
+==== Request
+include::{snippets}/course/getCourseList/http-request.adoc[]
+==== Response
+include::{snippets}/course/getCourseList/http-response.adoc[]
+=== 코스 단건조회
+==== Request
+include::{snippets}/course/getCourse/http-request.adoc[]
+==== Response
+include::{snippets}/course/getCourse/http-response.adoc[]
+=== 코스 수정
+==== Request
+include::{snippets}/course/updateCourse/http-request.adoc[]
+==== Response
+include::{snippets}/course/updateCourse/http-response.adoc[]
+=== 코스 삭제
+==== Request
+include::{snippets}/course/deleteCourse/http-request.adoc[]
+==== Response
+include::{snippets}/course/deleteCourse/http-response.adoc[]
 
 [[CHAT-API]]
 == Chat API
