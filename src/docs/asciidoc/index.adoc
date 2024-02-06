@@ -19,6 +19,94 @@ endif::[]
 include::{snippets}/user/signup/http-request.adoc[]
 ==== Response
 include::{snippets}/user/signup/http-response.adoc[]
+'''
+=== 회원탈퇴
+==== Request
+include::{snippets}/user/deleteUser/http-request.adoc[]
+==== Response
+include::{snippets}/user/deleteUser/http-response.adoc[]
+'''
+=== 회원단건조회
+==== Request
+include::{snippets}/user/viewProfile/http-request.adoc[]
+==== Response
+include::{snippets}/user/viewProfile/http-response.adoc[]
+'''
+=== 내프로필 조회
+==== Request
+include::{snippets}/user/viewMyProfile/http-request.adoc[]
+==== Response
+include::{snippets}/user/viewMyProfile/http-response.adoc[]
+'''
+=== 회원수정
+==== Request
+include::{snippets}/user/updateProfile/http-request.adoc[]
+==== Response
+include::{snippets}/user/updateProfile/http-response.adoc[]
+'''
+=== 회원목록조회
+==== Request
+include::{snippets}/user/getUserList/http-request.adoc[]
+==== Response
+include::{snippets}/user/getUserList/http-response.adoc[]
+
+[[Kakao-API]]
+== Kakao API
+'''
+=== 카카오 인증 코드
+==== Request
+include::{snippets}/user/kakao-code/http-request.adoc[]
+==== Response
+include::{snippets}/user/kakao-code/http-response.adoc[]
+'''
+=== 카카오 로그인
+==== Request
+include::{snippets}/user/kakao-login/http-request.adoc[]
+==== Response
+include::{snippets}/user/kakao-login/http-response.adoc[]
+
+[[Email-API]]
+== Email API
+'''
+=== 이메일 발송
+==== Request
+include::{snippets}/user/email-send/http-request.adoc[]
+==== Response
+include::{snippets}/user/email-send/http-response.adoc[]
+'''
+=== 이메일 검증
+==== Request
+include::{snippets}/user/email-verify/http-request.adoc[]
+==== Response
+include::{snippets}/user/email-verify/http-response.adoc[]
+
+[[Application-API]]
+== Application API
+'''
+=== 신청서 제출
+==== Request
+include::{snippets}/user/application-submit/http-request.adoc[]
+==== Response
+include::{snippets}/user/application-submit/http-response.adoc[]
+'''
+=== 신청서 목록 조회
+==== Request
+include::{snippets}/user/application-getList/http-request.adoc[]
+==== Response
+include::{snippets}/user/application-getList/http-response.adoc[]
+'''
+=== 신청서 단건 조회
+==== Request
+include::{snippets}/user/application-getApplication/http-request.adoc[]
+==== Response
+include::{snippets}/user/application-getApplication/http-response.adoc[]
+'''
+=== 신청서 승인
+==== Request
+include::{snippets}/user/application-confirm/http-request.adoc[]
+==== Response
+include::{snippets}/user/application-confirm/http-response.adoc[]
+
 
 [[TRIP-API]]
 == Trip API

@@ -6,6 +6,7 @@ import com.b6.mypaldotrip.domain.user.controller.dto.request.UserListReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserSignUpReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserUpdateReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserDeleteRes;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetMyProfileRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetProfileRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserListRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserSignUpRes;
@@ -205,10 +206,12 @@ public class UserService {
         userEntity.reject();
     }
 
-    public UserGetProfileRes viewMyProfile(Long userId) {
-        return UserGetProfileRes.builder()
+    public UserGetMyProfileRes viewMyProfile(Long userId) {
+        UserGetMyProfileRes res = userRepository.findNameAndRoleByUserId(userId);
+        return UserGetMyProfileRes.builder()
                 .userId(userId)
-                .username(userRepository.findUsernameByUserId(userId))
+                .username(res.username())
+                .userRole(res.userRole())
                 .build();
     }
 }

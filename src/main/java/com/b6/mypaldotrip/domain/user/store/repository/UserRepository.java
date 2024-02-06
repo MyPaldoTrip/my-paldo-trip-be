@@ -1,5 +1,6 @@
 package com.b6.mypaldotrip.domain.user.store.repository;
 
+import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetMyProfileRes;
 import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>, UserCus
 
     Optional<UserEntity> findByEmail(String email);
 
-    @Query("select u.username from UserEntity u where u.userId =:userId")
-    String findUsernameByUserId(Long userId);
+    @Query(
+            "select new com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetMyProfileRes(u.userId,u.username,u.userRole) from UserEntity u where u.userId =:userId")
+    UserGetMyProfileRes findNameAndRoleByUserId(Long userId);
 }
