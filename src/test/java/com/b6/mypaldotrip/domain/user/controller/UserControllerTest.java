@@ -17,6 +17,7 @@ import com.b6.mypaldotrip.domain.user.controller.dto.request.UserListReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserSignUpReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.request.UserUpdateReq;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserDeleteRes;
+import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetMyProfileRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserGetProfileRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserListRes;
 import com.b6.mypaldotrip.domain.user.controller.dto.response.UserSignUpRes;
@@ -154,18 +155,11 @@ class UserControllerTest extends CommonControllerTest {
     @DisplayName("내 프로필조회 테스트 성공")
     void 내프로필조회() throws Exception {
         // given
-        UserGetProfileRes res =
-                UserGetProfileRes.builder()
+        UserGetMyProfileRes res =
+                UserGetMyProfileRes.builder()
                         .userId(TEST_USERID)
-                        .email(TEST_EMAIL)
                         .username(TEST_USERNAME)
-                        .introduction(TEST_INTRODUCTION)
-                        .profileURL(TEST_FILE_URL)
-                        .age(TEST_AGE)
-                        .level(TEST_LEVEL)
-                        .reviewListResList(new ArrayList<>())
-                        .followingEntityList(new ArrayList<>())
-                        .followerEntityList(new ArrayList<>())
+                        .userRole(TEST_ROLE)
                         .build();
         given(userService.viewMyProfile(any())).willReturn(res);
 
@@ -269,7 +263,7 @@ class UserControllerTest extends CommonControllerTest {
                         .username(TEST_USERNAME)
                         .age(TEST_AGE)
                         .level(TEST_LEVEL)
-                        .userRoleValue(TEST_ROLE)
+                        .userRoleValue(String.valueOf(TEST_ROLE))
                         .modified(String.valueOf(LocalDateTime.now()))
                         .writeReviewCnt(1)
                         .followerCnt(1)
