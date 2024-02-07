@@ -1,6 +1,10 @@
 package com.b6.mypaldotrip.global.config;
 
-import com.b6.mypaldotrip.global.security.*;
+import com.b6.mypaldotrip.global.security.JwtAuthenticationEntryPoint;
+import com.b6.mypaldotrip.global.security.JwtAuthenticationFilter;
+import com.b6.mypaldotrip.global.security.JwtAuthorizationFilter;
+import com.b6.mypaldotrip.global.security.JwtUtil;
+import com.b6.mypaldotrip.global.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -64,12 +68,13 @@ public class WebSecurityConfig {
                                 .requestMatchers(
                                         PathRequest.toStaticResources().atCommonLocations())
                                 .permitAll()
+                                /** 도시 */
                                 .requestMatchers(
-                                        "/api/" + versionConfig.getVersion() + "/users/signup/**")
+                                        "/api/"
+                                                + versionConfig.getVersion()
+                                                + "/cities/provinces/**")
                                 .permitAll()
-                                .requestMatchers(
-                                        "/api/" + versionConfig.getVersion() + "/cities/**")
-                                .permitAll()
+                                /** 여행정보 */
                                 .requestMatchers(
                                         HttpMethod.GET,
                                         "/api/" + versionConfig.getVersion() + "/trips/**")
@@ -82,19 +87,42 @@ public class WebSecurityConfig {
                                                 + versionConfig.getVersion()
                                                 + "/trips/{tripId}/reviews/lists")
                                 .permitAll()
+                                /** 코스 */
                                 .requestMatchers(
+                                        HttpMethod.POST,
+                                        "/api/" + versionConfig.getVersion() + "/courses/list")
+                                .permitAll()
+                                .requestMatchers(
+                                        HttpMethod.GET,
                                         "/api/" + versionConfig.getVersion() + "/courses/**")
+                                .permitAll()
+                                .requestMatchers(
+                                        "/api/"
+                                                + versionConfig.getVersion()
+                                                + "/courses/{courseId}/comments/list")
                                 .permitAll()
                                 .requestMatchers(
                                         "/api/" + versionConfig.getVersion() + "/users/email/**")
                                 .permitAll()
                                 .requestMatchers("/kakao-login/**")
                                 .permitAll()
-                                .requestMatchers("/api/" + versionConfig.getVersion() + "/users/**")
+                                /** 유저 */
+                                .requestMatchers(
+                                        "/api/" + versionConfig.getVersion() + "/users/signup/**")
                                 .permitAll()
+                                .requestMatchers(
+                                        HttpMethod.GET,
+                                        "/api/" + versionConfig.getVersion() + "/users/**")
+                                .permitAll()
+                                .requestMatchers(
+                                        HttpMethod.POST,
+                                        "/api/" + versionConfig.getVersion() + "/users/**")
+                                .permitAll()
+                                /** 날씨 */
                                 .requestMatchers(
                                         "/api/" + versionConfig.getVersion() + "/weathers/**")
                                 .permitAll()
+                                /** 채팅 */
                                 .requestMatchers("/ws/**")
                                 .permitAll()
                                 .requestMatchers(
