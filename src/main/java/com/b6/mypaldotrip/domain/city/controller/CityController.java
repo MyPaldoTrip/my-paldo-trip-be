@@ -45,28 +45,27 @@ public class CityController {
     public ResponseEntity<RestResponse<CityCreateRes>> createCity(
             @Valid @RequestPart(value = "req") String req,
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestPart(value = "multipartFile") MultipartFile multipartFile)
+            @RequestPart(value = "multipartFile", required = false) MultipartFile multipartFile)
             throws IOException {
-        CityCreateRes res = cityService.createCity(req, userDetails.getUserEntity(), multipartFile);
+        CityCreateRes res = cityService.createCity(req, userDetails, multipartFile);
         return RestResponse.success(res, GlobalResultCode.CREATED, versionConfig.getVersion())
                 .toResponseEntity();
     }
 
     @PutMapping("/{cityId}") // 수정
     public ResponseEntity<RestResponse<CityUpdateRes>> updateCity(
-            @PathVariable Long cityId, @RequestBody CityUpdateReq cityUpdateReq
-            // @AuthenticationPrincipal UserDetailsImpl userDetails
-            ) {
-        CityUpdateRes res = cityService.updateCity(cityId, cityUpdateReq);
+            @PathVariable Long cityId,
+            @RequestBody CityUpdateReq cityUpdateReq,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        CityUpdateRes res = cityService.updateCity(cityId, cityUpdateReq, userDetails);
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
     }
 
     @DeleteMapping("/{cityId}") // 삭제
-    public ResponseEntity<RestResponse<CityDeleteRes>> deleteCity(@PathVariable Long cityId
-            // @AuthenticationPrincipal UserDetailsImpl userDetails
-            ) {
-        CityDeleteRes res = cityService.deleteCity(cityId);
+    public ResponseEntity<RestResponse<CityDeleteRes>> deleteCity(
+            @PathVariable Long cityId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        CityDeleteRes res = cityService.deleteCity(cityId, userDetails);
         // userDetails.getUser());
         return RestResponse.success(res, GlobalResultCode.SUCCESS, versionConfig.getVersion())
                 .toResponseEntity();
