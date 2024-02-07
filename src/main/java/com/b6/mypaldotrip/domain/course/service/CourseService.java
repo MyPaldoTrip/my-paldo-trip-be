@@ -70,12 +70,13 @@ public class CourseService {
                         .build();
 
         CourseEntity savedCourse = courseRepository.save(course);
-
-        for (String tripName : req.tripNames()) {
-            TripEntity trip = tripService.findTripByName(tripName);
-            TripCourseEntity tripCourse =
-                    TripCourseEntity.builder().trip(trip).course(savedCourse).build();
-            tripCourseRepository.save(tripCourse);
+        if (!Objects.equals(req.tripNames().get(0), "")) {
+            for (String tripName : req.tripNames()) {
+                TripEntity trip = tripService.findTripByName(tripName);
+                TripCourseEntity tripCourse =
+                        TripCourseEntity.builder().trip(trip).course(savedCourse).build();
+                tripCourseRepository.save(tripCourse);
+            }
         }
 
         CourseFileEntity courseFileEntity =
@@ -181,7 +182,7 @@ public class CourseService {
             thumbnailUrl = null;
         }
 
-        if (req.tripNames() != null) {
+        if (!Objects.equals(req.tripNames().get(0), "")) {
             course.clearTripCourses();
             for (String tripName : req.tripNames()) {
                 TripEntity trip = tripService.findTripByName(tripName);

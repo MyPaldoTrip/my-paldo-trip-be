@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -51,6 +52,14 @@ public class GlobalExceptionHandler {
             ConstraintViolationException e) {
         log.error(e.getMessage());
         ResultCode resultCode = GlobalResultCode.VALIDATION_ERROR;
+        return RestResponse.error(resultCode, versionConfig.getVersion()).toResponseEntity();
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<RestResponse<Object>> handleMaxUploadSizeExceededException(
+            MaxUploadSizeExceededException e) {
+
+        ResultCode resultCode = GlobalResultCode.WRONG_FILE_EXCEED;
         return RestResponse.error(resultCode, versionConfig.getVersion()).toResponseEntity();
     }
 }

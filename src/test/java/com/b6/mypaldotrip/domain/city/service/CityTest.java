@@ -1,25 +1,28 @@
-package com.b6.mypaldotrip.domain.user;
+package com.b6.mypaldotrip.domain.city.service;
 
-import static com.b6.mypaldotrip.domain.user.store.entity.UserRole.ROLE_USER;
-
+import com.b6.mypaldotrip.domain.city.store.entity.CityEntity;
 import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
-import com.b6.mypaldotrip.domain.user.store.entity.UserRole;
 
-public interface CommonTest {
-
+public interface CityTest {
     String TEST_USERNAME = "name";
     String TEST_PASSWORD = "password";
     String TEST_EMAIL = "test@gmail.com";
     String TEST_INTRODUCTION = "test introduction";
     String TEST_FILE_URL =
             "https://my-mpt-bucket.s3.ap-northeast-2.amazonaws.com/user/e82283cc-fa55-4cd0-9a61-a2436acbf746.png";
-    UserRole TEST_ROLE = ROLE_USER;
     Long TEST_AGE = 20L;
     Long TEST_LEVEL = 1L;
-    Long TEST_USERID = 1L;
-    String ANOTHER = "another";
-    Long ANOTHER_LONG = 1L;
+    Long TEST_CITYID = 1L;
+    String TEST_PROVINCE_NAME = "test province";
+    String TEST_CITY_NAME = "test city name";
+    String TEST_CITY_INFO = "test city info";
 
+    CityEntity TEST_CITY =
+            CityEntity.builder()
+                    .provinceName(TEST_PROVINCE_NAME)
+                    .cityName(TEST_CITY_NAME)
+                    .cityInfo(TEST_CITY_INFO)
+                    .build();
     UserEntity TEST_USER =
             UserEntity.builder()
                     .username(TEST_USERNAME)
@@ -29,16 +32,5 @@ public interface CommonTest {
                     .fileURL(TEST_FILE_URL)
                     .age(TEST_AGE)
                     .level(TEST_LEVEL)
-                    .build();
-
-    UserEntity TEST_ANOTHER_USER =
-            UserEntity.builder()
-                    .username(ANOTHER + TEST_USERNAME)
-                    .email(ANOTHER + TEST_EMAIL)
-                    .password(ANOTHER + TEST_PASSWORD)
-                    .introduction(ANOTHER + TEST_INTRODUCTION)
-                    .fileURL(ANOTHER + TEST_FILE_URL)
-                    .age(ANOTHER_LONG + TEST_AGE)
-                    .level(ANOTHER_LONG + TEST_LEVEL)
                     .build();
 }

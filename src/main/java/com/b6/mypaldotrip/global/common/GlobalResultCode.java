@@ -15,7 +15,8 @@ public enum GlobalResultCode implements ResultCode {
     NOT_FOUND_FILE(HttpStatus.NOT_FOUND, "파일을 찾을 수 없습니다."),
     NOT_FOUND_TOKEN(HttpStatus.FORBIDDEN, "토큰이 존재하지 않거나 유효하지 않습니다."),
     UNAUTHORIZED_ERROR(HttpStatus.UNAUTHORIZED, "인증정보가 없습니다."),
-    NOT_FOUND_URL(HttpStatus.NOT_FOUND, "잘못된 경로입니다.");
+    NOT_FOUND_URL(HttpStatus.NOT_FOUND, "잘못된 경로입니다."),
+    WRONG_FILE_EXCEED(HttpStatus.BAD_REQUEST, "파일 크기가 초과되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
