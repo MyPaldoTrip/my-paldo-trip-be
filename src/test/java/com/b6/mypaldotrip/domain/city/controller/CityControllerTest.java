@@ -9,7 +9,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.b6.mypaldotrip.domain.city.controller.dto.request.CityCreateReq;
@@ -17,6 +17,7 @@ import com.b6.mypaldotrip.domain.city.controller.dto.request.CityUpdateReq;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityCreateRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityDeleteRes;
 import com.b6.mypaldotrip.domain.city.controller.dto.response.CityUpdateRes;
+import com.b6.mypaldotrip.domain.city.s3.service.CityFileService;
 import com.b6.mypaldotrip.domain.city.service.CityService;
 import com.b6.mypaldotrip.domain.city.service.CityTestUtils;
 import com.b6.mypaldotrip.global.security.UserDetailsImpl;
@@ -36,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class CityControllerTest extends CityTestUtils {
 
     @MockBean private CityService cityService;
+    @MockBean private CityFileService cityFileService;
 
     @Nested
     @DisplayName("도시 생성 테스트")
@@ -128,7 +130,7 @@ public class CityControllerTest extends CityTestUtils {
             // when
             ResultActions actions =
                     mockMvc.perform(
-                            patch(
+                            put(
                                             "/api/"
                                                     + versionConfig.getVersion()
                                                     + "/cities/{cityId}",
