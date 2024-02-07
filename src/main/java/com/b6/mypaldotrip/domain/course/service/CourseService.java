@@ -70,12 +70,13 @@ public class CourseService {
                         .build();
 
         CourseEntity savedCourse = courseRepository.save(course);
-
-        for (String tripName : req.tripNames()) {
-            TripEntity trip = tripService.findTripByName(tripName);
-            TripCourseEntity tripCourse =
-                    TripCourseEntity.builder().trip(trip).course(savedCourse).build();
-            tripCourseRepository.save(tripCourse);
+        if (!req.tripNames().isEmpty()) {
+            for (String tripName : req.tripNames()) {
+                TripEntity trip = tripService.findTripByName(tripName);
+                TripCourseEntity tripCourse =
+                        TripCourseEntity.builder().trip(trip).course(savedCourse).build();
+                tripCourseRepository.save(tripCourse);
+            }
         }
 
         CourseFileEntity courseFileEntity =

@@ -1,6 +1,9 @@
 package com.b6.mypaldotrip.domain.user;
 
+import static com.b6.mypaldotrip.domain.user.store.entity.UserRole.ROLE_USER;
+
 import com.b6.mypaldotrip.domain.user.store.entity.UserEntity;
+import com.b6.mypaldotrip.domain.user.store.entity.UserRole;
 
 public interface CommonTest {
 
@@ -10,7 +13,7 @@ public interface CommonTest {
     String TEST_INTRODUCTION = "test introduction";
     String TEST_FILE_URL =
             "https://my-mpt-bucket.s3.ap-northeast-2.amazonaws.com/user/e82283cc-fa55-4cd0-9a61-a2436acbf746.png";
-    String TEST_ROLE = "ROLE_USER";
+    UserRole TEST_ROLE = ROLE_USER;
     Long TEST_AGE = 20L;
     Long TEST_LEVEL = 1L;
     Long TEST_USERID = 1L;
